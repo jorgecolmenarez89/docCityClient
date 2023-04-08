@@ -3,6 +3,7 @@ import { View, StyleSheet, Dimensions } from 'react-native';
 import MapView from 'react-native-maps';
 import MenuButton from '../../components/MenuButton'; 
 import { useLocation } from '../../hooks/useLocation';
+import Fab from '../../components/Fab'; 
 
 const deviceHeight = Dimensions.get("window").height
 const widthHeight = Dimensions.get("window").width
@@ -21,7 +22,6 @@ function HomeScreen({navigation}) {
   return (
     <View style={styles.container}>
 			<View style={styles.containerMap}>
-
 				<>
 					<MenuButton 
 						iconName="menu-outline"
@@ -31,6 +31,7 @@ function HomeScreen({navigation}) {
 
 					<MapView
 						style={styles.map}
+						showsUserLocation
 						region={{
 							latitude: initialPosition.latitude,
 							longitude: initialPosition.longitude,
@@ -40,6 +41,16 @@ function HomeScreen({navigation}) {
 					>
 
 					</MapView>
+
+					<Fab 
+						iconName="search-outline"
+						onPress={() => navigation.navigate('Search')}
+						style={{
+							position: 'absolute',
+							bottom: 20,
+							right: 20
+						}}
+					/>
 
 				</>
 

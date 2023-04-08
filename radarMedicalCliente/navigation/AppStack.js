@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+import { ListItem, Icon } from '@rneui/themed';
 import LoadingScreen from '../screens/LoadingScreen';
 import { PermisionsContext } from '../context/PermisionsContext';
 import DashboardScreen from '../screens/doctor/DashboardScreen';
@@ -32,7 +33,7 @@ export default function AppStack() {
             paddingHorizontal: 10,
             paddingVertical: 20,
             alignItems: 'center',
-            backgroundColor: '#f6f6f6'  
+            backgroundColor: '#66bfc5'  
           }}>
 
             <Image 
@@ -45,12 +46,20 @@ export default function AppStack() {
             />
 
             <View style={{ width: '100%', marginTop: 10, display: 'flex', alignItems: 'center' }}>
-              <Text>{userLoged.fullName}</Text>
-              <Text>{userLoged.email}</Text>
+              <Text style={{ color: '#ffffff' }}>{userLoged.fullName}</Text>
+              <Text style={{ color: '#ffffff' }}>{userLoged.email}</Text>
             </View>
             
           </View>
-          <DrawerItemList {...props} />
+          {/*<DrawerItemList {...props} /> */}
+          <DrawerItem
+            label="Busqueda"
+            onPress={() => props.navigation.navigate('Search')}
+          />
+          <DrawerItem
+            label="Perfil"
+            onPress={() => props.navigation.navigate('Profile')}
+          />
         </DrawerContentScrollView>
         <TouchableOpacity
           onPress={() => logout()}

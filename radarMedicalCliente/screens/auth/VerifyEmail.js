@@ -120,8 +120,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   title: {
-    fontSize: 23,
+    fontSize: 22,
     color: '#14193f',
-    fontFamily: 'Poppins-Bold'
+    fontFamily: 'Poppins-SemiBold'
   }
 })

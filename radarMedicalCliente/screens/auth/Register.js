@@ -101,7 +101,7 @@ function Register({ navigation }) {
             onChangeText={text => handleChange(text, 'fullName')}
             value={user.fullName}
             placeholder='Nombre y Apellido'
-            laceholderTextColor={'#9fa0af'}
+            placeholderTextColor={'#9fa0af'}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -219,8 +219,8 @@ const styles = StyleSheet.create({
     height: 50
   },
   title: {
-    fontSize: 23,
+    fontSize: 22,
     color: '#14193f',
-    fontFamily: 'Poppins-Bold'
+    fontFamily: 'Poppins-SemiBold'
   }
 })
