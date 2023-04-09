@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import SingleMap from '../../components/SingleMap'; 
-import Swiper from 'react-native-swiper'
+import Swiper from 'react-native-swiper';
 import { Button} from '@rneui/themed';
 import CardResult from '../../components/CardResult'; 
 
@@ -148,6 +148,10 @@ function ResultScreen() {
 		buildMarkers(results[index])
 	}	
 
+	const renderItem = ({item, index}) => {
+		<CardResult healtCenter={item}  />
+	}
+
   return (
     <View style={styles.container}>
       <View style={{ flex: 1, width: '100%' }}>
@@ -161,17 +165,19 @@ function ResultScreen() {
 				/>
 			</View>
 			<View style={{ position: 'absolute', display: 'flex', bottom: 0, left: 0, right: 0, height: 350, alignItems: 'center' }}>
+				
 				<Swiper style={styles.wrapper} showsButtons={true}
 					showsPagination={false}
 					onIndexChanged={(index) => changeIndex(index)}
+					loop={false}
 				>
 					{results.map((item, index) => (
 						<View style={styles.slide} key={'slide' + index} >
 							<CardResult healtCenter={item}  />
 						</View>
 					))}
-				</Swiper>
-				<View style={{ height: 60, display: 'flex', justifyContent: 'center' }}>
+					</Swiper>
+				{/*<View style={{ height: 60, display: 'flex', justifyContent: 'center' }}>
 					<Button
             title="Contactar"
             onPress={() => {}}
@@ -186,7 +192,7 @@ function ResultScreen() {
             loading={false}
           />
 						
-				</View>
+				</View>*/}
 			</View>
     </View>
   );
@@ -204,7 +210,7 @@ const styles = StyleSheet.create({
     width: '100%',
 		display: 'flex',
 		alignItems:'center',
-		flex: 1,
+		height: '100%'
   },
   slide2: {
     flex: 1,
