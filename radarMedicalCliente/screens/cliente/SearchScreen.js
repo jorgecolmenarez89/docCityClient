@@ -6,7 +6,7 @@ import { Button } from '@rneui/themed';
 import {getEspecialities} from '../../services/doctor/medicine';
 import {getProivinces, getMunicipalitiesByProvinceId, getParroquiesByMinicipalyId} from '../../services/doctor/address'; 
 
-function SearchScreen() {
+function SearchScreen({navigation}) {
 
 	const [especialidades, setEspecialidades] = useState([])
 	const [estados, setEstatdos] = useState([])
@@ -63,7 +63,7 @@ function SearchScreen() {
 	}
 
 	const handleSearch = () => {
-
+    navigation.navigate('Result')
 	}
 
   return (

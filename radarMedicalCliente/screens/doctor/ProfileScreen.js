@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     width,
-    height: 50,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#F6F6F6',
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
 
   dropdown1BtnStyle: {
     width: '80%',
-    height: 50,
+    height: 40,
     backgroundColor: '#FFF',
     borderRadius: 8,
     borderWidth: 1,

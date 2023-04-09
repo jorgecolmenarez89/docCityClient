@@ -1,15 +1,9 @@
 import React, {useContext} from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
-import { ListItem, Icon } from '@rneui/themed';
+import { Icon } from '@rneui/themed';
 import LoadingScreen from '../screens/LoadingScreen';
 import { PermisionsContext } from '../context/PermisionsContext';
-import DashboardScreen from '../screens/doctor/DashboardScreen';
-import ProfileScreen from '../screens/doctor/ProfileScreen';
-import UbicacionesStack from '../navigation/UbicacionesStack';
-import CompleteInfoScreen from '../screens/doctor/CompleteInfoScreen';
-import EjemploMapa from '../screens/doctor/EjemploMapa';
-import HealthCentersStack from '../navigation/HealthCentersStack';
 import { AuthContext } from '../context/AuthContext';
 import ClientStack from '../navigation/ClientStack';
 
@@ -19,9 +13,12 @@ export default function AppStack() {
 
   const { permissions } = useContext(PermisionsContext)
   const {logout, userLoged} =  useContext(AuthContext)
-  /*if(permissions.loactionStatus === 'unavailable'){
+
+  console.log('permissions', permissions)
+
+  if(permissions.loactionStatus === 'unavailable'){
     return <LoadingScreen />
-  }*/
+  }
 
   const CustomDrawer = (props) => {
     return (
@@ -33,7 +30,8 @@ export default function AppStack() {
             paddingHorizontal: 10,
             paddingVertical: 20,
             alignItems: 'center',
-            backgroundColor: '#66bfc5'  
+            backgroundColor: '#66bfc5',
+            marginTop: -10  
           }}>
 
             <Image 
@@ -55,10 +53,26 @@ export default function AppStack() {
           <DrawerItem
             label="Busqueda"
             onPress={() => props.navigation.navigate('Search')}
+            icon={({ focused, color, size }) => (
+              <Icon type='ionicon' color={'#14193f'} size={size} name={focused ? 'map' : 'map-outline'} /> 
+            )}
+            labelStyle={{
+              color: '#14193f',
+              fontFamily: 'Poppins-Medium',
+              marginLeft: -20
+            }}
           />
           <DrawerItem
             label="Perfil"
-            onPress={() => props.navigation.navigate('Profile')}
+            onPress={() => props.navigation.navigate('Profile')} 
+            icon={({ focused, color, size }) => (
+              <Icon type='ionicon' color={'#14193f'} size={size} name={focused ? 'settings' : 'settings-outline'} /> 
+            )}
+            labelStyle={{
+              color: '#14193f',
+              fontFamily: 'Poppins-Medium',
+              marginLeft: -20
+            }}
           />
         </DrawerContentScrollView>
         <TouchableOpacity
@@ -69,10 +83,16 @@ export default function AppStack() {
             right: 0,
             left : 0,
             padding: 20,
-            backgroundColor: '#f6f6f6'
+            backgroundColor: '#f6f6f6',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center'
           }}
         >
-          <Text > Salir</Text>
+          <Icon type='ionicon' color={'#14193f'} size={22} name='log-out-outline' /> 
+          <Text style={{ color: '#14193f', fontFamily: 'Poppins-Medium', marginLeft: 8 }} >
+             Salir
+          </Text>
         </TouchableOpacity>
       </View>
     )

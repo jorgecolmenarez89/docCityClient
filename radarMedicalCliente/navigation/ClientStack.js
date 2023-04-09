@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/cliente/HomeScreen';
 import SearchScreen from '../screens/cliente/SearchScreen';
 import ProfileScreen from '../screens/cliente/ProfileScreen';
+import ResultScreen from '../screens/cliente/ResultScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,12 @@ function ClientSatck() {
         }}
       />
       <Stack.Screen name="Profile" component={ProfileScreen} 
+        options={{
+         title: '',
+         headerTransparent: true, 
+        }}
+      />
+      <Stack.Screen name="Result" component={ResultScreen} 
         options={{
          title: '',
          headerTransparent: true, 
