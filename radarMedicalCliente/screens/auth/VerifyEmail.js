@@ -83,7 +83,7 @@ function VerifyEmail({ navigation }) {
             onPress={() => navigation.navigate('Login')}
             type="clear"
             titleStyle={{
-              color: '#86889c',
+              color: '#545573',
               fontFamily: 'Poppins-SemiBold'
             }}
           />
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   label:{
     fontSize: 17,
-    color: '#14193f',
+    color: '#15193f',
     fontFamily: 'Poppins-Medium'
   },
   contentLinks:{
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    color: '#14193f',
+    color: '#15193f',
     fontFamily: 'Poppins-SemiBold'
   }
 })

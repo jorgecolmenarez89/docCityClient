@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   label:{
     fontSize: 17,
-    color: '#14193f',
+    color: '#15193f',
     fontFamily: 'Poppins-Medium'
   },
   contentLinks:{
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    color: '#14193f',
+    color: '#15193f',
     fontFamily: 'Poppins-SemiBold'
   }
 })

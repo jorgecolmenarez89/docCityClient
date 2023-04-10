@@ -54,10 +54,10 @@ export default function AppStack() {
             label="Busqueda"
             onPress={() => props.navigation.navigate('Search')}
             icon={({ focused, color, size }) => (
-              <Icon type='ionicon' color={'#14193f'} size={size} name={focused ? 'map' : 'map-outline'} /> 
+              <Icon type='ionicon' color={'#15193f'} size={size} name={focused ? 'map' : 'map-outline'} /> 
             )}
             labelStyle={{
-              color: '#14193f',
+              color: '#15193f',
               fontFamily: 'Poppins-Medium',
               marginLeft: -20
             }}
@@ -66,10 +66,10 @@ export default function AppStack() {
             label="Perfil"
             onPress={() => props.navigation.navigate('Profile')} 
             icon={({ focused, color, size }) => (
-              <Icon type='ionicon' color={'#14193f'} size={size} name={focused ? 'settings' : 'settings-outline'} /> 
+              <Icon type='ionicon' color={'#15193f'} size={size} name={focused ? 'settings' : 'settings-outline'} /> 
             )}
             labelStyle={{
-              color: '#14193f',
+              color: '#15193f',
               fontFamily: 'Poppins-Medium',
               marginLeft: -20
             }}
@@ -89,8 +89,8 @@ export default function AppStack() {
             alignItems: 'center'
           }}
         >
-          <Icon type='ionicon' color={'#14193f'} size={22} name='log-out-outline' /> 
-          <Text style={{ color: '#14193f', fontFamily: 'Poppins-Medium', marginLeft: 8 }} >
+          <Icon type='ionicon' color={'#15193f'} size={22} name='log-out-outline' /> 
+          <Text style={{ color: '#15193f', fontFamily: 'Poppins-Medium', marginLeft: 8 }} >
              Salir
           </Text>
         </TouchableOpacity>

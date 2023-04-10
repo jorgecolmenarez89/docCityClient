@@ -162,11 +162,11 @@ const styles = StyleSheet.create({
 	row: { display: 'flex', flexDirection: 'row', alignItems: 'center',  borderBottomColor: '#eee', borderBottomWidth: 1, paddingVertical: 5 },
 	rowTitle: {
 		fontFamily: 'Poppins-SemiBold',
-		color: '#14193f'
+		color: '#15193f'
 	},
 	rowText: {
 		fontFamily: 'Poppins-Regular',
-		color: '#14193f'
+		color: '#15193f'
 	},
 	modalHeader:{
 		height: 60,
@@ -191,11 +191,11 @@ const styles = StyleSheet.create({
 	fullNames: {
 		fontFamily: 'Poppins-SemiBold',
 		fontSize: 20,
-		color: '#14193f'
+		color: '#15193f'
 	},
 	speciality:{
 		fontFamily: 'Poppins-Regular',
-		color: '#14193f',
+		color: '#15193f',
 		fontSize: 18
 	},
 	info: {

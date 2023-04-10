@@ -89,7 +89,7 @@ function SearchScreen({navigation}) {
 						buttonStyle={styles.dropdown1BtnStyle}
             buttonTextStyle={styles.dropdown1BtnTxtStyle}
             renderDropdownIcon={isOpened => {
-              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#b2b3bc'} size={16} />;
+              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#9fa0af'} size={16} />;
             }}
             dropdownIconPosition={'right'}
             dropdownStyle={styles.dropdown1DropdownStyle}
@@ -124,7 +124,7 @@ function SearchScreen({navigation}) {
 						buttonStyle={styles.dropdown1BtnStyle}
             buttonTextStyle={styles.dropdown1BtnTxtStyle}
             renderDropdownIcon={isOpened => {
-              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#b2b3bc'} size={16} />;
+              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#9fa0af'} size={16} />;
             }}
             dropdownIconPosition={'right'}
             dropdownStyle={styles.dropdown1DropdownStyle}
@@ -150,7 +150,7 @@ function SearchScreen({navigation}) {
 						buttonStyle={styles.dropdown1BtnStyle}
             buttonTextStyle={styles.dropdown1BtnTxtStyle}
             renderDropdownIcon={isOpened => {
-              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#b2b3bc'} size={16} />;
+              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#9fa0af'} size={16} />;
             }}
             dropdownIconPosition={'right'}
             dropdownStyle={styles.dropdown1DropdownStyle}
@@ -176,7 +176,7 @@ function SearchScreen({navigation}) {
 						buttonStyle={styles.dropdown1BtnStyle}
             buttonTextStyle={styles.dropdown1BtnTxtStyle}
             renderDropdownIcon={isOpened => {
-              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#b2b3bc'} size={16} />;
+              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#9fa0af'} size={16} />;
             }}
             dropdownIconPosition={'right'}
             dropdownStyle={styles.dropdown1DropdownStyle}
@@ -242,13 +242,13 @@ const styles = StyleSheet.create({
   dropdown1RowStyle: {backgroundColor: '#EFEFEF', borderBottomColor: '#C5C5C5'},
   dropdown1RowTxtStyle: {color: '#444', textAlign: 'left'},
 	dropdownsearchInputStyleStyle: {
-    backgroundColor: '#444',
+    backgroundColor: '#66bfc5',
     borderBottomWidth: 1,
     borderBottomColor: '#FFF',
   },
 	title: {
     fontSize: 22,
-    color: '#14193f',
+    color: '#15193f',
     fontFamily: 'Poppins-SemiBold'
   }
 })

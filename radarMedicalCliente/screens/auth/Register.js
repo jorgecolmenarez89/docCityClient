@@ -79,7 +79,7 @@ function Register({ navigation }) {
             onChangeText={text => handleChange(text, 'username')}
             value={user.username}
             placeholder='Nombre de usuario'
-            placeholderTextColor={'#9fa0af'}
+            placeholderTextColor={'#35385b'}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -90,7 +90,7 @@ function Register({ navigation }) {
             onChangeText={text => handleChange(text, 'email')}
             value={user.email}
             placeholder='Correo electrónico'
-            placeholderTextColor={'#9fa0af'}
+            placeholderTextColor={'#35385b'}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -101,7 +101,7 @@ function Register({ navigation }) {
             onChangeText={text => handleChange(text, 'fullName')}
             value={user.fullName}
             placeholder='Nombre y Apellido'
-            placeholderTextColor={'#9fa0af'}
+            placeholderTextColor={'#35385b'}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -114,12 +114,12 @@ function Register({ navigation }) {
               value={user.password}
               secureTextEntry={hidePassword}
               placeholder='Contraseña'
-              placeholderTextColor={'#9fa0af'}
+              placeholderTextColor={'#35385b'}
             />
             <Icon
               name= {hidePassword ? 'eye-outline': 'eye-off-outline'}
               type="ionicon"
-              color='#9fa0af'
+              color='#35385b'
               size={20}
               onPress={()=> setHidePassword(!hidePassword)}
             />
@@ -135,12 +135,12 @@ function Register({ navigation }) {
               value={user.repeatPassword}
               secureTextEntry={hideRepeatPassword}
               placeholder='Repetir Contraseña'
-              placeholderTextColor={'#9fa0af'}
+              placeholderTextColor={'#35385b'}
             />
             <Icon
               name= {hideRepeatPassword ? 'eye-outline': 'eye-off-outline'}
               type="ionicon"
-              color='#9fa0af'
+              color='#35385b'
               size={20}
               onPress={()=> setHideRepeatPassword(!hideRepeatPassword)}
             />
@@ -167,7 +167,7 @@ function Register({ navigation }) {
               onPress={() => navigation.navigate('Login')}
               type="clear"
               titleStyle={{
-                color: '#86889c',
+                color: '#545573',
                 fontFamily: 'Poppins-SemiBold'
               }}
             />
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   label:{
     fontSize: 17,
-    color: '#14193f',
+    color: '#15193f',
     fontFamily: 'Poppins-Medium'
   },
   contentLinks:{
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    color: '#14193f',
+    color: '#15193f',
     fontFamily: 'Poppins-SemiBold'
   }
 })

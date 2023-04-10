@@ -103,7 +103,7 @@ function ProfileScreen() {
             onChangeText={text => setFullName(text)}
             value={fullName}
             placeholder='Jhon Doe'
-            placeholderTextColor={'#9fa0af'}
+            placeholderTextColor={'#35385b'}
           />
         </View>
 
@@ -115,7 +115,7 @@ function ProfileScreen() {
             onChangeText={text => setPhone(text)}
             value={phone}
             placeholder='04240000000'
-            placeholderTextColor={'#9fa0af'}
+            placeholderTextColor={'#35385b'}
           />
         </View>
 
@@ -135,7 +135,7 @@ function ProfileScreen() {
 						buttonStyle={styles.dropdown1BtnStyle}
             buttonTextStyle={styles.dropdown1BtnTxtStyle}
             renderDropdownIcon={isOpened => {
-              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#b2b3bc'} size={16} />;
+              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#9fa0af'} size={16} />;
             }}
             dropdownIconPosition={'right'}
             dropdownStyle={styles.dropdown1DropdownStyle}
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    color: '#14193f',
+    color: '#15193f',
     fontFamily: 'Poppins-SemiBold'
   },
   contentImage:{
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   label:{
     fontSize: 15,
-    color: '#14193f',
+    color: '#15193f',
     fontFamily: 'Poppins-SemiBold'
   },
   dropdown1BtnStyle: {

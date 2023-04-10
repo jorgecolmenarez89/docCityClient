@@ -81,7 +81,7 @@ function Login({ navigation }) {
             <Icon
               name= {hidePassword ? 'eye-outline': 'eye-off-outline'}
               type="ionicon"
-              color='#9fa0af'
+              color='#35385b'
               size={20}
               onPress={()=> setHidePassword(!hidePassword)}
             />
@@ -110,7 +110,7 @@ function Login({ navigation }) {
             onPress={() => navigation.navigate('Register')}
             type="clear"
             titleStyle={{
-              color: '#86889c',
+              color: '#545573',
               fontFamily: 'Poppins-SemiBold'
             }}
           />
@@ -120,7 +120,7 @@ function Login({ navigation }) {
             onPress={() => navigation.navigate('VerifyEmail')}
             type="clear"
             titleStyle={{
-              color: '#86889c',
+              color: '#545573',
               fontFamily: 'Poppins-SemiBold'
             }}
           />
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   },
   label:{
     fontSize: 17,
-    color: '#14193f',
+    color: '#15193f',
     fontFamily: 'Poppins-Medium'
   },
   contentLinks:{
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     width: '100%',
-    backgroundColor: '#f5f6fa',
+    backgroundColor: '#f5f6fa', 
     borderRadius: 6,
     paddingHorizontal: 10,
     height: 50

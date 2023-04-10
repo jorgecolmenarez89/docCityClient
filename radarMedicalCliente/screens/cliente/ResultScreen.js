@@ -145,6 +145,7 @@ function ResultScreen() {
   }
 
 	const changeIndex = (index) => {
+		console.log(index)
 		buildMarkers(results[index])
 	}	
 
