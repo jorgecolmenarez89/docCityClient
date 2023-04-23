@@ -2,12 +2,13 @@ import React, {useState, useRef, useEffect} from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import SingleMap from '../../components/SingleMap'; 
 import Swiper from 'react-native-swiper';
-import { Button} from '@rneui/themed';
 import CardResult from '../../components/CardResult'; 
 
-function ResultScreen() {
+function ResultScreen({ route }) {
 
-	const [results, setResults] = useState([
+	const { results, especialidades } = route.params;
+
+	const [results1, setResults1] = useState([
 		{
 			id: 1009,
 			"rif": 'J324645654',
@@ -138,8 +139,8 @@ function ResultScreen() {
           latitude: parseFloat(arrayCoordinate[0]),
           longitude: parseFloat(arrayCoordinate[1]),
         },
-        title: ubication.Name,
-        description: ubication.Address
+        title: ubication.name,
+        description: ubication.address
       }
     ])
   }
@@ -150,7 +151,7 @@ function ResultScreen() {
 	}	
 
 	const renderItem = ({item, index}) => {
-		<CardResult healtCenter={item}  />
+		<CardResult healtCenter={item} especialidades={especialidades} />
 	}
 
   return (
@@ -174,7 +175,7 @@ function ResultScreen() {
 				>
 					{results.map((item, index) => (
 						<View style={styles.slide} key={'slide' + index} >
-							<CardResult healtCenter={item}  />
+							<CardResult healtCenter={item} especialidades={especialidades} />
 						</View>
 					))}
 					</Swiper>

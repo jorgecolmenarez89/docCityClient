@@ -16,7 +16,7 @@ const textArray = [
 
 const randomNumber = Math.floor(Math.random()*textArray.length);
 
-function CardResult({ healtCenter }) {
+function CardResult({ healtCenter, especialidades }) {
 
 	const [isOpened, setIsOpened] = useState(false);
 	const [selectedUser, setSelectedUser] = useState(null);
@@ -28,19 +28,32 @@ function CardResult({ healtCenter }) {
 			<View style={styles.row}>
 				<Avatar
 					rounded
-					source={{ uri: 'https://randomuser.me/api/portraits/men/36.jpg' }}
+					source={getAvatarUrl(item)}
 				/>
 				<View style={{ display: 'flex', marginLeft: 10 }}>
-					<Text style={styles.rowTitle}>{item.FullName}</Text>
-					<Text style={styles.rowText}>{textArray[randomNumber] }</Text>
+					<Text style={styles.rowTitle}>{item.fullName}</Text>
+					<Text style={styles.rowText}>{getEspeciality(item)}</Text>
 				</View>
 			</View>
 		</TouchableOpacity>
 	)
 
+	const getEspeciality = (doctor) => {
+		const filter = especialidades.find(e => e.id === doctor.medicalSpecialityId);
+		return filter.name
+	}
+
 	const selectedDoctor  = (doctor) => {
 		setSelectedUser(doctor)
 		setIsOpened(true)
+	}
+
+	const getAvatarUrl = (doctor) => {
+		if(doctor.avatarUrl) {
+			return { uri: doctor.avatarUrl }
+		} else {
+			return require('../assets/icon-user.png')
+		}
 	}
 
   return (
@@ -54,7 +67,7 @@ function CardResult({ healtCenter }) {
 						containerStyle={styles.listContainer}
 						data={healtCenter.users}
 						renderItem={renderItem}
-						keyExtractor={item => item.Id}
+						keyExtractor={item => item.id}
 					/>
 				</Card>
 			}
@@ -81,14 +94,14 @@ function CardResult({ healtCenter }) {
 							<Avatar
 								size={100}
 								rounded
-								source={{ uri: 'https://cdn-icons-png.flaticon.com/512/147/147133.png' }}
+								source={getAvatarUrl(selectedUser)}
 							/>
 						</View>
 						<View style={styles.centerContent}>
-							<Text style={styles.fullNames}>{selectedUser.FullName}</Text>
-							<Text style={styles.speciality}>{textArray[randomNumber] }</Text>
-							<Text style={styles.speciality}>Credencial: {selectedUser.ColegioMedicoId}</Text>
-							<Text style={styles.speciality}>Años de experiencia: {selectedUser.ExperienceYears}</Text>
+							<Text style={styles.fullNames}>{selectedUser.fullName}</Text>
+							<Text style={styles.speciality}>{getEspeciality(selectedUser)}</Text>
+							<Text style={styles.speciality}>Credencial: {selectedUser.colegioMedicoId}</Text>
+							<Text style={styles.speciality}>Años de experiencia: {selectedUser.experienceYears}</Text>
 						</View>
 						<View style={{...styles.centerContent, marginTop: 20}}>
 							<Text style={styles.speciality}>Calificación</Text>
@@ -123,7 +136,7 @@ function CardResult({ healtCenter }) {
 							<View style={{flex: 1, paddingHorizontal: 10 }}>
 								<Button
 									title="Cancelar"
-									onPress={() => {}}
+									onPress={() => setIsOpened(false)}
 									buttonStyle={{
 										backgroundColor: '#66bfc5',
 										borderRadius: 10,

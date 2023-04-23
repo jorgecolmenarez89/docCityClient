@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import React, {useState, useEffect, useContext} from 'react';
+import { View, Text, StyleSheet, TextInput, Alert } from 'react-native';
 import {Avatar, Button } from '@rneui/themed';
 import * as ImagePicker from 'react-native-image-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SelectDropdown from 'react-native-select-dropdown';
+import { AuthContext } from '../../context/AuthContext';
+import { updateUserInfo } from '../../services/doctor/profile';
 
 const sexos = [
   'Masculino',
@@ -12,11 +14,21 @@ const sexos = [
 
 function ProfileScreen() {
 
+  const {changeUserLoged, userLoged} =  useContext(AuthContext)
+
   const [fileData, setFileData] = useState(null);
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [sex, setSex] = useState('');
   const [loading, setLoading] = useState(false);
+  const [defaultSex, setDefaultSex] = useState('');
+
+  useEffect(() =>{
+    setFullName(userLoged.fullName)
+    setPhone(userLoged.phoneNumber)
+    setSex(userLoged.sexo)
+    setDefaultSex(userLoged.sexo)
+  }, [])
 
   const loadFile = () => {
     let options = {
@@ -52,8 +64,24 @@ function ProfileScreen() {
     });
   }
   
-  const handleUpdate = () => {
-
+  const handleUpdate = async () => {
+    const body = {
+      userName: userLoged.userName,
+      sexo: sex,
+      phoneNumber: phone
+    }
+    try {
+      await updateUserInfo(body)
+      changeUserLoged({
+        ...userLoged,
+        sexo: sex,
+        phoneNumber: phone
+      }) 
+      Alert.alert('Exito','Datos actualizados correctamente');
+    } catch (error) {
+      console.log('error', error.response.data)
+      Alert.alert('Error','Ocurrio un error intente nuevamente');
+    }
   }
 
   return (
@@ -104,6 +132,7 @@ function ProfileScreen() {
             value={fullName}
             placeholder='Jhon Doe'
             placeholderTextColor={'#35385b'}
+            readOnly
           />
         </View>
 
@@ -114,7 +143,7 @@ function ProfileScreen() {
             maxLength={11}
             onChangeText={text => setPhone(text)}
             value={phone}
-            placeholder='04240000000'
+            placeholder='Escribe tu numero teléfonico'
             placeholderTextColor={'#35385b'}
           />
         </View>
@@ -122,6 +151,7 @@ function ProfileScreen() {
         <View style={styles.inputContent}>
           <Text style={styles.label}>Sexo</Text>
           <SelectDropdown
+            defaultValue={defaultSex}
 						data={sexos}
 						onSelect={(selectedItem, index) => {
               setSex(selectedItem)

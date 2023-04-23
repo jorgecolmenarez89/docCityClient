@@ -5,3 +5,9 @@ export const updateDoctorInfo = (body) => {
         headers: {'Content-Type': 'application/json'}
     });
 }
+
+export const updateUserInfo = (body) => {
+    return axiosInstance.put(`/users/UpdateUserInfo`, body, { 
+        headers: {'Content-Type': 'application/json'}
+    });
+}

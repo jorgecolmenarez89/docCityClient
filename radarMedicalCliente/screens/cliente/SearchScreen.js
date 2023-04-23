@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet,Alert } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SelectDropdown from 'react-native-select-dropdown';
 import { Button } from '@rneui/themed';
 import {getEspecialities} from '../../services/doctor/medicine';
 import {getProivinces, getMunicipalitiesByProvinceId, getParroquiesByMinicipalyId} from '../../services/doctor/address'; 
+import { getCentersByMunicipio, getCentersByEstado, getCentersByParroquia } from '../../services/doctor/centers';
+import { getEspecialistasByCenter } from '../../services/user/doctors';
 
 function SearchScreen({navigation}) {
 
@@ -62,9 +64,62 @@ function SearchScreen({navigation}) {
     } 
 	}
 
-	const handleSearch = () => {
-    navigation.navigate('Result')
+	const handleSearch = async () => {
+    if( !validInputSelect(parroquiaId) && !validInputSelect(municipioId) && !validInputSelect(estadoId) ){
+      Alert.alert('Error','Debe seleccionar por lo menos un campo de de tipo región');
+    } else if(!validInputSelect(especialidadId)){
+      Alert.alert('Error','Debe seleccionar la especialidad médica');
+    } else {
+      setLoading(true)
+      if(validInputSelect(parroquiaId)){
+        const { data } = await getCentersByParroquia(parroquiaId);
+        console.log('data1')
+        usersForCenter(data);
+      } else {
+        if(validInputSelect(municipioId)){
+          const { data } = await getCentersByMunicipio(municipioId);
+          console.log('data2')
+          usersForCenter(data);
+        } else {
+          const { data } = await getCentersByEstado(estadoId);
+          console.log('data3')
+          usersForCenter(data);
+        }
+      }
+    }
 	}
+
+  const usersForCenter = async (centers) => {
+    let arrayFinal = [];
+    for (let index = 0; index < centers.length; index++) {
+      let objectItem = {};
+      let element = centers[index];
+      try {
+        const response = await getEspecialistasByCenter(element.id, especialidadId);
+        objectItem = {...element, users: response.data};
+        arrayFinal.push(objectItem);
+      } catch (error) {
+        console.log('fallo', error)
+      }
+    }
+    setLoading(false)
+    if(arrayFinal.length > 0){
+      navigation.navigate('Result', {
+        results: arrayFinal,
+        especialidades: especialidades
+      })
+    } else {
+      Alert.alert('No data','No se han encontrado resultados con los parámetos de búsqueda solicitados');
+    }
+  }
+
+  const validInputSelect = (value) => {
+    if(value && value != -1){
+      return true
+    } else {
+      return false
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -78,6 +133,10 @@ function SearchScreen({navigation}) {
 						data={estados}
 						onSelect={(selectedItem, index) => {
               setEstatdoId(selectedItem.id)
+              setMunicipioId(-1)
+              setParroquiaId(-1)
+              setMunicipios([])
+              setParroquias([])
 							listMunicipalities(selectedItem.id)
 						}}
 						buttonTextAfterSelection={(selectedItem, index) => {
@@ -113,6 +172,8 @@ function SearchScreen({navigation}) {
 						data={municipios}
 						onSelect={(selectedItem, index) => {
               setMunicipioId(selectedItem.id)
+              setParroquiaId(-1)
+              setParroquias([])
 							listParroquies(selectedItem.id)
 						}}
 						buttonTextAfterSelection={(selectedItem, index) => {

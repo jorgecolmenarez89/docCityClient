@@ -20,6 +20,9 @@ export const getCentersByEstado = (estadoId) => {
 export const getCentersByParroquia = (parroquiaId) => {
     return axiosInstance.get(`/centers/GetCentrosByParroquiaId/${parroquiaId}`);
 }
+export const getCentersByMunicipio = (municipioId) => {
+    return axiosInstance.get(`/centers/GetCentrosByMunicupioId/${municipioId}`);
+}
 export const getCentersByCiudad = (ciudadId) => {
     return axiosInstance.get(`/centers/GetCentrosByCiudadId/${ciudadId}`);
 }
