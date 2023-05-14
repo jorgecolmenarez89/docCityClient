@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
 import {View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
-import { Button, Icon, Image} from '@rneui/themed';
+import { Button, Icon} from '@rneui/themed';
 import {axiosInstance} from '../../config/api';
 
 function Login({ navigation }) {
@@ -47,16 +47,9 @@ function Login({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f6f7fc' }}>
 
       <View style={{ width: '100%', paddingHorizontal: 30 }}>
-
-        <View style={{ display:'flex', flexDirection: 'row', justifyContent: 'center', width: '100%'}}>
-          <Image 
-            source={require('../../assets/logo.png')}
-            style={{ width: 90, height: 90, borderRadius: 10 }}
-          />
-        </View>
 
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Usuario</Text>
@@ -81,7 +74,7 @@ function Login({ navigation }) {
             <Icon
               name= {hidePassword ? 'eye-outline': 'eye-off-outline'}
               type="ionicon"
-              color='#35385b'
+              color='#7d7d7d'
               size={20}
               onPress={()=> setHidePassword(!hidePassword)}
             />
@@ -93,9 +86,9 @@ function Login({ navigation }) {
           <Button
             title="Iniciar sesion"
             buttonStyle={{
-              backgroundColor: '#66bfc5',
-              borderRadius: 10,
-              height: 50
+              backgroundColor: '#0b445e',
+              borderRadius: 30,
+              height: 50,
             }}
             titleStyle={{
               fontFamily: 'Poppins-SemiBold'
@@ -110,7 +103,7 @@ function Login({ navigation }) {
             onPress={() => navigation.navigate('Register')}
             type="clear"
             titleStyle={{
-              color: '#545573',
+              color: '#4c71c9',
               fontFamily: 'Poppins-SemiBold'
             }}
           />
@@ -120,7 +113,7 @@ function Login({ navigation }) {
             onPress={() => navigation.navigate('VerifyEmail')}
             type="clear"
             titleStyle={{
-              color: '#545573',
+              color: '#4c71c9',
               fontFamily: 'Poppins-SemiBold'
             }}
           />
@@ -140,14 +133,16 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     backgroundColor: '#f5f6fa',
-    borderRadius: 6,
+    borderRadius: 10,
     paddingHorizontal: 10,
     height: 50,
-    fontFamily: 'Poppins-Medium'
+    fontFamily: 'Poppins-Medium',
+    borderWidth: 2,
+    borderColor: '#7d7d7d',
   },
   label:{
     fontSize: 17,
-    color: '#15193f',
+    color: '#06060a',
     fontFamily: 'Poppins-Medium'
   },
   contentLinks:{
@@ -163,7 +158,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     backgroundColor: '#f5f6fa', 
-    borderRadius: 6,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#7d7d7d',
     paddingHorizontal: 10,
     height: 50
   },

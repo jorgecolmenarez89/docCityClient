@@ -66,7 +66,7 @@ function Register({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white', paddingTop: 50  }}>
+    <View style={{ flex: 1, backgroundColor: '#f6f7fc', paddingTop: 50  }}>
       <View style={{ flex: 1, paddingHorizontal: 30, width: '100%' }}>
         <View style={{ display: 'flex', justifyContent: 'flex-start', flexDirection:'row', width: '100%', marginBottom: 30 }}>
           <Text style={styles.title}>Registro</Text>
@@ -79,7 +79,7 @@ function Register({ navigation }) {
             onChangeText={text => handleChange(text, 'username')}
             value={user.username}
             placeholder='Nombre de usuario'
-            placeholderTextColor={'#35385b'}
+            placeholderTextColor={'#7d7d7d'}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -90,7 +90,7 @@ function Register({ navigation }) {
             onChangeText={text => handleChange(text, 'email')}
             value={user.email}
             placeholder='Correo electrónico'
-            placeholderTextColor={'#35385b'}
+            placeholderTextColor={'#7d7d7d'}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -101,7 +101,7 @@ function Register({ navigation }) {
             onChangeText={text => handleChange(text, 'fullName')}
             value={user.fullName}
             placeholder='Nombre y Apellido'
-            placeholderTextColor={'#35385b'}
+            placeholderTextColor={'#7d7d7d'}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -114,12 +114,12 @@ function Register({ navigation }) {
               value={user.password}
               secureTextEntry={hidePassword}
               placeholder='Contraseña'
-              placeholderTextColor={'#35385b'}
+              placeholderTextColor={'#7d7d7d'}
             />
             <Icon
               name= {hidePassword ? 'eye-outline': 'eye-off-outline'}
               type="ionicon"
-              color='#35385b'
+              color='#7d7d7d'
               size={20}
               onPress={()=> setHidePassword(!hidePassword)}
             />
@@ -135,12 +135,12 @@ function Register({ navigation }) {
               value={user.repeatPassword}
               secureTextEntry={hideRepeatPassword}
               placeholder='Repetir Contraseña'
-              placeholderTextColor={'#35385b'}
+              placeholderTextColor={'#7d7d7d'}
             />
             <Icon
               name= {hideRepeatPassword ? 'eye-outline': 'eye-off-outline'}
               type="ionicon"
-              color='#35385b'
+              color='#7d7d7d'
               size={20}
               onPress={()=> setHideRepeatPassword(!hideRepeatPassword)}
             />
@@ -151,8 +151,8 @@ function Register({ navigation }) {
             title="Crear cuenta"
             onPress={() => handleRegister() }
             buttonStyle={{
-              backgroundColor: '#66bfc5',
-              borderRadius: 10,
+              backgroundColor: '#0b445e',
+              borderRadius: 30,
               height: 50
             }}
             titleStyle={{
@@ -167,7 +167,7 @@ function Register({ navigation }) {
               onPress={() => navigation.navigate('Login')}
               type="clear"
               titleStyle={{
-                color: '#545573',
+                color: '#4c71c9',
                 fontFamily: 'Poppins-SemiBold'
               }}
             />
@@ -188,7 +188,9 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     backgroundColor: '#f5f6fa',
-    borderRadius: 6,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#7d7d7d',
     paddingHorizontal: 10,
     fontFamily: 'Poppins-Medium'
   },
@@ -209,7 +211,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     backgroundColor: '#f5f6fa',
-    borderRadius: 6,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#7d7d7d',
     paddingHorizontal: 10,
     height: 50
   },
@@ -220,7 +224,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    color: '#15193f',
+    color: '#06060a',
     fontFamily: 'Poppins-SemiBold'
   }
 })

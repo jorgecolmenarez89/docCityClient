@@ -1,4 +1,4 @@
-package com.radarmedicalcliente;
+package com.doccityclient;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

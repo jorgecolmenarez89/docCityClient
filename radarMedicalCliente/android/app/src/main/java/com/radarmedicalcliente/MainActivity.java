@@ -1,4 +1,4 @@
-package com.radarmedicalcliente;
+package com.doccityclient;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

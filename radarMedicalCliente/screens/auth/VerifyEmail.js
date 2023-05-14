@@ -38,7 +38,7 @@ function VerifyEmail({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f6f7fc' }}>
       <View style={{ paddingHorizontal: 30, width: '100%' }}>
         <View style={{ display: 'flex', justifyContent: 'flex-start', flexDirection:'row', width: '100%', marginBottom: 30 }}>
           <Text style={styles.title}>Recuperar Contraseña</Text>
@@ -67,8 +67,8 @@ function VerifyEmail({ navigation }) {
             title="Enviar email"
             onPress={() => sendEmail()}
             buttonStyle={{
-              backgroundColor: '#66bfc5',
-              borderRadius: 10,
+              backgroundColor: '#0b445e',
+              borderRadius: 30,
               height: 50
             }}
             titleStyle={{
@@ -83,7 +83,7 @@ function VerifyEmail({ navigation }) {
             onPress={() => navigation.navigate('Login')}
             type="clear"
             titleStyle={{
-              color: '#545573',
+              color: '#4c71c9',
               fontFamily: 'Poppins-SemiBold'
             }}
           />
@@ -103,14 +103,16 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     backgroundColor: '#f5f6fa',
-    borderRadius: 6,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#7d7d7d',
     paddingHorizontal: 10,
     fontFamily: 'Poppins-Medium',
     height: 50
   },
   label:{
     fontSize: 17,
-    color: '#15193f',
+    color: '#06060a',
     fontFamily: 'Poppins-Medium'
   },
   contentLinks:{
@@ -121,7 +123,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    color: '#15193f',
+    color: '#06060a',
     fontFamily: 'Poppins-SemiBold'
   }
 })

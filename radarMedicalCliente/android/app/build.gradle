@@ -99,9 +99,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.radarmedicalcliente"
+    namespace "com.doccityclient"
     defaultConfig {
-        applicationId "com.radarmedicalcliente"
+        applicationId "com.doccityclient"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
