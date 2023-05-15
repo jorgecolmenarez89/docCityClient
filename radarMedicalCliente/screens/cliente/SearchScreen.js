@@ -104,7 +104,7 @@ function SearchScreen({navigation}) {
     }
     setLoading(false)
     if(arrayFinal.length > 0){
-      navigation.navigate('Result', {
+      navigation.navigate('ResultS', {
         results: arrayFinal,
         especialidades: especialidades
       })
