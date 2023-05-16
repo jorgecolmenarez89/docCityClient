@@ -1,46 +1,58 @@
 import React, {useState} from 'react';
-import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
-import { Button } from '@rneui/themed';
+import {View, Text, TextInput, StyleSheet, Alert} from 'react-native';
+import {Button} from '@rneui/themed';
 import {sendUserSecurityCode} from '../../services/auth';
-import { validateEmail } from '../../helpers';
+import {validateEmail} from '../../helpers';
 
-function VerifyEmail({ navigation }) {
+function VerifyEmail({navigation}) {
+  const [email, setEmail] = useState('');
+  const [userName, setUserName] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const [email, setEmail]= useState('')
-  const [userName, setUserName]= useState('')
-  const [loading, setLoading] = useState(false)
-
-  const sendEmail = async() => {
-    if(userName=== '') {
-      Alert.alert('Atención','Campo usuario es requerido');
+  const sendEmail = async () => {
+    if (userName === '') {
+      Alert.alert('Atención', 'Campo usuario es requerido');
     } else if (email == '') {
-      Alert.alert('Atención','Campo correo electrónico es requerido');
-    }else if (!validateEmail(email)) {
-      Alert.alert('Atención','Formato de correo inválido');
+      Alert.alert('Atención', 'Campo correo electrónico es requerido');
+    } else if (!validateEmail(email)) {
+      Alert.alert('Atención', 'Formato de correo inválido');
     } else {
-      setLoading(true)
+      setLoading(true);
       const body = {
         userName: userName,
         usedFor: 'Cambio de contraseña',
-        emailSent: email
-      }
+        emailSent: email,
+      };
       try {
-        await sendUserSecurityCode(body)
+        await sendUserSecurityCode(body);
         navigation.push('ResetPassword', {
-          userName
-        })
-        setLoading(false)
+          userName,
+        });
+        setLoading(false);
       } catch (error) {
-        setLoading(false)
-        Alert.alert('Atención',error.response.data);
+        setLoading(false);
+        Alert.alert('Atención', error.response.data);
       }
     }
-  }
+  };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f6f7fc' }}>
-      <View style={{ paddingHorizontal: 30, width: '100%' }}>
-        <View style={{ display: 'flex', justifyContent: 'flex-start', flexDirection:'row', width: '100%', marginBottom: 30 }}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f6f7fc',
+      }}>
+      <View style={{paddingHorizontal: 30, width: '100%'}}>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            flexDirection: 'row',
+            width: '100%',
+            marginBottom: 30,
+          }}>
           <Text style={styles.title}>Recuperar Contraseña</Text>
         </View>
 
@@ -50,7 +62,7 @@ function VerifyEmail({ navigation }) {
             maxLength={40}
             style={styles.input}
             value={userName}
-            onChangeText={(text) => setUserName(text)}
+            onChangeText={text => setUserName(text)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -59,7 +71,7 @@ function VerifyEmail({ navigation }) {
             maxLength={40}
             style={styles.input}
             value={email}
-            onChangeText={(text) => setEmail(text)}
+            onChangeText={text => setEmail(text)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -69,10 +81,10 @@ function VerifyEmail({ navigation }) {
             buttonStyle={{
               backgroundColor: '#0b445e',
               borderRadius: 30,
-              height: 50
+              height: 50,
             }}
             titleStyle={{
-              fontFamily: 'Poppins-SemiBold'
+              fontFamily: 'Poppins-SemiBold',
             }}
             loading={loading}
           />
@@ -84,7 +96,7 @@ function VerifyEmail({ navigation }) {
             type="clear"
             titleStyle={{
               color: '#4c71c9',
-              fontFamily: 'Poppins-SemiBold'
+              fontFamily: 'Poppins-SemiBold',
             }}
           />
         </View>
@@ -93,12 +105,12 @@ function VerifyEmail({ navigation }) {
   );
 }
 
-export default VerifyEmail
+export default VerifyEmail;
 
-const styles = StyleSheet.create({ 
-  inputContainer:{
+const styles = StyleSheet.create({
+  inputContainer: {
     width: '100%',
-    paddingVertical: 8
+    paddingVertical: 8,
   },
   input: {
     width: '100%',
@@ -108,14 +120,14 @@ const styles = StyleSheet.create({
     borderColor: '#7d7d7d',
     paddingHorizontal: 10,
     fontFamily: 'Poppins-Medium',
-    height: 50
+    height: 50,
   },
-  label:{
+  label: {
     fontSize: 17,
     color: '#06060a',
-    fontFamily: 'Poppins-Medium'
+    fontFamily: 'Poppins-Medium',
   },
-  contentLinks:{
+  contentLinks: {
     width: '100%',
     display: 'flex',
     justifyContent: 'center',
@@ -124,6 +136,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     color: '#06060a',
-    fontFamily: 'Poppins-SemiBold'
-  }
-})
+    fontFamily: 'Poppins-SemiBold',
+  },
+});
