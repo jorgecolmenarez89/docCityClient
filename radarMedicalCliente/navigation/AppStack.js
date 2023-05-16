@@ -1,10 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from '@rneui/themed';
 import DashboardScreen from '../screens/cliente/DashboardScreen';
-import ProfileScreen from '../screens/cliente/ProfileScreen';
-import SearchScreen from '../screens/cliente/SearchScreen';
-import SearchStack from '../navigation/SearchStack'
+import SearchStack from '../navigation/SearchStack';
 import ChatScreen from '../screens/cliente/ChatScreen';
+import ProfileStack from '../navigation/ProfileStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -66,7 +65,7 @@ function AppStack() {
           ),
         }}
       />
-      <Tab.Screen name="Profile" component={ProfileScreen} 
+      <Tab.Screen name="Profile" component={ProfileStack} 
         options={{
           tabBarLabel: 'Perfil',
           tabBarLabelStyle:{
