@@ -24,6 +24,12 @@ function App() {
         console.log('Nueva notificacion recibida! in Background', remoteMessage);
       }
     )
+
+    messaging()
+    .getToken()
+    .then(token => {
+      console.log(token);
+    });
   
     return () => {
       foregroundSubscriber();
