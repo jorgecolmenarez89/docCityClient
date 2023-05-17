@@ -1,14 +1,20 @@
+import React, {useContext} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from '@rneui/themed';
 import DashboardScreen from '../screens/cliente/DashboardScreen';
 import SearchStack from '../navigation/SearchStack';
 import ChatScreen from '../screens/cliente/ChatScreen';
 import ProfileStack from '../navigation/ProfileStack';
+import TriajeStack from '../navigation/TriajeStack';
+import { AuthContext } from '../context/AuthContext';
 
 const Tab = createBottomTabNavigator();
 
 function AppStack() {
-  return (
+
+  const {userLoged} =  useContext(AuthContext)
+
+  return userLoged.isAuthorizedDoctor ? (
     <Tab.Navigator
       screenOptions={{
         headerShown:false,
@@ -81,6 +87,8 @@ function AppStack() {
         }}
       />
     </Tab.Navigator>
+  ) : (
+    <TriajeStack />
   );
 }
 

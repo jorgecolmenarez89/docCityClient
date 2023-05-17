@@ -8,6 +8,7 @@ import { updateUserInfo } from '../../services/doctor/profile';
 
 function ProfileNewScreen({ navigation }) {
 
+	const {logout} =  useContext(AuthContext)
 	const {changeUserLoged, userLoged} =  useContext(AuthContext)
 
   const [fileData, setFileData] = useState(null);
@@ -28,8 +29,33 @@ function ProfileNewScreen({ navigation }) {
 		<SafeAreaView style={styles.container}>
 			<ScrollView style={styles.scrollView}>
 
+				
+
 				<View style={styles.titleContainer}>
-					<Text style={styles.title}>Mi Perfil</Text>
+					<View
+						style={{ 
+							width: '100%',
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'center'
+						}}
+					>
+						<Text style={styles.title}>Mi Perfil</Text>
+					</View>
+					<View
+						style={{ 
+							position: 'absolute',
+							right: 0
+						}}
+					>
+						<Icon 
+							name="log-out-outline"
+							color="#163539"
+							size={30}
+							type="ionicon"
+							onPress={() => { logout() }}
+						/> 
+					</View>
 				</View>
 
 				<View style={styles.spacer}></View>
@@ -85,7 +111,9 @@ const styles = StyleSheet.create({
 	titleContainer: {
 		width: '100%',
 		display: 'flex',
-		alignItems: 'center'
+		flexDirection: 'row',
+		alignItems: 'center',
+		position: 'relative'
 	},
 	title: {
     fontSize: 20,
