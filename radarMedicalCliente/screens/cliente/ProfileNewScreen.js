@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar} from 'react-native';
 import { Button, Icon, Image} from '@rneui/themed';
+import CardGrey from '../../components/perfil/CardGrey'
 
 import { AuthContext } from '../../context/AuthContext';
 import { updateUserInfo } from '../../services/doctor/profile';
@@ -28,9 +29,6 @@ function ProfileNewScreen({ navigation }) {
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView style={styles.scrollView}>
-
-				
-
 				<View style={styles.titleContainer}>
 					<View
 						style={{ 
@@ -84,6 +82,7 @@ function ProfileNewScreen({ navigation }) {
 									fontFamily: 'Poppins-Medium',
 									fontSize: 17
 								}}
+								onPress={()=> navigation.navigate('ProfileEditS')}
 							>
 								ACTUALIZAR
 							</Button>
@@ -93,7 +92,41 @@ function ProfileNewScreen({ navigation }) {
 
 				<View style={styles.spacer}></View>
 
+				<View style={styles.subContainer}>
+					<View
+						style={{ 
+							width: '100%',
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'flex-start'
+						}}
+					>
+						<Text style={styles.title}>Informacion de Interes</Text>
+					</View>
+				</View>
+				<View style={styles.spacer}></View>
 
+				<CardGrey title="Mis Consultas" options={[
+						'Lorem Ipsum'
+					]} 
+					onPressEvent={() => navigation.navigate('ConsultasS')}
+				/>
+				<View style={styles.spacer}></View>
+				<CardGrey title="Mis Vacunas" 
+					options={[
+						'Lorem Ipsum'
+					]}
+					onPressEvent={() => navigation.navigate('VacunasS')}
+				/>
+				<View style={styles.spacer}></View>
+				<CardGrey  title="Mis Instumentos de Pago"
+					options={[
+						'Lorem Ipsum'
+					]}
+					onPressEvent={() => navigation.navigate('InstrumentosS')}
+				/>
+				<View style={styles.spacer}></View>
+				
 			</ScrollView>
 		</SafeAreaView>
 	)
@@ -114,6 +147,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		position: 'relative'
+	},
+	subContainer:{
+		width: '100%',
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'flex-start'
 	},
 	title: {
     fontSize: 20,

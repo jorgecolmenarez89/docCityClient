@@ -6,13 +6,14 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SelectDropdown from 'react-native-select-dropdown';
 import { AuthContext } from '../../context/AuthContext';
 import { updateUserInfo } from '../../services/doctor/profile';
+import CustomHeader from '../../components/CustomHeader';
 
 const sexos = [
   'Masculino',
   'Femenino'
 ];
 
-function ProfileScreen() {
+function ProfileScreen({ navigation }) {
 
   const {changeUserLoged, userLoged} =  useContext(AuthContext)
 
@@ -86,8 +87,13 @@ function ProfileScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={{ marginTop: 10, marginLeft: 20 }}>
+        <CustomHeader iconColor="#0b445e" iconName="arrow-back"
+          onPressIcon={() => navigation.goBack()}
+        />
+      </View>
       <View style={styles.wrapper}> 
-				<View style={{ display: 'flex', justifyContent: 'flex-start', flexDirection:'row', width: '100%', marginBottom: 30 }}>
+				<View style={{ display: 'flex', justifyContent: 'flex-start', flexDirection:'row', width: '100%', marginBottom: 20 }}>
           <Text style={styles.title}>Editar Perfil</Text>
         </View>
         <View style={styles.contentImage}>
@@ -98,7 +104,7 @@ function ProfileScreen() {
               source={{ uri: 'https://cdn-icons-png.flaticon.com/512/147/147133.png' }}
             >
               <Avatar.Accessory size={23} 
-                style={{ backgroundColor: '#66bfc5' }}
+                style={{ backgroundColor: '#0b445e' }}
                 onPress={() => loadFile()}
               />
             </Avatar>
@@ -165,7 +171,7 @@ function ProfileScreen() {
 						buttonStyle={styles.dropdown1BtnStyle}
             buttonTextStyle={styles.dropdown1BtnTxtStyle}
             renderDropdownIcon={isOpened => {
-              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#9fa0af'} size={16} />;
+              return <FontAwesome name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#7d7d7d'} size={16} />;
             }}
             dropdownIconPosition={'right'}
             dropdownStyle={styles.dropdown1DropdownStyle}
@@ -180,8 +186,8 @@ function ProfileScreen() {
             title="Actualizar"
             onPress={() => handleUpdate() }
             buttonStyle={{
-              backgroundColor: '#66bfc5',
-              borderRadius: 10,
+              backgroundColor: '#0b445e',
+              borderRadius: 30,
               height: 50,
 							marginTop: 10
             }}
@@ -202,11 +208,11 @@ export default ProfileScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-		backgroundColor: '#ffffff'
+		backgroundColor: '#f6f7fc'
   },
 	wrapper: {
 		paddingHorizontal: 30,
-		marginTop: 50
+		marginTop: 10
 	},
 	inputContent: {
     width: '100%',
@@ -227,29 +233,25 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     width: '100%',
-    backgroundColor: '#f5f6fa',
-    borderRadius: 6,
+    backgroundColor: '#f5f6fa', 
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#7d7d7d',
     paddingHorizontal: 10,
     fontFamily: 'Poppins-Medium'
   },
   label:{
     fontSize: 15,
-    color: '#15193f',
+    color: '#06060a',
     fontFamily: 'Poppins-SemiBold'
   },
   dropdown1BtnStyle: {
     width: '100%',
     height: 50,
-    backgroundColor: '#FFF',
-    borderRadius: 6,
-		shadowColor: '#000',
-		shadowOffset:{
-				width: 0,
-				height: 3
-		},
-		shadowOpacity: 0.27,
-		shadowRadius: 4.65,
-		elevation: 6
+    backgroundColor: '#f5f6fa',
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#7d7d7d',
   },
   dropdown1BtnTxtStyle: {color: '#83859a', textAlign: 'left'},
   dropdown1DropdownStyle: {backgroundColor: '#EFEFEF'},
