@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar} from 'react-native';
 import { Button, Icon, Image} from '@rneui/themed';
+import CardGrey from '../../components/perfil/CardGrey'
 
 import { AuthContext } from '../../context/AuthContext';
 import { updateUserInfo } from '../../services/doctor/profile';
@@ -8,6 +9,7 @@ import { updateUserInfo } from '../../services/doctor/profile';
 
 function ProfileNewScreen({ navigation }) {
 
+	const {logout} =  useContext(AuthContext)
 	const {changeUserLoged, userLoged} =  useContext(AuthContext)
 
   const [fileData, setFileData] = useState(null);
@@ -27,9 +29,31 @@ function ProfileNewScreen({ navigation }) {
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView style={styles.scrollView}>
-
 				<View style={styles.titleContainer}>
-					<Text style={styles.title}>Mi Perfil</Text>
+					<View
+						style={{ 
+							width: '100%',
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'center'
+						}}
+					>
+						<Text style={styles.title}>Mi Perfil</Text>
+					</View>
+					<View
+						style={{ 
+							position: 'absolute',
+							right: 0
+						}}
+					>
+						<Icon 
+							name="log-out-outline"
+							color="#163539"
+							size={30}
+							type="ionicon"
+							onPress={() => { logout() }}
+						/> 
+					</View>
 				</View>
 
 				<View style={styles.spacer}></View>
@@ -58,6 +82,7 @@ function ProfileNewScreen({ navigation }) {
 									fontFamily: 'Poppins-Medium',
 									fontSize: 17
 								}}
+								onPress={()=> navigation.navigate('ProfileEditS')}
 							>
 								ACTUALIZAR
 							</Button>
@@ -67,7 +92,41 @@ function ProfileNewScreen({ navigation }) {
 
 				<View style={styles.spacer}></View>
 
+				<View style={styles.subContainer}>
+					<View
+						style={{ 
+							width: '100%',
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'flex-start'
+						}}
+					>
+						<Text style={styles.title}>Informacion de Interes</Text>
+					</View>
+				</View>
+				<View style={styles.spacer}></View>
 
+				<CardGrey title="Mis Consultas" options={[
+						'Lorem Ipsum'
+					]} 
+					onPressEvent={() => navigation.navigate('ConsultasS')}
+				/>
+				<View style={styles.spacer}></View>
+				<CardGrey title="Mis Vacunas" 
+					options={[
+						'Lorem Ipsum'
+					]}
+					onPressEvent={() => navigation.navigate('VacunasS')}
+				/>
+				<View style={styles.spacer}></View>
+				<CardGrey  title="Mis Instumentos de Pago"
+					options={[
+						'Lorem Ipsum'
+					]}
+					onPressEvent={() => navigation.navigate('InstrumentosS')}
+				/>
+				<View style={styles.spacer}></View>
+				
 			</ScrollView>
 		</SafeAreaView>
 	)
@@ -85,7 +144,15 @@ const styles = StyleSheet.create({
 	titleContainer: {
 		width: '100%',
 		display: 'flex',
-		alignItems: 'center'
+		flexDirection: 'row',
+		alignItems: 'center',
+		position: 'relative'
+	},
+	subContainer:{
+		width: '100%',
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'flex-start'
 	},
 	title: {
     fontSize: 20,
