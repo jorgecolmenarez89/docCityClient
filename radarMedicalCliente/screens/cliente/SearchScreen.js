@@ -2,38 +2,27 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, Alert} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SelectDropdown from 'react-native-select-dropdown';
-import {Button} from '@rneui/themed';
+import {Button, ButtonGroup, useTheme} from '@rneui/themed';
 import {getEspecialities} from '../../services/doctor/medicine';
-import {
-  getProivinces,
-  getMunicipalitiesByProvinceId,
-  getParroquiesByMinicipalyId,
-} from '../../services/doctor/address';
-import {
-  getCentersByMunicipio,
-  getCentersByEstado,
-  getCentersByParroquia,
-} from '../../services/doctor/centers';
-import {getEspecialistasByCenter} from '../../services/user/doctors';
 import MapCustom from '../../components/atoms/maps';
+import {Card} from '@rneui/themed';
+import {ASSETS} from '../../config/Constant';
+import {mostrarUbicaciones} from '../../services/doctor/ubicaciones';
+import Doctor from '../../models/Doctor';
+import {Icon} from '@rneui/base';
 
 function SearchScreen({navigation}) {
+  const {theme} = useTheme();
   const [especialidades, setEspecialidades] = useState([]);
-  const [estados, setEstatdos] = useState([]);
-  const [municipios, setMunicipios] = useState([]);
-  const [parroquias, setParroquias] = useState([]);
 
-  const [especialidadId, setEspecialidadId] = useState(-1);
-  const [estadoId, setEstatdoId] = useState(-1);
-  const [municipioId, setMunicipioId] = useState(-1);
-  const [parroquiaId, setParroquiaId] = useState(-1);
+  const [locationUser, setLocationUser] = useState();
+  const [especialidadId, setEspecialidadId] = useState();
+  const [doctors, setDoctors] = useState();
+
   const [loading, setLoading] = useState(false);
-  const [defaultValueEspecialidad, seteDefaultValueEspecialidad] =
-    useState(null);
 
   useEffect(() => {
     getEspecialitiesAll();
-    listProvinces();
   }, []);
 
   const getEspecialitiesAll = async () => {
@@ -45,265 +34,107 @@ function SearchScreen({navigation}) {
     }
   };
 
-  const listProvinces = async () => {
-    try {
-      const {data} = await getProivinces();
-      setEstatdos(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const listMunicipalities = async id => {
-    try {
-      const {data} = await getMunicipalitiesByProvinceId(id);
-      setMunicipios(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const listParroquies = async id => {
-    try {
-      const {data} = await getParroquiesByMinicipalyId(id);
-      setParroquias(data);
-    } catch (error) {
-      console.log(error);
-    }
+  const resetSearch = async () => {
+    setEspecialidadId(undefined);
+    setLocationUser(undefined);
+    setDoctors(undefined);
   };
 
   const handleSearch = async () => {
-    if (
-      !validInputSelect(parroquiaId) &&
-      !validInputSelect(municipioId) &&
-      !validInputSelect(estadoId)
-    ) {
+    setLoading(true);
+    const {status, data} = await mostrarUbicaciones({
+      user: locationUser,
+      especialidadId,
+    });
+    if (status === 200) {
+      setDoctors(data.map(doctor => new Doctor(Doctor.formatData(doctor))));
+    } else {
       Alert.alert(
         'Error',
-        'Debe seleccionar por lo menos un campo de de tipo región',
+        'No fue posible enviar la información por el momento',
       );
-    } else if (!validInputSelect(especialidadId)) {
-      Alert.alert('Error', 'Debe seleccionar la especialidad médica');
-    } else {
-      setLoading(true);
-      if (validInputSelect(parroquiaId)) {
-        const {data} = await getCentersByParroquia(parroquiaId);
-        console.log('data1');
-        usersForCenter(data);
-      } else {
-        if (validInputSelect(municipioId)) {
-          const {data} = await getCentersByMunicipio(municipioId);
-          console.log('data2');
-          usersForCenter(data);
-        } else {
-          const {data} = await getCentersByEstado(estadoId);
-          console.log('data3');
-          usersForCenter(data);
-        }
-      }
-    }
-  };
-
-  const usersForCenter = async centers => {
-    let arrayFinal = [];
-    for (let index = 0; index < centers.length; index++) {
-      let objectItem = {};
-      let element = centers[index];
-      try {
-        const response = await getEspecialistasByCenter(
-          element.id,
-          especialidadId,
-        );
-        objectItem = {...element, users: response.data};
-        arrayFinal.push(objectItem);
-      } catch (error) {
-        console.log('fallo', error);
-      }
     }
     setLoading(false);
-    if (arrayFinal.length > 0) {
-      navigation.navigate('ResultS', {
-        results: arrayFinal,
-        especialidades: especialidades,
-      });
-    } else {
-      Alert.alert(
-        'No data',
-        'No se han encontrado resultados con los parámetos de búsqueda solicitados',
-      );
-    }
   };
 
-  const validInputSelect = value => {
-    if (value && value != -1) {
-      return true;
-    } else {
+  const validButton = () => {
+    if (especialidadId !== undefined && locationUser !== undefined) {
       return false;
     }
+    return true;
   };
 
   return (
     <View style={styles.container}>
-      {/**
-      <View style={styles.wrapper}>
-        <View
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-start',
-            flexDirection: 'row',
-            width: '100%',
-            marginBottom: 30,
-          }}>
-          <Text style={styles.title}>Parámetros de Búsqueda</Text>
-        </View>
+      <MapCustom
+        isSearch={!doctors}
+        markers={doctors && doctors.map(doctor => doctor.marker())}
+        renderBottom={
+          doctors && (
+            <Button
+              icon={
+                <Icon type="ionicon" name="arrow-back-outline" color="white" />
+              }
+              onPress={() => resetSearch()}
+              buttonStyle={{
+                borderRadius: 10,
+                height: 50,
+                marginTop: 10,
+                width: 50,
+                marginBottom: 10,
+              }}
+            />
+          )
+        }
+        onChangeLocation={region =>
+          setLocationUser({
+            latitude: region.latitude,
+            longitude: region.longitude,
+          })
+        }>
+        {!doctors && (
+          <View style={styles.overlaySearch}>
+            <SelectDropdown
+              data={especialidades}
+              onSelect={(selectedItem, index) => {
+                console.log('onSelect() ==>', {selectedItem, index});
+                setEspecialidadId(selectedItem.id);
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                return selectedItem.name;
+              }}
+              rowTextForSelection={(item, index) => {
+                return item.name;
+              }}
+              buttonStyle={styles.dropdown1BtnStyle}
+              buttonTextStyle={styles.dropdown1BtnTxtStyle}
+              renderDropdownIcon={isOpened => {
+                return (
+                  <FontAwesome
+                    name={isOpened ? 'chevron-up' : 'chevron-down'}
+                    color={'#9fa0af'}
+                    size={16}
+                  />
+                );
+              }}
+              dropdownIconPosition={'right'}
+              dropdownStyle={styles.dropdown1DropdownStyle}
+              rowStyle={styles.dropdown1RowStyle}
+              rowTextStyle={styles.dropdown1RowTxtStyle}
+              defaultButtonText={'Especialidad Médica'}
+            />
+          </View>
+        )}
+      </MapCustom>
 
-        <View style={styles.inputContent}>
-          <SelectDropdown
-            data={estados}
-            onSelect={(selectedItem, index) => {
-              setEstatdoId(selectedItem.id);
-              setMunicipioId(-1);
-              setParroquiaId(-1);
-              setMunicipios([]);
-              setParroquias([]);
-              listMunicipalities(selectedItem.id);
-            }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem.name;
-            }}
-            rowTextForSelection={(item, index) => {
-              return item.name;
-            }}
-            buttonStyle={styles.dropdown1BtnStyle}
-            buttonTextStyle={styles.dropdown1BtnTxtStyle}
-            renderDropdownIcon={isOpened => {
-              return (
-                <FontAwesome
-                  name={isOpened ? 'chevron-up' : 'chevron-down'}
-                  color={'#9fa0af'}
-                  size={16}
-                />
-              );
-            }}
-            dropdownIconPosition={'right'}
-            dropdownStyle={styles.dropdown1DropdownStyle}
-            rowStyle={styles.dropdown1RowStyle}
-            rowTextStyle={styles.dropdown1RowTxtStyle}
-            defaultButtonText={'Estado o Provincia'}
-            search
-            searchInputStyle={styles.dropdownsearchInputStyleStyle}
-            searchPlaceHolder={'Busqueda rápida'}
-            searchPlaceHolderColor={'#F8F8F8'}
-            renderSearchInputLeftIcon={() => {
-              return <FontAwesome name={'search'} color={'#FFF'} size={18} />;
-            }}
-          />
-        </View>
-
-        <View style={styles.inputContent}>
-          <SelectDropdown
-            data={municipios}
-            onSelect={(selectedItem, index) => {
-              setMunicipioId(selectedItem.id);
-              setParroquiaId(-1);
-              setParroquias([]);
-              listParroquies(selectedItem.id);
-            }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem.name;
-            }}
-            rowTextForSelection={(item, index) => {
-              return item.name;
-            }}
-            buttonStyle={styles.dropdown1BtnStyle}
-            buttonTextStyle={styles.dropdown1BtnTxtStyle}
-            renderDropdownIcon={isOpened => {
-              return (
-                <FontAwesome
-                  name={isOpened ? 'chevron-up' : 'chevron-down'}
-                  color={'#9fa0af'}
-                  size={16}
-                />
-              );
-            }}
-            dropdownIconPosition={'right'}
-            dropdownStyle={styles.dropdown1DropdownStyle}
-            rowStyle={styles.dropdown1RowStyle}
-            rowTextStyle={styles.dropdown1RowTxtStyle}
-            defaultButtonText={'Municipio'}
-            disabled={!estadoId || estadoId == -1}
-          />
-        </View>
-
-        <View style={styles.inputContent}>
-          <SelectDropdown
-            data={parroquias}
-            onSelect={(selectedItem, index) => {
-              setParroquiaId(selectedItem.id);
-            }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem.name;
-            }}
-            rowTextForSelection={(item, index) => {
-              return item.name;
-            }}
-            buttonStyle={styles.dropdown1BtnStyle}
-            buttonTextStyle={styles.dropdown1BtnTxtStyle}
-            renderDropdownIcon={isOpened => {
-              return (
-                <FontAwesome
-                  name={isOpened ? 'chevron-up' : 'chevron-down'}
-                  color={'#9fa0af'}
-                  size={16}
-                />
-              );
-            }}
-            dropdownIconPosition={'right'}
-            dropdownStyle={styles.dropdown1DropdownStyle}
-            rowStyle={styles.dropdown1RowStyle}
-            rowTextStyle={styles.dropdown1RowTxtStyle}
-            defaultButtonText={'Parroquia'}
-            disabled={!municipioId || municipioId == -1}
-          />
-        </View>
-
-        <View style={styles.inputContent}>
-          <SelectDropdown
-            data={especialidades}
-            onSelect={(selectedItem, index) => {
-              setEspecialidadId(selectedItem.id);
-            }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem.name;
-            }}
-            rowTextForSelection={(item, index) => {
-              return item.name;
-            }}
-            buttonStyle={styles.dropdown1BtnStyle}
-            buttonTextStyle={styles.dropdown1BtnTxtStyle}
-            renderDropdownIcon={isOpened => {
-              return (
-                <FontAwesome
-                  name={isOpened ? 'chevron-up' : 'chevron-down'}
-                  color={'#9fa0af'}
-                  size={16}
-                />
-              );
-            }}
-            dropdownIconPosition={'right'}
-            dropdownStyle={styles.dropdown1DropdownStyle}
-            rowStyle={styles.dropdown1RowStyle}
-            rowTextStyle={styles.dropdown1RowTxtStyle}
-            defaultButtonText={'Especialidad Médica'}
-          />
-        </View>
-
+      {!doctors && (
         <View style={styles.inputContent}>
           <Button
             title="Buscar"
+            disabled={validButton()}
             onPress={() => handleSearch()}
+            color={theme.colors.primary}
             buttonStyle={{
-              backgroundColor: '#66bfc5',
               borderRadius: 10,
               height: 50,
               marginTop: 10,
@@ -314,9 +145,7 @@ function SearchScreen({navigation}) {
             loading={loading}
           />
         </View>
-      </View>
-      */}
-      <MapCustom />
+      )}
     </View>
   );
 }
@@ -335,8 +164,8 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   inputContent: {
-    width: '100%',
     marginBottom: 12,
+    marginHorizontal: 10,
   },
   dropdown1BtnStyle: {
     width: '100%',
@@ -365,5 +194,17 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: '#15193f',
     fontFamily: 'Poppins-SemiBold',
+  },
+  overlaySearch: {
+    //backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  payContainer: {},
+  payCard: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    elevation: 0,
   },
 });

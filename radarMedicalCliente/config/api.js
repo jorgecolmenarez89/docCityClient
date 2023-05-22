@@ -1,5 +1,9 @@
-import axios from 'axios'
-export const API_URL = 'http://209.145.57.238:8080/api';
+import axios from 'axios';
+import {API_URL} from './Constant';
 
-
-export const axiosInstance = axios.create({ baseURL: API_URL })
+export const axiosInstance = axios.create(
+  {baseURL: API_URL},
+  {
+    headers: {'Content-Type': 'application/json; charset=utf-8'},
+  },
+);
