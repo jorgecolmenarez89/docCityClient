@@ -46,6 +46,7 @@ function SearchScreen({navigation}) {
       user: locationUser,
       especialidadId,
     });
+    console.log('axios state', status)
     if (status === 200) {
       setDoctors(data.map(doctor => new Doctor(Doctor.formatData(doctor))));
     } else {
