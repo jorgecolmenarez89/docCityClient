@@ -28,7 +28,8 @@ function Login({navigation}) {
       Alert.alert('Atención', 'Campo conraseña es requerido');
     } else {
       setLoading(true);
-      const url = `/users/GetUserInfoForLogin/${user.userName}/${user.password}/${token}`;
+      //const url = `/users/GetUserInfoForLogin/${user.userName}/${user.password}/${token}`;
+      const url = `/users/GetUserInfoForLogin/${user.userName}/${user.password}`;
       try {
         const response = await axiosInstance.get(url);
         setLoading(false);
@@ -39,7 +40,7 @@ function Login({navigation}) {
           Alert.alert('Atención', error.response.data);
         } else {
           Alert.alert('Error', 'Ha Ocurrido un error intente nuevamente');
-          setIsLoading(false);
+          setLoading(false);
         }
       }
     }
