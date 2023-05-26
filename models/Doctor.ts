@@ -1,10 +1,13 @@
-interface DoctorModel {
+export interface DoctorModel {
   fullName: string;
   coordinate: {
     longitude: number;
     latitude: number;
   };
   deviceToken?: string;
+  dataRaw: any;
+  photo?: string;
+  id: string;
 }
 
 class Doctor {
@@ -22,7 +25,10 @@ class Doctor {
         latitude: parseFloat(splitLocation[0]),
         longitude: parseFloat(splitLocation[1]),
       },
+      photo: data.photo,
       deviceToken: data.deviceToken,
+      id: data.id,
+      dataRaw: data,
     };
   }
 

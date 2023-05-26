@@ -6,6 +6,7 @@ import {ThemeProvider, createTheme} from '@rneui/themed';
 import {AuthProvider} from './context/AuthContext';
 import {PermisionsProvider} from './context/PermisionsContext';
 import AppNav from './navigation/AppNav';
+import ChatContextProvider from './context/ChatContext';
 
 Geolocation.setRNConfiguration({
   skipPermissionRequests: false,
@@ -37,9 +38,11 @@ function App() {
     <NativeBaseProvider>
       <ThemeProvider theme={theme}>
         <AuthProvider>
-          <PermisionsProvider>
-            <AppNav />
-          </PermisionsProvider>
+          <ChatContextProvider>
+            <PermisionsProvider>
+              <AppNav />
+            </PermisionsProvider>
+          </ChatContextProvider>
         </AuthProvider>
       </ThemeProvider>
     </NativeBaseProvider>

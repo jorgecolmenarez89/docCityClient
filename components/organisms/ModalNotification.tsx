@@ -9,6 +9,7 @@ import {AuthContext} from '@context/AuthContext';
 import Notification, {TypeNotification} from '../../models/Notification';
 import {sendNotificationRequest} from '../../services/doctor/notification';
 import {updateRequest} from '@services/doctor/request';
+import {createChat} from '../../services/user/chat';
 
 const ModalNotification = ({
   onClose,
@@ -68,12 +69,12 @@ const ModalNotification = ({
                 onPress={async () => {
                   setIsLoading(true);
                   const body = {
-                    userId: notification.data.data.user.id,
-                    medicoId: userLoged.id,
+                    userId: userLoged.id,
+                    medicoId: notification.data.data.user.id,
                     status: StatusRequest.cancelada,
                     serviceRating: '0',
-                    user: notification.data.data.user,
-                    doctor: userLoged,
+                    user: userLoged,
+                    doctor: notification.data.data.user,
                     id: notification.data.data.idRequest,
                   };
                   const {status, data} = await updateRequest(body);
@@ -101,12 +102,12 @@ const ModalNotification = ({
                 onPress={async () => {
                   setIsLoading(true);
                   const body = {
-                    userId: notification.data.data.user.id,
-                    medicoId: userLoged.id,
+                    userId: userLoged.id,
+                    medicoId: notification.data.data.user.id,
                     status: StatusRequest.inProgress,
                     serviceRating: '0',
-                    user: notification.data.data.user,
-                    doctor: userLoged,
+                    user: userLoged,
+                    doctor: notification.data.data.user,
                     id: notification.data.data.idRequest,
                   };
                   const {status, data} = await updateRequest(body);
@@ -116,6 +117,7 @@ const ModalNotification = ({
                       description: 'Consulta aceptada con éxito.',
                       type: TypeToast.success,
                     });
+                    await createChat({doctor: notification.data.data.user, user: userLoged});
                     onClose();
                   } else {
                     showToast({
