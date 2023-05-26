@@ -81,12 +81,16 @@ function SearchScreen({navigation}) {
             <Button
               icon={<Icon type='ionicon' name='arrow-back-outline' color='white' />}
               onPress={() => resetSearch()}
-              buttonStyle={{
-                borderRadius: 10,
+              containerStyle={{
                 height: 50,
-                marginTop: 10,
                 width: 50,
+                borderRadius: 10,
+                marginTop: 10,
                 marginBottom: 10,
+              }}
+              buttonStyle={{
+                height: '100%',
+                width: '100%',
               }}
             />
           )

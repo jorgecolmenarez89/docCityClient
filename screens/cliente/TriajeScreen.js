@@ -3,109 +3,123 @@ import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar, Alert} from
 import {CheckBox, Button} from '@rneui/themed';
 import {updateUserInfo} from '../../services/doctor/profile';
 import {AuthContext} from '../../context/AuthContext';
+import axios from 'axios';
 
 function TriajeScreen({navigation}) {
   const {userLoged, changeUserLoged} = useContext(AuthContext);
 
-  const [pregunta1, setPregunta1] = useState('');
-  const [pregunta2, setPregunta2] = useState('');
-  const [pregunta3, setPregunta3] = useState('');
-  const [pregunta4, setPregunta4] = useState('');
-  const [pregunta5, setPregunta5] = useState('');
-  const [pregunta6, setPregunta6] = useState('');
-  const [pregunta7, setPregunta7] = useState('');
-  const [pregunta8, setPregunta8] = useState('');
-  const [pregunta9, setPregunta9] = useState('');
-  const [pregunta10, setPregunta10] = useState('');
-  const [pregunta11, setPregunta11] = useState('');
-  const [pregunta12, setPregunta12] = useState('');
+  const [answerToQuestion1, setAnswerToQuestion1] = useState('');
+  const [answerToQuestion2, setAnswerToQuestion2] = useState('');
+  const [answerToQuestion3, setAnswerToQuestion3] = useState('');
+  const [answerToQuestion4, setAnswerToQuestion4] = useState('');
+  const [answerToQuestion5, setAnswerToQuestion5] = useState('');
+  const [answerToQuestion6, setAnswerToQuestion6] = useState('');
+  const [answerToQuestion7, setAnswerToQuestion7] = useState('');
+  const [answerToQuestion8, setAnswerToQuestion8] = useState('');
+  const [answerToQuestion9, setAnswerToQuestion9] = useState('');
+  const [answerToQuestion10, setAnswerToQuestion10] = useState('');
+  const [answerToQuestion11, setAnswerToQuestion11] = useState('');
+  const [answerToQuestion12, setAnswerToQuestion12] = useState('');
   const [loading, setLoading] = useState(false);
 
   const toggleCheckbox1 = (e, value) => {
-    setPregunta1(value);
+    setAnswerToQuestion1(value);
   };
 
   const toggleCheckbox2 = (e, value) => {
-    setPregunta2(value);
+    setAnswerToQuestion2(value);
   };
 
   const toggleCheckbox3 = (e, value) => {
-    setPregunta3(value);
+    setAnswerToQuestion3(value);
   };
 
   const toggleCheckbox4 = (e, value) => {
-    setPregunta4(value);
+    setAnswerToQuestion4(value);
   };
 
   const toggleCheckbox5 = (e, value) => {
-    setPregunta5(value);
+    setAnswerToQuestion5(value);
   };
 
   const toggleCheckbox6 = (e, value) => {
-    setPregunta6(value);
+    setAnswerToQuestion6(value);
   };
 
   const toggleCheckbox7 = (e, value) => {
-    setPregunta7(value);
+    setAnswerToQuestion7(value);
   };
 
   const toggleCheckbox8 = (e, value) => {
-    setPregunta8(value);
+    setAnswerToQuestion8(value);
   };
 
   const toggleCheckbox9 = (e, value) => {
-    setPregunta9(value);
+    setAnswerToQuestion9(value);
   };
 
   const toggleCheckbox10 = (e, value) => {
-    setPregunta10(value);
+    setAnswerToQuestion10(value);
   };
 
   const toggleCheckbox11 = (e, value) => {
-    setPregunta11(value);
+    setAnswerToQuestion11(value);
   };
 
   const toggleCheckbox12 = (e, value) => {
-    setPregunta12(value);
+    setAnswerToQuestion12(value);
   };
   const updateData = async () => {
     if (
-      pregunta1 == '' ||
-      pregunta2 == '' ||
-      pregunta3 == '' ||
-      pregunta4 == '' ||
-      pregunta5 == '' ||
-      pregunta6 == '' ||
-      pregunta7 == '' ||
-      pregunta8 == '' ||
-      pregunta9 == '' ||
-      pregunta10 == '' ||
-      pregunta11 == '' ||
-      pregunta12 == ''
+      answerToQuestion1 == '' ||
+      answerToQuestion2 == '' ||
+      answerToQuestion3 == '' ||
+      answerToQuestion4 == '' ||
+      answerToQuestion5 == '' ||
+      answerToQuestion6 == '' ||
+      answerToQuestion7 == '' ||
+      answerToQuestion8 == '' ||
+      answerToQuestion9 == '' ||
+      answerToQuestion10 == '' ||
+      answerToQuestion11 == '' ||
+      answerToQuestion12 == ''
     ) {
-      Alert.alert('Error', 'Estimado usuario debe responder todas las preguntas');
+      Alert.alert('Error', 'Estimado usuario debe responder a todas las preguntas');
     } else {
       setLoading(true);
-      Alert.alert('Correcto', 'Todo bien');
-      /*try {
-				const body = {
-					userName: userLoged.userName,
-					sexo: sex,
-					phoneNumber: phone
-				}
-				await updateUserInfo(body)
-				changeUserLoged({
-					...userLoged,
-					sexo: sex,
-					phoneNumber: phone
-				})
-				setLoading(false); 
-				Alert.alert('Exito','Datos actualizados correctamente');
-			} catch (error) {
-				setLoading(false);
-				console.log('error', error.response.data)
-				Alert.alert('Error','Ocurrio un error intente nuevamente');
-			}*/
+      try {
+        const bodyTriaje = {
+          idUser: userLoged.id,
+          answerToQuestion1,
+          answerToQuestion2,
+          answerToQuestion3,
+          answerToQuestion4,
+          answerToQuestion5,
+          answerToQuestion6,
+          answerToQuestion7,
+          answerToQuestion8,
+          answerToQuestion9,
+          answerToQuestion10,
+          answerToQuestion11,
+          answerToQuestion12,
+        };
+        await axios.post('http://209.145.57.238:8080/InsertTriaje', bodyTriaje, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        //await updateUserInfo(body)
+        changeUserLoged({
+          ...userLoged,
+          isCompletedInfo: true,
+        });
+        setLoading(false);
+        Alert.alert('Exito', 'Datos actualizados correctamente');
+      } catch (error) {
+        setLoading(false);
+        console.log('error', error);
+        Alert.alert('Error', 'Ocurrio un error intente nuevamente');
+      }
     }
   };
 
@@ -124,7 +138,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
-                checked={pregunta1 === 'si'}
+                checked={answerToQuestion1 === 'si'}
                 onPress={e => {
                   toggleCheckbox1(e, 'si');
                 }}
@@ -144,7 +158,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta1 === 'no'}
+                checked={answerToQuestion1 === 'no'}
                 onPress={e => {
                   toggleCheckbox1(e, 'no');
                 }}
@@ -175,7 +189,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
-                checked={pregunta2 === 'si'}
+                checked={answerToQuestion2 === 'si'}
                 onPress={e => {
                   toggleCheckbox2(e, 'si');
                 }}
@@ -195,7 +209,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta2 === 'no'}
+                checked={answerToQuestion2 === 'no'}
                 onPress={e => {
                   toggleCheckbox2(e, 'no');
                 }}
@@ -224,7 +238,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
-                checked={pregunta3 === 'si'}
+                checked={answerToQuestion3 === 'si'}
                 onPress={e => {
                   toggleCheckbox3(e, 'si');
                 }}
@@ -244,7 +258,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta3 === 'no'}
+                checked={answerToQuestion3 === 'no'}
                 onPress={e => {
                   toggleCheckbox3(e, 'no');
                 }}
@@ -273,7 +287,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
-                checked={pregunta4 === 'si'}
+                checked={answerToQuestion4 === 'si'}
                 onPress={e => {
                   toggleCheckbox4(e, 'si');
                 }}
@@ -293,7 +307,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta4 === 'no'}
+                checked={answerToQuestion4 === 'no'}
                 onPress={e => {
                   toggleCheckbox4(e, 'no');
                 }}
@@ -324,7 +338,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
-                checked={pregunta5 === 'si'}
+                checked={answerToQuestion5 === 'si'}
                 onPress={e => {
                   toggleCheckbox5(e, 'si');
                 }}
@@ -344,7 +358,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta5 === 'no'}
+                checked={answerToQuestion5 === 'no'}
                 onPress={e => {
                   toggleCheckbox5(e, 'no');
                 }}
@@ -375,7 +389,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
-                checked={pregunta6 === 'si'}
+                checked={answerToQuestion6 === 'si'}
                 onPress={e => {
                   toggleCheckbox6(e, 'si');
                 }}
@@ -395,7 +409,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta6 === 'no'}
+                checked={answerToQuestion6 === 'no'}
                 onPress={e => {
                   toggleCheckbox6(e, 'no');
                 }}
@@ -424,7 +438,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
-                checked={pregunta7 === 'si'}
+                checked={answerToQuestion7 === 'si'}
                 onPress={e => {
                   toggleCheckbox7(e, 'si');
                 }}
@@ -444,7 +458,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta7 === 'no'}
+                checked={answerToQuestion7 === 'no'}
                 onPress={e => {
                   toggleCheckbox7(e, 'no');
                 }}
@@ -473,7 +487,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemRadio}>
               <CheckBox
-                checked={pregunta8 === '0-4-horas'}
+                checked={answerToQuestion8 === '0-4-horas'}
                 onPress={e => {
                   toggleCheckbox8(e, '0-4-horas');
                 }}
@@ -488,7 +502,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta8 === '4-5-horas'}
+                checked={answerToQuestion8 === '4-5-horas'}
                 onPress={e => {
                   toggleCheckbox8(e, '4-5-horas');
                 }}
@@ -503,7 +517,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta8 === '5-6-horas'}
+                checked={answerToQuestion8 === '5-6-horas'}
                 onPress={e => {
                   toggleCheckbox8(e, '5-6-horas');
                 }}
@@ -518,7 +532,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta8 === '6-7-horas'}
+                checked={answerToQuestion8 === '6-7-horas'}
                 onPress={e => {
                   toggleCheckbox8(e, '6-7-horas');
                 }}
@@ -533,7 +547,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta8 === '7-8-horas'}
+                checked={answerToQuestion8 === '7-8-horas'}
                 onPress={e => {
                   toggleCheckbox8(e, '7-8-horas');
                 }}
@@ -548,7 +562,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta8 === '8-9-horas'}
+                checked={answerToQuestion8 === '8-9-horas'}
                 onPress={e => {
                   toggleCheckbox8(e, '8-9-horas');
                 }}
@@ -563,7 +577,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta8 === 'mas-9-horas'}
+                checked={answerToQuestion8 === 'mas-9-horas'}
                 onPress={e => {
                   toggleCheckbox8(e, 'mas-9-horas');
                 }}
@@ -588,7 +602,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
-                checked={pregunta9 === 'si'}
+                checked={answerToQuestion9 === 'si'}
                 onPress={e => {
                   toggleCheckbox9(e, 'si');
                 }}
@@ -608,7 +622,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta9 === 'no'}
+                checked={answerToQuestion9 === 'no'}
                 onPress={e => {
                   toggleCheckbox9(e, 'no');
                 }}
@@ -639,7 +653,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
-                checked={pregunta10 === 'si'}
+                checked={answerToQuestion10 === 'si'}
                 onPress={e => {
                   toggleCheckbox10(e, 'si');
                 }}
@@ -659,7 +673,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta10 === 'no'}
+                checked={answerToQuestion10 === 'no'}
                 onPress={e => {
                   toggleCheckbox10(e, 'no');
                 }}
@@ -688,7 +702,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
-                checked={pregunta11 === 'si'}
+                checked={answerToQuestion11 === 'si'}
                 onPress={e => {
                   toggleCheckbox11(e, 'si');
                 }}
@@ -708,7 +722,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta11 === 'no'}
+                checked={answerToQuestion11 === 'no'}
                 onPress={e => {
                   toggleCheckbox11(e, 'no');
                 }}
@@ -737,7 +751,7 @@ function TriajeScreen({navigation}) {
             </View>
             <View style={styles.itemRadio}>
               <CheckBox
-                checked={pregunta12 === 'cada-3-meses'}
+                checked={answerToQuestion12 === 'cada-3-meses'}
                 onPress={e => {
                   toggleCheckbox12(e, 'cada-3-meses');
                 }}
@@ -752,7 +766,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta12 === 'cada-6-meses'}
+                checked={answerToQuestion12 === 'cada-6-meses'}
                 onPress={e => {
                   toggleCheckbox12(e, 'cada-6-meses');
                 }}
@@ -767,7 +781,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta12 === 'anual'}
+                checked={answerToQuestion12 === 'anual'}
                 onPress={e => {
                   toggleCheckbox12(e, 'anual');
                 }}
@@ -782,7 +796,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta12 === 'cuando-es-necesario'}
+                checked={answerToQuestion12 === 'cuando-es-necesario'}
                 onPress={e => {
                   toggleCheckbox12(e, 'cuando-es-necesario');
                 }}
@@ -797,7 +811,7 @@ function TriajeScreen({navigation}) {
                 }}
               />
               <CheckBox
-                checked={pregunta12 === 'nunca'}
+                checked={answerToQuestion12 === 'nunca'}
                 onPress={e => {
                   toggleCheckbox12(e, 'nunca');
                 }}

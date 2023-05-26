@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from '@rneui/themed';
 import DashboardScreen from '../screens/cliente/DashboardScreen';
@@ -7,13 +7,28 @@ import ChatScreen from '../screens/cliente/ChatScreen';
 import ProfileStack from '../navigation/ProfileStack';
 import TriajeStack from '../navigation/TriajeStack';
 import {AuthContext} from '../context/AuthContext';
+import firestore from '@react-native-firebase/firestore';
 
 const Tab = createBottomTabNavigator();
 
 function AppStack() {
   const {userLoged} = useContext(AuthContext);
 
-  return !userLoged.isAuthorizedDoctor ? (
+  useEffect(() => {
+    // Escuchar si cambia alguno de mis chats
+    const subscriber = firestore()
+      .collection('chats')
+      .where('userId', '==', userLoged.id)
+      .onSnapshot(documentsSnapshot => {
+        documentsSnapshot.forEach(doc => {
+          console.log('User data ' + doc.id + ' :', doc.data());
+        });
+      });
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, []);
+
+  return !userLoged.isCompletedInfo ? (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
