@@ -3,3 +3,9 @@ export enum StatusRequest {
   inProgress = 'en proceso',
   cancelada = 'cancelada',
 }
+
+export enum TypeToast {
+  success = 'success',
+  error = 'error',
+  info = 'info',
+}

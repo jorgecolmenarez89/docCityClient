@@ -2,6 +2,7 @@ export enum TypeNotification {
   request = 'request',
 }
 export interface NotificationModel {
+  id?: string | number;
   title?: string;
   description?: string;
   type?: TypeNotification;

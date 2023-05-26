@@ -1,13 +1,19 @@
 import React, {createContext, useState, useEffect} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {axiosInstance} from '../config/api';
 import {Alert} from 'react-native';
+import {useToast, Box} from 'native-base';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Text} from '@rneui/base';
+import {useTheme} from '@rneui/themed';
+
+import {axiosInstance} from '../config/api';
 import useNotification from '../hooks/useNotification';
 import ModalNotification from '../components/organisms/ModalNotification';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
+  const toast = useToast();
+  const {theme} = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [userToken, setUserToken] = useState(null);
@@ -86,6 +92,29 @@ export const AuthProvider = ({children}) => {
     setUserToken(JSON.stringify(data));
   };
 
+  const showToast = ({type, title, description}) => {
+    let colorBackground = theme.colors.success;
+
+    if (type === 'error') {
+      colorBackground = theme.colors.error;
+    } else if (type === 'info') {
+      colorBackground = theme.colors.warning;
+    }
+
+    toast.show({
+      render: () => {
+        return (
+          <Box bg={colorBackground} px='4' py='2' rounded='sm' mb={5}>
+            {title && <Text style={{color: theme.colors.white}}>{title}</Text>}
+            {description && <Text style={{color: theme.colors.white}}>{description}</Text>}
+          </Box>
+        );
+      },
+      placement: 'bottom',
+      variant: 'left-accent',
+    });
+  };
+
   useEffect(() => {
     isLoggedIn();
   }, []);
@@ -104,6 +133,7 @@ export const AuthProvider = ({children}) => {
         setIsLoading,
         showNotification,
         token,
+        showToast,
       }}>
       {children}
       {notification && (

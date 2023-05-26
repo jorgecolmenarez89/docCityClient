@@ -1,14 +1,14 @@
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import {Alert, Modal, View, StyleSheet, Pressable} from 'react-native';
 import {Text, Button, useTheme, Image, Avatar} from '@rneui/themed';
 
 import {BACKGROUNG_COLOR_MODAL, ASSETS} from '../../config/Constant';
-import {StatusRequest} from '../../config/Enum';
+import {StatusRequest, TypeToast} from '../../config/Enum';
 
 import {AuthContext} from '@context/AuthContext';
 import Notification, {TypeNotification} from '../../models/Notification';
 import {sendNotificationRequest} from '../../services/doctor/notification';
-import {generateRequest, generateRequestNode} from '@services/doctor/request';
+import {updateRequest} from '@services/doctor/request';
 
 const ModalNotification = ({
   onClose,
@@ -17,7 +17,8 @@ const ModalNotification = ({
   onClose: () => void;
   notification: Notification;
 }) => {
-  const {userLoged} = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const {userLoged, showToast} = useContext(AuthContext);
 
   if (notification.data.type === TypeNotification.request) {
     return (
@@ -35,15 +36,27 @@ const ModalNotification = ({
               <Text style={styles.modalDescription}>{notification.data.description}</Text>
             </View>
 
-            <View style={{justifyContent: 'center', alignItems: 'center', marginHorizontal: 20}}>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginHorizontal: 20,
+                marginBottom: 20,
+              }}>
               <Avatar
                 containerStyle={{marginBottom: 20}}
                 size={100}
                 rounded
                 source={{uri: notification.data.data.user.photo || ASSETS.user}}></Avatar>
 
-              <Text style={[styles.modalDescription, styles.textBold]}>
+              <Text style={[styles.modalDescription, styles.textBold, styles.capitalize]}>
                 {notification.data.data.user.fullName}
+              </Text>
+
+              <Text style={[styles.modalDescription, styles.textBold]}>
+                <Text style={[styles.modalDescription]}>
+                  {notification.data.data.user.colegioMedicoId}
+                </Text>
               </Text>
             </View>
 
@@ -51,13 +64,42 @@ const ModalNotification = ({
               <Button
                 containerStyle={{flex: 1, marginRight: 10}}
                 type='outline'
-                onPress={() => onClose()}>
+                loading={isLoading}
+                onPress={async () => {
+                  setIsLoading(true);
+                  const body = {
+                    userId: notification.data.data.user.id,
+                    medicoId: userLoged.id,
+                    status: StatusRequest.cancelada,
+                    serviceRating: '0',
+                    user: notification.data.data.user,
+                    doctor: userLoged,
+                    id: notification.data.data.idRequest,
+                  };
+                  const {status, data} = await updateRequest(body);
+
+                  if (status === 200) {
+                    showToast({
+                      description: 'Consulta cancelada.',
+                      type: TypeToast.success,
+                    });
+                    onClose();
+                  } else {
+                    showToast({
+                      description: 'No fue posible cancelar la consulta.',
+                      type: TypeToast.error,
+                    });
+                  }
+                  setIsLoading(false);
+                }}>
                 <Text style={[styles.textStyle, {color: 'black'}]}>Rechazar</Text>
               </Button>
 
               <Button
+                loading={isLoading}
                 containerStyle={{flex: 1, marginLeft: 10}}
                 onPress={async () => {
+                  setIsLoading(true);
                   const body = {
                     userId: notification.data.data.user.id,
                     medicoId: userLoged.id,
@@ -65,11 +107,23 @@ const ModalNotification = ({
                     serviceRating: '0',
                     user: notification.data.data.user,
                     doctor: userLoged,
+                    id: notification.data.data.idRequest,
                   };
-                  await generateRequest(body);
-                  await generateRequestNode(body);
-                  //sendNotificationRequest({client: notification.data.data.user, user: userLoged});
-                  onClose();
+                  const {status, data} = await updateRequest(body);
+
+                  if (status === 200) {
+                    showToast({
+                      description: 'Consulta aceptada con éxito.',
+                      type: TypeToast.success,
+                    });
+                    onClose();
+                  } else {
+                    showToast({
+                      description: 'No fue posible aceptar la consulta.',
+                      type: TypeToast.error,
+                    });
+                  }
+                  setIsLoading(false);
                 }}>
                 <Text style={[styles.textStyle]}>Aceptar</Text>
               </Button>
@@ -131,10 +185,12 @@ const styles = StyleSheet.create({
   modalDescription: {
     color: 'black',
     fontSize: 18,
-    marginBottom: 20,
   },
   textBold: {
     fontWeight: 'bold',
+  },
+  capitalize: {
+    textTransform: 'capitalize',
   },
   optionsModal: {
     flexDirection: 'row',

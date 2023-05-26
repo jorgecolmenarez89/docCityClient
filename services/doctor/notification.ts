@@ -1,6 +1,6 @@
 import axios from 'axios';
 //import {axiosInstance} from '../../config/api';
-import {API_URL_NODE} from '../../config/Constant';
+import {URL_NODE} from '../../config/Constant';
 import Doctor from '../../models/Doctor';
 import User from '../../models/User';
 
@@ -26,7 +26,7 @@ export const sendNotificationRequest = async ({
     }
     console.log('sendNotificationRequest() ==> userMap', {userMap, neess: {...userMap}});
 
-    return await axios.create({baseURL: API_URL_NODE}).post(
+    return await axios.create({baseURL: URL_NODE}).post(
       '/send-notifications',
       {
         registrationTokens: doctors.map(doctor => doctor.getTokenNotification()),

@@ -9,7 +9,8 @@ export const IS_ANDROID = Platform.OS === 'android';
 
 export const API_URL = 'http://209.145.57.238:8080/api';
 export const URL_MOCK = 'http://192.168.0.20:3000/';
-export const API_URL_NODE = 'http://192.168.0.20:3100';
+export const URL_NODE = 'http://192.168.0.20:3100';
+export const API_URL_NODE = `${URL_NODE}/api`;
 
 export const BACKGROUNG_COLOR_MODAL = 'rgba(0,0,0,0.6)';
 

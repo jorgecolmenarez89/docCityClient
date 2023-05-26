@@ -1,5 +1,7 @@
 import React, {useEffect} from 'react';
 import Geolocation from '@react-native-community/geolocation';
+import {NativeBaseProvider} from 'native-base';
+
 import {ThemeProvider, createTheme} from '@rneui/themed';
 import {AuthProvider} from './context/AuthContext';
 import {PermisionsProvider} from './context/PermisionsContext';
@@ -12,7 +14,7 @@ Geolocation.setRNConfiguration({
 });
 
 const theme = createTheme({
-  darkColors: {
+  lightColors: {
     primary: '#003752',
   },
   components: {
@@ -27,18 +29,20 @@ const theme = createTheme({
       raised: true,
     },
   },
-  mode: 'dark',
+  mode: 'light',
 });
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <AuthProvider>
-        <PermisionsProvider>
-          <AppNav />
-        </PermisionsProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <NativeBaseProvider>
+      <ThemeProvider theme={theme}>
+        <AuthProvider>
+          <PermisionsProvider>
+            <AppNav />
+          </PermisionsProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </NativeBaseProvider>
   );
 }
 
