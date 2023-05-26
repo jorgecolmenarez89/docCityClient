@@ -27,7 +27,7 @@ const theme = createTheme({
       raised: true,
     },
   },
-  mode: 'dark',
+  mode: 'light',
 });
 
 function App() {
