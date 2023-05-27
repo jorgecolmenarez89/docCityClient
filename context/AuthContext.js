@@ -13,6 +13,7 @@ export const AuthProvider = ({children}) => {
   const [userToken, setUserToken] = useState(null);
   const [userLoged, setUserLoged] = useState(null);
   const {token, showNotification, notification, onDeleteNotification} = useNotification();
+  const [chats, setChats] = useState([]);
 
   const login = async (username, password) => {
     setAuthLoading(true);
@@ -86,6 +87,10 @@ export const AuthProvider = ({children}) => {
     setUserToken(JSON.stringify(data));
   };
 
+  const updateChats = data => {
+    setChats(data);
+  };
+
   useEffect(() => {
     isLoggedIn();
   }, []);
@@ -104,6 +109,8 @@ export const AuthProvider = ({children}) => {
         setIsLoading,
         showNotification,
         token,
+        chats,
+        updateChats,
       }}>
       {children}
       {notification && (

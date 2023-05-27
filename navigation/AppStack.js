@@ -12,7 +12,7 @@ import firestore from '@react-native-firebase/firestore';
 const Tab = createBottomTabNavigator();
 
 function AppStack() {
-  const {userLoged} = useContext(AuthContext);
+  const {userLoged, updateChats} = useContext(AuthContext);
 
   useEffect(() => {
     // Escuchar si cambia alguno de mis chats
@@ -26,6 +26,23 @@ function AppStack() {
       });
     // Stop listening for updates when no longer required
     return () => subscriber();
+  }, []);
+
+  useEffect(() => {
+    let objectChat = null;
+    let arrayChat = [];
+    firestore()
+      .collection('chats')
+      .where('userId', '==', userLoged.id)
+      .get()
+      .then(querySnapshot => {
+        console.log('Total users: ', querySnapshot.size);
+        querySnapshot.forEach(documentSnapshot => {
+          objectChat = {...documentSnapshot.data(), id: documentSnapshot.id};
+          arrayChat.push(arrayChat);
+        });
+      });
+    updateChats(arrayChat);
   }, []);
 
   return userLoged.isCompletedInfo ? (
