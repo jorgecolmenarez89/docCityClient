@@ -1,9 +1,12 @@
 import React, {useEffect} from 'react';
 import Geolocation from '@react-native-community/geolocation';
+import {NativeBaseProvider} from 'native-base';
+
 import {ThemeProvider, createTheme} from '@rneui/themed';
 import {AuthProvider} from './context/AuthContext';
 import {PermisionsProvider} from './context/PermisionsContext';
 import AppNav from './navigation/AppNav';
+import ChatContextProvider from './context/ChatContext';
 
 Geolocation.setRNConfiguration({
   skipPermissionRequests: false,
@@ -12,7 +15,7 @@ Geolocation.setRNConfiguration({
 });
 
 const theme = createTheme({
-  darkColors: {
+  lightColors: {
     primary: '#003752',
   },
   components: {
@@ -32,13 +35,17 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <AuthProvider>
-        <PermisionsProvider>
-          <AppNav />
-        </PermisionsProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <NativeBaseProvider>
+      <ThemeProvider theme={theme}>
+        <AuthProvider>
+          <ChatContextProvider>
+            <PermisionsProvider>
+              <AppNav />
+            </PermisionsProvider>
+          </ChatContextProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </NativeBaseProvider>
   );
 }
 

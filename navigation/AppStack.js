@@ -8,11 +8,14 @@ import ProfileStack from '../navigation/ProfileStack';
 import TriajeStack from '../navigation/TriajeStack';
 import {AuthContext} from '../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
+import {ChatContext} from '../context/ChatContext';
+import Chat from '../models/Chat';
 
 const Tab = createBottomTabNavigator();
 
 function AppStack() {
-  const {userLoged, updateChats} = useContext(AuthContext);
+  const {userLoged} = useContext(AuthContext);
+  const {chats, notifications, updateNotifications, updateChats} = useContext(ChatContext);
 
   useEffect(() => {
     // Escuchar si cambia alguno de mis chats
@@ -21,31 +24,27 @@ function AppStack() {
       .where('userId', '==', userLoged.id)
       .onSnapshot(documentsSnapshot => {
         documentsSnapshot.forEach(doc => {
+          const indexChat = chats.findIndex(chat => chat.data.id === doc.id);
           console.log('User data ' + doc.id + ' :', doc.data());
+          updateNotifications(notifications + 1);
+          if (indexChat === -1) {
+            updateChats([
+              ...chats,
+              new Chat(Chat.formatData({data: {...doc.data(), id: doc.id}, userLog: userLoged})),
+            ]);
+          } else {
+            chats[indexChat] = new Chat(
+              Chat.formatData({data: {...doc.data(), id: doc.id}, userLog: userLoged}),
+            );
+            updateChats(chats);
+          }
         });
       });
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, []);
 
-  useEffect(() => {
-    let objectChat = null;
-    let arrayChat = [];
-    firestore()
-      .collection('chats')
-      .where('userId', '==', userLoged.id)
-      .get()
-      .then(querySnapshot => {
-        console.log('Total users: ', querySnapshot.size);
-        querySnapshot.forEach(documentSnapshot => {
-          objectChat = {...documentSnapshot.data(), id: documentSnapshot.id};
-          arrayChat.push(arrayChat);
-        });
-      });
-    updateChats(arrayChat);
-  }, []);
-
-  return userLoged.isCompletedInfo ? (
+  return !userLoged.isCompletedInfo ? (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
@@ -87,6 +86,7 @@ function AppStack() {
         component={ChatScreen}
         options={{
           tabBarLabel: 'Chat',
+          tabBarBadge: notifications,
           tabBarLabelStyle: {
             fontSize: 12,
           },

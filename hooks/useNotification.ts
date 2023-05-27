@@ -78,7 +78,7 @@ const useNotification = () => {
           type: data?.type || TypeNotification.request,
           title: data?.title,
           description: data?.description,
-          data: {user},
+          data: {user, idRequest: data?.idRequest},
         }),
       );
       await notifee.cancelNotification(remoteMessage.messageId || '');
