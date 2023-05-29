@@ -18,8 +18,8 @@ export const AuthProvider = ({children}) => {
   const [authLoading, setAuthLoading] = useState(false);
   const [userToken, setUserToken] = useState(null);
   const [userLoged, setUserLoged] = useState(null);
+  const [navigation, setNavigation] = useState();
   const {token, showNotification, notification, onDeleteNotification} = useNotification();
-  const [chats, setChats] = useState([]);
 
   const login = async (username, password) => {
     setAuthLoading(true);
@@ -116,8 +116,8 @@ export const AuthProvider = ({children}) => {
     });
   };
 
-  const updateChats = data => {
-    setChats(data);
+  const onUpdateNavigation = newNavigation => {
+    setNavigation(newNavigation);
   };
 
   useEffect(() => {
@@ -139,8 +139,8 @@ export const AuthProvider = ({children}) => {
         showNotification,
         token,
         showToast,
-        chats,
-        updateChats,
+        onUpdateNavigation,
+        navigation,
       }}>
       {children}
       {notification && (

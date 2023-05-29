@@ -1,7 +1,7 @@
 import moment from 'moment';
 import {dateMessage} from '../helpers/Converts';
 
-enum ChatMessageStatus {
+export enum ChatMessageStatus {
   new = 'new',
   read = 'read',
 }
@@ -9,10 +9,10 @@ enum ChatMessageStatus {
 interface ChatMessageModel {
   text: string;
   autorId: string;
-  status: ChatMessageModel;
-  updateAt?: number;
+  status: ChatMessageStatus;
+  updateAt?: number | Date;
   updateAtDisplay?: string;
-  createAt?: number;
+  createAt?: number | Date;
   createAtDisplay?: string;
 }
 
@@ -30,9 +30,10 @@ class ChatMessage {
       text: text,
       autorId: autorId,
       status: status,
-      updateAt: updateAt,
-      createAt: createAt,
-      createAtDisplay: dateMessage(createAt),
+      updateAt: updateAt?.toDate() || undefined,
+      createAt: createAt?.toDate() || undefined,
+      createAtDisplay: createAt ? dateMessage(createAt?.toDate()) : undefined,
+      updateAtDisplay: updateAt ? dateMessage(updateAt?.toDate()) : undefined,
     };
   }
 
@@ -42,6 +43,7 @@ class ChatMessage {
       text,
       autorId,
       status,
+      createAt: new Date(),
     };
   }
 }

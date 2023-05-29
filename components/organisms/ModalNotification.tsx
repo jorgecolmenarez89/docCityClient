@@ -3,7 +3,7 @@ import {Alert, Modal, View, StyleSheet, Pressable} from 'react-native';
 import {Text, Button, useTheme, Image, Avatar} from '@rneui/themed';
 
 import {BACKGROUNG_COLOR_MODAL, ASSETS} from '../../config/Constant';
-import {StatusRequest, TypeToast} from '../../config/Enum';
+import {NavigationRoutes, StatusRequest, TypeToast} from '../../config/Enum';
 
 import {AuthContext} from '@context/AuthContext';
 import Notification, {TypeNotification} from '../../models/Notification';
@@ -19,7 +19,7 @@ const ModalNotification = ({
   notification: Notification;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const {userLoged, showToast} = useContext(AuthContext);
+  const {userLoged, showToast, navigation} = useContext(AuthContext);
 
   if (notification.data.type === TypeNotification.request) {
     return (
@@ -117,7 +117,17 @@ const ModalNotification = ({
                       description: 'Consulta aceptada con éxito.',
                       type: TypeToast.success,
                     });
-                    await createChat({doctor: notification.data.data.user, user: userLoged});
+                    const {status, data} = await createChat({
+                      doctor: notification.data.data.user,
+                      user: userLoged,
+                    });
+                    console.log('createChat =>', {navigation});
+                    if (status) {
+                      navigation.navigate('ChatsStack', {
+                        screen: NavigationRoutes.chat,
+                        params: {id: data},
+                      });
+                    }
                     onClose();
                   } else {
                     showToast({

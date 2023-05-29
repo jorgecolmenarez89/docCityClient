@@ -1,4 +1,5 @@
 import {dateChat} from '../helpers/Converts';
+import ChatMessage from './ChatMessage';
 import Doctor, {DoctorModel} from './Doctor';
 import User, {UserModel} from './User';
 
@@ -8,7 +9,7 @@ interface ChatModel {
   doctorId: string | number;
   user: UserModel;
   userId: string | number;
-  messages: [];
+  messages: ChatMessage[];
   updateAt?: number;
   updateAtDisplay?: string;
   createAt?: number;
@@ -32,9 +33,12 @@ class Chat {
       doctorId: doctorId,
       user: user,
       userId: userId,
-      messages: messages,
-      updateAt: updateAt.toDate(),
-      updateAtDisplay: dateChat(updateAt.toDate()),
+      messages:
+        messages && messages.length > 0
+          ? messages.map(msg => new ChatMessage(ChatMessage.formatData(msg)))
+          : [],
+      updateAt: updateAt?.toDate(),
+      updateAtDisplay: updateAt ? dateChat(updateAt?.toDate()) : undefined,
       receiver: userLog.id !== doctor.id ? doctor : user,
     };
   }

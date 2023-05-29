@@ -9,3 +9,8 @@ export enum TypeToast {
   error = 'error',
   info = 'info',
 }
+
+export enum NavigationRoutes {
+  chat = 'Chat',
+  chats = 'Chats',
+}

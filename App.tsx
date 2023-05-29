@@ -17,6 +17,7 @@ Geolocation.setRNConfiguration({
 const theme = createTheme({
   lightColors: {
     primary: '#003752',
+    secondary: '#056269',
   },
   components: {
     Text: {

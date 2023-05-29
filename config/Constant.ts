@@ -4,6 +4,8 @@ const locationPin = require('../assets/location-pin.png');
 const business = require('../assets/business.png');
 const gifCard = require('../assets/gif-card.png');
 const doctorPin = require('../assets/doctor-pin.png');
+const flatMessage = require('../assets/flat-message.svg');
+const flatReceiverMessage = require('../assets/flat-message-receiver.svg');
 
 export const IS_ANDROID = Platform.OS === 'android';
 
@@ -20,6 +22,14 @@ export const ASSETS = {
   gifCard: gifCard,
   doctorPin: doctorPin,
   user: 'https://cdn-icons-png.flaticon.com/512/147/147133.png',
+  flatMessage: flatMessage,
+  flatReceiverMessage: flatReceiverMessage,
+};
+
+export const NAME_ICON = {
+  // ionicons
+  arrowLeft: 'arrow-back',
+  sendOutline: 'send-outline',
 };
 
 export const DEFAULT_REGION = {
