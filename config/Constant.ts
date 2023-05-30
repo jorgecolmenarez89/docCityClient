@@ -36,3 +36,7 @@ export const DEFAULT_REGION = {
   latitudeDelta: 0.0122,
   longitudeDelta: 0.0121,
 };
+
+export const PREFIXES = {
+  navigation: 'doccity://',
+};

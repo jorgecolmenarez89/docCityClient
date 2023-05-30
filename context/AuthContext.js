@@ -8,6 +8,7 @@ import {useTheme} from '@rneui/themed';
 import {axiosInstance} from '../config/api';
 import useNotification from '../hooks/useNotification';
 import ModalNotification from '../components/organisms/ModalNotification';
+import useAppState from '../hooks/useAppState';
 
 export const AuthContext = createContext();
 
@@ -20,6 +21,8 @@ export const AuthProvider = ({children}) => {
   const [userLoged, setUserLoged] = useState(null);
   const [navigation, setNavigation] = useState();
   const {token, showNotification, notification, onDeleteNotification} = useNotification();
+  const [chats, setChats] = useState([]);
+  const {appState} = useAppState();
 
   const login = async (username, password) => {
     setAuthLoading(true);
@@ -141,6 +144,7 @@ export const AuthProvider = ({children}) => {
         showToast,
         onUpdateNavigation,
         navigation,
+        appState,
       }}>
       {children}
       {notification && (

@@ -7,6 +7,7 @@ export enum ChatMessageStatus {
 }
 
 interface ChatMessageModel {
+  id?: string;
   text: string;
   autorId: string;
   status: ChatMessageStatus;

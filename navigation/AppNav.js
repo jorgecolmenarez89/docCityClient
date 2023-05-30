@@ -4,6 +4,25 @@ import {NavigationContainer} from '@react-navigation/native';
 import AuthSatck from './AuthStack';
 import AppStack from './AppStack';
 import {AuthContext} from '../context/AuthContext';
+import {PREFIXES} from '../config/Constant';
+
+const config = {
+  screens: {
+    Home: 'home',
+    ChatsStack: {
+      screens: {
+        Chats: 'chats',
+        Chat: 'chat/:id',
+      },
+    },
+    Profile: 'user',
+  },
+};
+
+const linking = {
+  prefixes: [PREFIXES.navigation],
+  config,
+};
 
 const AppNav = () => {
   const {isLoading, userToken} = useContext(AuthContext);
@@ -17,7 +36,9 @@ const AppNav = () => {
   }
 
   return (
-    <NavigationContainer>{userToken !== null ? <AppStack /> : <AuthSatck />}</NavigationContainer>
+    <NavigationContainer linking={linking}>
+      {userToken !== null ? <AppStack /> : <AuthSatck />}
+    </NavigationContainer>
   );
 };
 

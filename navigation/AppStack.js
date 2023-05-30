@@ -41,29 +41,36 @@ function AppStack() {
       .collection('chats')
       .where('userId', '==', userLoged.id)
       .onSnapshot(documentsSnapshot => {
-        documentsSnapshot.forEach(doc => {
-          const indexChat = chats.findIndex(chat => chat.data.id === doc.id);
-          console.log('User data ' + doc.id + ' :', doc.data());
-          updateNotifications(notifications + 1);
-          if (indexChat === -1) {
-            updateChats([
-              ...chats,
-              new Chat(Chat.formatData({data: {...doc.data(), id: doc.id}, userLog: userLoged})),
-            ]);
-          } else {
-            chats[indexChat] = new Chat(
-              Chat.formatData({data: {...doc.data(), id: doc.id}, userLog: userLoged}),
-            );
-            updateChats(chats);
-          }
+        const docChanges = documentsSnapshot
+          .docChanges()
+          .map(doc => ({...doc.doc.data(), id: doc.doc.id}));
+        console.log('docChanges() ==> ', {
+          doc: docChanges,
         });
+
+        //documentsSnapshot.forEach(doc => {
+        //const indexChat = chats.findIndex(chat => chat.data.id === doc.id);
+        //console.log('User data ' + doc.id + ' :', doc.data());
+        //updateNotifications(notifications + 1);
+        //if (indexChat === -1) {
+        //updateChats([
+        //...chats,
+        //new Chat(Chat.formatData({data: {...doc.data(), id: doc.id}, userLog: userLoged})),
+        //]);
+        //} else {
+        //chats[indexChat] = new Chat(
+        //Chat.formatData({data: {...doc.data(), id: doc.id}, userLog: userLoged})
+        //);
+        //updateChats(chats);
+        //}
+        //});
       });
     onUpdateNavigation(navigation);
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, []);
 
-  return !userLoged.isCompletedInfo ? (
+  return userLoged.isCompletedInfo ? (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
