@@ -19,7 +19,7 @@ const ModalNotification = ({
   notification: Notification;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const {userLoged, showToast, navigation} = useContext(AuthContext);
+  const {userLoged, showToast, navigation, token} = useContext(AuthContext);
 
   if (notification.data.type === TypeNotification.request) {
     return (
@@ -119,7 +119,7 @@ const ModalNotification = ({
                     });
                     const {status, data} = await createChat({
                       doctor: notification.data.data.user,
-                      user: userLoged,
+                      user: {...userLoged, deviceToken: token},
                     });
                     console.log('createChat =>', {navigation});
                     if (status) {

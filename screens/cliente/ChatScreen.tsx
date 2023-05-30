@@ -1,4 +1,5 @@
-import React, {useEffect, useState, useContext, useRef, LegacyRef} from 'react';
+import React, {useEffect, useState, useContext, useRef, LegacyRef, useCallback} from 'react';
+import firestore from '@react-native-firebase/firestore';
 import {SvgXml} from 'react-native-svg';
 import {View, StyleSheet, FlatList, TextInput, Keyboard} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -6,7 +7,7 @@ import {AuthContext} from '../../context/AuthContext';
 import {addMessage, getChatById} from '../../services/user/chat';
 import {Avatar, Icon, Image, Input, Text, useTheme} from '@rneui/themed';
 import {ASSETS, NAME_ICON} from '../../config/Constant';
-import Chat from '../../models/Chat';
+import Chat, {ChatModel} from '../../models/Chat';
 import {RootStackParamList} from '../../config/Types';
 import {NavigationRoutes, TypeToast} from '../../config/Enum';
 import ChatMessage, {ChatMessageStatus} from '../../models/ChatMessage';
@@ -14,12 +15,15 @@ import ChatMessage, {ChatMessageStatus} from '../../models/ChatMessage';
 import flatMessage from '../../assets/flat-message.svg';
 import flatReceiverMessage from '../../assets/flat-message-receiver.svg';
 import {dateMessage} from '../../helpers/Converts';
+import {sendNotificationChat, sendNotificationRequest} from '../../services/doctor/notification';
+import {useIsFocused} from '@react-navigation/native';
 
 type ChatScreenProps = NativeStackScreenProps<RootStackParamList, NavigationRoutes.chat>;
 
 const ChatScreen = ({navigation, route}: ChatScreenProps) => {
   const {theme} = useTheme();
-  const {showToast} = useContext(AuthContext);
+  const {showToast, appState} = useContext(AuthContext);
+  const isFocused = useIsFocused();
   const listMessages = useRef<FlatList<ChatMessage>>(null);
 
   const [chat, setChat] = useState<Chat>();
@@ -64,6 +68,12 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
         setNewMessage('');
         setNumberOfLines(1);
         listMessages?.current?.scrollToEnd();
+        sendNotificationChat({
+          doctor: chat.data.doctor,
+          user: userLoged,
+          message: nextMessage,
+          chat: chat,
+        });
       } else {
         showToast({
           title: 'Error',
@@ -75,6 +85,13 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
       showToast({title: 'Completa los datos', type: TypeToast.error});
     }
   };
+
+  const handleSubmit = useCallback(
+    (messages: ChatMessage[]) => {
+      console.log('isFocused ==>', {isFocused, messages, appState});
+    },
+    [messages, isFocused, appState],
+  );
 
   useEffect(() => {
     const {id} = route.params;
@@ -88,14 +105,27 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
         console.log('showSubscription ==> ', true);
       }, 50);
     });
-    //const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-    //});
+
+    const subscriber = firestore()
+      .collection('chats')
+      .doc(id)
+      .onSnapshot(documentsSnapshot => {
+        const chatChange: ChatModel = {...documentsSnapshot.data(), id: documentsSnapshot.id};
+        const updateChat = new Chat(Chat.formatData({data: chatChange, userLog: userLoged}));
+        setMessages(updateChat.data.messages);
+        listMessages?.current?.scrollToEnd();
+        handleSubmit(updateChat.data.messages);
+      });
 
     return () => {
       showSubscription.remove();
-      //hideSubscription.remove();
+      subscriber();
     };
   }, [route]);
+
+  useEffect(() => {
+    console.log('appState =>', {appState});
+  }, [appState]);
 
   return (
     <View style={{flex: 1}}>

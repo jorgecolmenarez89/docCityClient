@@ -55,7 +55,7 @@ function SearchScreen({navigation}) {
       console.log('handleSearch() ==>', {userLoged});
       const result = await sendNotificationRequest({
         doctors: newDoctors,
-        user: {...userLoged, tokenDevice: token},
+        user: {...userLoged, deviceToken: token},
       });
       console.log('handleSearch() ==> result', {result, userLoged});
     } else {

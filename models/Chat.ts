@@ -3,7 +3,7 @@ import ChatMessage from './ChatMessage';
 import Doctor, {DoctorModel} from './Doctor';
 import User, {UserModel} from './User';
 
-interface ChatModel {
+export interface ChatModel {
   id?: string;
   doctor: DoctorModel;
   doctorId: string | number;
