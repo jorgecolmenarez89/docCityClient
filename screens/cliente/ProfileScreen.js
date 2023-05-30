@@ -1,11 +1,12 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, StyleSheet, TextInput, Alert} from 'react-native';
-import {Avatar, Button} from '@rneui/themed';
+import {View, Text, StyleSheet, TextInput, Alert, Platform} from 'react-native';
+import storage from '@react-native-firebase/storage';
+import {Avatar, Button, Image} from '@rneui/themed';
 import * as ImagePicker from 'react-native-image-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SelectDropdown from 'react-native-select-dropdown';
 import {AuthContext} from '../../context/AuthContext';
-import {updateUserInfo} from '../../services/doctor/profile';
+import {updateUserInfo, formatBodyUser} from '../../services/doctor/profile';
 import CustomHeader from '../../components/CustomHeader';
 
 const sexos = ['Masculino', 'Femenino'];
@@ -19,12 +20,19 @@ function ProfileScreen({navigation}) {
   const [sex, setSex] = useState('');
   const [loading, setLoading] = useState(false);
   const [defaultSex, setDefaultSex] = useState('');
+  const [url, setUrl] = useState(null);
 
   useEffect(() => {
-    setFullName(userLoged.fullName);
-    setPhone(userLoged.phoneNumber);
-    setSex(userLoged.sexo);
-    setDefaultSex(userLoged.sexo);
+    if (userLoged.fullName) setFullName(userLoged.fullName);
+    if (userLoged.phoneNumber) setPhone(userLoged.phoneNumber);
+    if (userLoged.sexo) {
+      setDefaultSex(userLoged.sexo);
+      setSex(userLoged.sexo);
+    }
+    if (userLoged.url && userLoged.url != '' && userLoged.url != null) {
+      setFileData({assets: [{uri: userLoged.url}]});
+      setUrl(userLoged.url);
+    }
   }, []);
 
   const loadFile = () => {
@@ -52,30 +60,48 @@ function ProfileScreen({navigation}) {
         // alert(JSON.stringify(response));s
         /*console.log('response', JSON.stringify(response));*/
         setFileData(response);
-        /*response.assets.forEach(item => {
-          console.log('item', item.uri)
-        })*/
+        response.assets.forEach(item => {
+          console.log('item', item.uri);
+          const {uri} = item;
+          const filename = 'avatar';
+          const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+          const path = `images/${userLoged.id}/${filename}`;
+          uploadImageAndGetUrl(uploadUri, path).then(url => {
+            setUrl(url);
+          });
+        });
       }
     });
   };
 
   const handleUpdate = async () => {
     const body = {
+      ...userLoged,
       userName: userLoged.userName,
       sexo: sex,
       phoneNumber: phone,
+      url,
     };
+    const formatBody = formatBodyUser(body);
+    console.log('formatBody', formatBody);
     try {
-      await updateUserInfo(body);
-      changeUserLoged({
-        ...userLoged,
-        sexo: sex,
-        phoneNumber: phone,
-      });
+      await updateUserInfo(formatBody);
+      changeUserLoged(formatBody);
       Alert.alert('Exito', 'Datos actualizados correctamente');
     } catch (error) {
-      console.log('error', error.response.data);
+      console.log('error', error);
       Alert.alert('Error', 'Ocurrio un error intente nuevamente');
+    }
+  };
+
+  const uploadImageAndGetUrl = async (localUri, firebasePath) => {
+    try {
+      const imageRef = storage().ref(firebasePath);
+      await imageRef.putFile(localUri, {contentType: 'image/jpg'});
+      const url = await imageRef.getDownloadURL();
+      return url;
+    } catch (err) {
+      Alert.alert(err);
     }
   };
 
@@ -265,4 +291,8 @@ const styles = StyleSheet.create({
   dropdown1DropdownStyle: {backgroundColor: '#EFEFEF'},
   dropdown1RowStyle: {backgroundColor: '#EFEFEF', borderBottomColor: '#C5C5C5'},
   dropdown1RowTxtStyle: {color: '#444', textAlign: 'left'},
+  imageBox: {
+    width: 300,
+    height: 300,
+  },
 });

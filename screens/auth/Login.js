@@ -28,9 +28,9 @@ function Login({navigation}) {
       Alert.alert('Atención', 'Campo conraseña es requerido');
     } else {
       setLoading(true);
-      const url = `/users/GetUserInfoForLogin/${user.userName}/${user.password}?deviceToken=${token}`;
+      const url = `/users/GetUserInfoForLogin/${user.userName}/${user.password}/${token}`;
       try {
-        const response = await axiosInstance.get(url);
+        const response = await axiosInstance({isNode: false}).get(url);
         setLoading(false);
         changeUserLoged(response.data);
       } catch (error) {

@@ -17,6 +17,7 @@ function Register({navigation}) {
     password: '',
     fullName: '',
     repeatPassword: '',
+    deviceToken: token,
   });
 
   const handleChange = (text, name) => {
@@ -45,13 +46,10 @@ function Register({navigation}) {
       //register(user)
       const url = '/users/CreateUser';
       try {
-        const response = await axiosInstance.post(
-          url,
-          {...user, token},
-          {
-            headers: {'Content-Type': 'application/json'},
-          },
-        );
+        const body = {...user, deviceToken: token};
+        const response = await axiosInstance({isNode: false}).post(url, user, {
+          headers: {'Content-Type': 'application/json'},
+        });
         setLoading(true);
         changeUserLoged(response.data);
       } catch (error) {

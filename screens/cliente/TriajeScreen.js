@@ -1,9 +1,10 @@
 import React, {useState, useContext} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar, Alert} from 'react-native';
 import {CheckBox, Button} from '@rneui/themed';
-import {updateUserInfo} from '../../services/doctor/profile';
 import {AuthContext} from '../../context/AuthContext';
 import axios from 'axios';
+import {insertTriaje} from '../../services/doctor/triaje';
+import {updateDoctorInfo} from '../../services/doctor/profile';
 
 function TriajeScreen({navigation}) {
   const {userLoged, changeUserLoged} = useContext(AuthContext);
@@ -103,16 +104,13 @@ function TriajeScreen({navigation}) {
           answerToQuestion11,
           answerToQuestion12,
         };
-        await axios.post('http://209.145.57.238:8080/InsertTriaje', bodyTriaje, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        //await updateUserInfo(body)
-        changeUserLoged({
+        const bodyUser = {
           ...userLoged,
           isCompletedInfo: true,
-        });
+        };
+        await insertTriaje(bodyTriaje);
+        await updateDoctorInfo(bodyUser);
+        changeUserLoged(bodyUser);
         setLoading(false);
         Alert.alert('Exito', 'Datos actualizados correctamente');
       } catch (error) {
