@@ -46,7 +46,6 @@ function Register({navigation}) {
       //register(user)
       const url = '/users/CreateUser';
       try {
-        const body = {...user, deviceToken: token};
         const response = await axiosInstance({isNode: false}).post(url, user, {
           headers: {'Content-Type': 'application/json'},
         });
@@ -155,6 +154,7 @@ function Register({navigation}) {
         </View>
         <View style={styles.inputContainer}>
           <Button
+            raised={false}
             title='Crear cuenta'
             onPress={() => handleRegister()}
             buttonStyle={{

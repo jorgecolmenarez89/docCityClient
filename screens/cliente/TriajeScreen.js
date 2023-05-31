@@ -2,9 +2,8 @@ import React, {useState, useContext} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar, Alert} from 'react-native';
 import {CheckBox, Button} from '@rneui/themed';
 import {AuthContext} from '../../context/AuthContext';
-import axios from 'axios';
 import {insertTriaje} from '../../services/doctor/triaje';
-import {updateDoctorInfo} from '../../services/doctor/profile';
+import {updateDoctorInfo, formatBodyUser} from '../../services/doctor/profile';
 
 function TriajeScreen({navigation}) {
   const {userLoged, changeUserLoged} = useContext(AuthContext);
@@ -104,10 +103,10 @@ function TriajeScreen({navigation}) {
           answerToQuestion11,
           answerToQuestion12,
         };
-        const bodyUser = {
+        const bodyUser = formatBodyUser({
           ...userLoged,
           isCompletedInfo: true,
-        };
+        });
         await insertTriaje(bodyTriaje);
         await updateDoctorInfo(bodyUser);
         changeUserLoged(bodyUser);

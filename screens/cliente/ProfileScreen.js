@@ -230,6 +230,7 @@ function ProfileScreen({navigation}) {
               fontFamily: 'Poppins-SemiBold',
             }}
             loading={loading}
+            raised={false}
           />
         </View>
       </View>

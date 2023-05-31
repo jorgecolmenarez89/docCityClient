@@ -24,6 +24,14 @@ function ProfileNewScreen({navigation}) {
     setDefaultSex(userLoged.sexo);
   }, []);
 
+  const getImage = () => {
+    if (userLoged.url && userLoged.url != '') {
+      return {uri: userLoged.url};
+    } else {
+      return require('../../assets/user-icon.png');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -59,7 +67,7 @@ function ProfileNewScreen({navigation}) {
         <View style={styles.namesContainer}>
           <View style={styles.imageContainer}>
             <Image
-              source={require('../../assets/user-icon.png')}
+              source={getImage()}
               style={{
                 width: 60,
                 height: 70,
@@ -71,6 +79,7 @@ function ProfileNewScreen({navigation}) {
             <Text style={styles.titleCard}>{fullName}</Text>
             <View style={styles.botonContainer}>
               <Button
+                raised={false}
                 buttonStyle={{
                   backgroundColor: '#0caec6',
                   borderRadius: 6,

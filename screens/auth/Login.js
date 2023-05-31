@@ -85,6 +85,7 @@ function Login({navigation}) {
         </View>
         <View style={styles.inputContainer}>
           <Button
+            raised={false}
             title='Iniciar sesion'
             buttonStyle={{
               backgroundColor: '#0b445e',
