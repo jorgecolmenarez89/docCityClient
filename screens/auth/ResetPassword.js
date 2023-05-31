@@ -67,6 +67,7 @@ function ResetPassword({navigation, route}) {
         </View>
         <View style={styles.inputContainer}>
           <Button
+            raised={false}
             title='Actualizar contraseña'
             onPress={() => handleReset()}
             buttonStyle={{

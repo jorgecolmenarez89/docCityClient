@@ -15,6 +15,7 @@ function Inicio({navigation}) {
         </Text>
         <View style={styles.contentButton}>
           <Button
+            raised={false}
             title='Empecemos'
             buttonStyle={{
               backgroundColor: '#0b445e',

@@ -76,6 +76,7 @@ function VerifyEmail({navigation}) {
         </View>
         <View style={styles.inputContainer}>
           <Button
+            raised={false}
             title='Enviar email'
             onPress={() => sendEmail()}
             buttonStyle={{
