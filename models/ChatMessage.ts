@@ -9,6 +9,7 @@ export enum ChatMessageStatus {
 interface ChatMessageModel {
   id?: string;
   text: string;
+  imgs: string[];
   autorId: string;
   status: ChatMessageStatus;
   updateAt?: number | Date;
@@ -25,10 +26,11 @@ class ChatMessage {
   }
 
   static formatData(data: any): ChatMessageModel {
-    const {text, autorId, status, updateAt, createAt} = data;
+    const {text, imgs, autorId, status, updateAt, createAt} = data;
 
     return {
       text: text,
+      imgs: imgs,
       autorId: autorId,
       status: status,
       updateAt: updateAt?.toDate() || undefined,
@@ -39,13 +41,21 @@ class ChatMessage {
   }
 
   send() {
-    const {text, autorId, status} = this.data;
-    return {
-      text,
+    const {text, autorId, imgs, status} = this.data;
+    let dataSend = {
       autorId,
       status,
       createAt: new Date(),
     };
+
+    if (imgs) {
+      dataSend.imgs = imgs;
+    }
+    if (text) {
+      dataSend.text = text;
+    }
+
+    return dataSend;
   }
 }
 

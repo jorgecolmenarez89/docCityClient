@@ -16,7 +16,7 @@ export const dateChat = (date: number) => {
 
 export const dateMessage = (date: number | Date) => {
   try {
-    return `${moment(date).format('HH:mm')}`;
+    return `${moment(date).format('hh:mm A')}`;
   } catch (err: any) {
     console.log('dateChat() => err', {err});
     return '';

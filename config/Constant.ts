@@ -1,4 +1,5 @@
 import {Platform} from 'react-native';
+import {API_URL as apiUrl, URL_MOCK as urlMock, URL_NODE as urlNode} from '@env';
 
 const locationPin = require('../assets/location-pin.png');
 const business = require('../assets/business.png');
@@ -9,9 +10,9 @@ const flatReceiverMessage = require('../assets/flat-message-receiver.svg');
 
 export const IS_ANDROID = Platform.OS === 'android';
 
-export const API_URL = 'http://209.145.57.238:8080/api';
-export const URL_MOCK = 'http://192.168.0.20:3000/';
-export const URL_NODE = 'http://192.168.0.20:3100';
+export const API_URL = apiUrl;
+export const URL_MOCK = urlMock;
+export const URL_NODE = urlNode;
 export const API_URL_NODE = `${URL_NODE}/api`;
 
 export const BACKGROUNG_COLOR_MODAL = 'rgba(0,0,0,0.6)';
@@ -21,15 +22,20 @@ export const ASSETS = {
   business: business,
   gifCard: gifCard,
   doctorPin: doctorPin,
-  user: 'https://cdn-icons-png.flaticon.com/512/147/147133.png',
+  user: 'https://cdn-icons-png.flaticon.com/512/3033/3033143.png',
   flatMessage: flatMessage,
   flatReceiverMessage: flatReceiverMessage,
 };
 
 export const NAME_ICON = {
   // ionicons
-  arrowLeft: 'arrow-back',
   sendOutline: 'send-outline',
+  close: 'close-circle-outline',
+  // materials
+  arrowLeft: 'arrow-back-ios',
+  photo: 'photo',
+  camera: 'camera-alt',
+  attachment: 'attachment',
 };
 
 export const DEFAULT_REGION = {

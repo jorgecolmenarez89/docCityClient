@@ -1,7 +1,7 @@
 import {AuthorizationStatus} from '@notifee/react-native';
 import React, {createContext, useEffect, useState} from 'react';
 import notifee from '@notifee/react-native';
-import {AppState, Platform} from 'react-native';
+import {AppState, Platform, PermissionsAndroid, Permission, PermissionStatus} from 'react-native';
 import {check, PERMISSIONS, request, openSettings} from 'react-native-permissions';
 import {IS_ANDROID} from '../config/Constant';
 
@@ -81,12 +81,29 @@ export const PermisionsProvider = ({children}) => {
     });
   };
 
+  const checkCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.check('android.permission.CAMERA');
+      if (granted) {
+        return true;
+      }
+      const status = await PermissionsAndroid.request('android.permission.CAMERA');
+      if (status === PermissionStatus.granted) {
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.log('checkCamera() ==>', err);
+    }
+  };
+
   return (
     <PermisionsContext.Provider
       value={{
         permissions,
         askLocationPermission,
         checkLocationPermission,
+        checkCameraPermission,
       }}>
       {children}
     </PermisionsContext.Provider>

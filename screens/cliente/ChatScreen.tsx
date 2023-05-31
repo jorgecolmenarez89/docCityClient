@@ -1,40 +1,80 @@
-import React, {useEffect, useState, useContext, useRef, LegacyRef, useCallback} from 'react';
+import React, {useEffect, useState, useContext, useRef, useCallback} from 'react';
 import firestore from '@react-native-firebase/firestore';
-import {SvgXml} from 'react-native-svg';
-import {View, StyleSheet, FlatList, TextInput, Keyboard} from 'react-native';
+import storage from '@react-native-firebase/storage';
+import {Asset, launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import {View, StyleSheet, FlatList, TextInput, Keyboard, Dimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AuthContext} from '../../context/AuthContext';
+import {PermisionsContext} from '../../context/PermisionsContext';
 import {addMessage, getChatById} from '../../services/user/chat';
-import {Avatar, Icon, Image, Input, Text, useTheme} from '@rneui/themed';
+import {Avatar, Dialog, Icon, Image, Text, useTheme} from '@rneui/themed';
 import {ASSETS, NAME_ICON} from '../../config/Constant';
 import Chat, {ChatModel} from '../../models/Chat';
 import {RootStackParamList} from '../../config/Types';
 import {NavigationRoutes, TypeToast} from '../../config/Enum';
 import ChatMessage, {ChatMessageStatus} from '../../models/ChatMessage';
 
-import flatMessage from '../../assets/flat-message.svg';
-import flatReceiverMessage from '../../assets/flat-message-receiver.svg';
 import {dateMessage} from '../../helpers/Converts';
-import {sendNotificationChat, sendNotificationRequest} from '../../services/doctor/notification';
+import {sendNotificationChat} from '../../services/doctor/notification';
 import {useIsFocused} from '@react-navigation/native';
+import {Box, Center, HStack, IconButton, Stagger, useDisclose} from 'native-base';
+import {SwiperFlatList} from 'react-native-swiper-flatlist';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 type ChatScreenProps = NativeStackScreenProps<RootStackParamList, NavigationRoutes.chat>;
 
+const {width, height} = Dimensions.get('window');
+
 const ChatScreen = ({navigation, route}: ChatScreenProps) => {
+  const {isOpen, onToggle} = useDisclose();
   const {theme} = useTheme();
   const {showToast, appState} = useContext(AuthContext);
+  const {checkCameraPermission} = useContext(PermisionsContext);
   const isFocused = useIsFocused();
   const listMessages = useRef<FlatList<ChatMessage>>(null);
+  const [imgCurrent, setImgCurrent] = useState<string>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [chat, setChat] = useState<Chat>();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState<string>();
+  const [newAssets, setNewAssets] = useState<Asset[]>();
   const [numberOfLines, setNumberOfLines] = useState<number>(1);
   const {userLoged} = useContext(AuthContext);
 
+  const onLaunchLibrary = async () => {
+    try {
+      onToggle();
+      const {assets} = await launchImageLibrary({mediaType: 'photo', selectionLimit: 1});
+      console.log('onLaunchLibrary() ==>', {assets});
+      if (assets) {
+        setNewAssets(assets);
+      }
+    } catch (err) {
+      showToast({title: 'No fue posible cargar la imagen', type: TypeToast.error});
+    }
+  };
+
+  const onLaunchCamera = async () => {
+    try {
+      const result = await checkCameraPermission();
+      if (result) {
+        onToggle();
+        const result = await launchCamera({mediaType: 'photo'});
+        console.log('onLaunchCamera() ==>', {result});
+        if (result.assets) {
+          setNewAssets(result.assets);
+        }
+      } else {
+        onToggle();
+      }
+    } catch (err) {
+      showToast({title: 'No fue posible cargar la imagen', type: TypeToast.error});
+    }
+  };
+
   const loadChat = async (id: string) => {
     const {status, data} = await getChatById(id, userLoged);
-    console.log('loadChat() ==> { status, data }', {status, data});
     if (status && data) {
       setChat(data);
       setMessages(data.data.messages || []);
@@ -46,44 +86,66 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
     }
   };
 
-  const onSendMessage = async () => {
-    if (chat && newMessage !== '' && newMessage !== undefined) {
-      const nextMessage = new ChatMessage({
-        text: newMessage || '',
-        autorId: userLoged.id,
-        status: ChatMessageStatus.new,
-        updateAt: new Date(),
-        updateAtDisplay: dateMessage(new Date()),
-        createAt: new Date(),
-        createAtDisplay: dateMessage(new Date()),
-      });
-      const {status, data} = await addMessage({
-        chat,
-        message: nextMessage,
-      });
-
-      console.log('onSendMessage() ==> { status, data }', {status, data, nextMessage});
-      if (status) {
-        setMessages([...messages, nextMessage]);
-        setNewMessage('');
-        setNumberOfLines(1);
-        listMessages?.current?.scrollToEnd();
-        sendNotificationChat({
-          doctor: chat.data.doctor,
-          user: userLoged,
-          message: nextMessage,
-          chat: chat,
-        });
+  const uploadAssets = async () => {
+    try {
+      if (newAssets) {
+        let urls = [];
+        for await (let newAsset of newAssets) {
+          const reference = storage().ref(`/chats/${chat?.data.id}/${newAsset.fileName}`);
+          const task = await reference.putFile(newAsset.uri);
+          const url = await reference.getDownloadURL();
+          urls.push(url);
+        }
+        return urls;
       } else {
-        showToast({
-          title: 'Error',
-          description: 'No fue posible enviar el mensaje.',
-          type: TypeToast.error,
-        });
+        return undefined;
       }
-    } else {
-      showToast({title: 'Completa los datos', type: TypeToast.error});
+    } catch (err) {
+      console.log('uploadAssets() ==>', err);
+      return undefined;
     }
+  };
+
+  const onSendMessage = async () => {
+    setIsLoading(true);
+    const msgNew = newMessage;
+    const urls = await uploadAssets();
+    console.log('onSendMessage() ==> urls', {urls});
+    const nextMessage = new ChatMessage({
+      text: msgNew,
+      imgs: urls,
+      autorId: userLoged.id,
+      status: ChatMessageStatus.new,
+      updateAt: new Date(),
+      updateAtDisplay: dateMessage(new Date()),
+      createAt: new Date(),
+      createAtDisplay: dateMessage(new Date()),
+    });
+    const {status, data} = await addMessage({
+      chat,
+      message: nextMessage,
+    });
+
+    if (status) {
+      setMessages([...messages, nextMessage]);
+      setNewMessage('');
+      setNewAssets(undefined);
+      setNumberOfLines(1);
+      listMessages?.current?.scrollToEnd();
+      sendNotificationChat({
+        doctor: chat.data.doctor,
+        user: userLoged,
+        message: nextMessage,
+        chat: chat,
+      });
+    } else {
+      showToast({
+        title: 'Error',
+        description: 'No fue posible enviar el mensaje.',
+        type: TypeToast.error,
+      });
+    }
+    setIsLoading(false);
   };
 
   const handleSubmit = useCallback(
@@ -92,6 +154,16 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
     },
     [messages, isFocused, appState],
   );
+
+  const handleDisabled = () => {
+    let result = true;
+    if (newMessage && newMessage !== '') {
+      result = false;
+    } else if (newAssets && newAssets.length > 0) {
+      result = false;
+    }
+    return result;
+  };
 
   useEffect(() => {
     const {id} = route.params;
@@ -128,27 +200,38 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
   }, [appState]);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, position: 'relative'}}>
       {/** header */}
-      <View style={[styles.header, {backgroundColor: theme.colors.primary}]}>
+      <View
+        style={[
+          styles.header,
+          {
+            backgroundColor: theme.colors.disabled,
+            borderBottomEndRadius: 15,
+            borderBottomStartRadius: 15,
+          },
+        ]}>
         <Icon
           name={NAME_ICON.arrowLeft}
-          type='ionicon'
-          color='white'
+          type='material'
+          size={15}
+          color={theme.colors.grey2}
           onPress={() => {
-            navigation.goBack();
+            navigation.navigate(NavigationRoutes.chats);
           }}
         />
 
         <Avatar rounded size={'small'} source={{uri: chat?.data.receiver?.photo || ASSETS.user}} />
 
-        <Text style={styles.title}>{chat?.data.receiver?.fullName}</Text>
+        <Text style={[styles.title, {color: theme.colors.grey2}]}>
+          {chat?.data.receiver?.fullName}
+        </Text>
       </View>
 
       {/** listado de mensajes*/}
 
       {messages && messages.length === 0 && <View style={{flex: 1}} />}
-      {messages && messages.length > 0 && (
+      {!newAssets && messages && messages.length > 0 && (
         <FlatList
           ref={listMessages}
           style={{flex: 1}}
@@ -160,49 +243,63 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
                 style={[
                   styles.message,
                   {
-                    marginBottom: 3,
+                    marginBottom: 10,
                     width: '100%',
                     flex: 1,
                     paddingTop: index === 0 ? 10 : 0,
-                    //paddingHorizontal: 10,
+                    paddingHorizontal: 10,
                     alignItems: item.data.autorId === userLoged.id ? 'flex-end' : 'flex-start',
-                    //flexDirection: 'row',
                   },
                 ]}>
                 <View style={{flexDirection: 'row'}}>
-                  {item.data.autorId !== userLoged.id && (
-                    <SvgXml width='10' height='10' xml={flatReceiverMessage} />
-                  )}
-
                   <View
                     style={{
                       padding: 10,
                       backgroundColor:
                         item.data.autorId !== userLoged.id
-                          ? theme.colors.primary
-                          : theme.colors.secondary,
-                      borderTopStartRadius: item.data.autorId !== userLoged.id ? 0 : 10,
-                      borderTopEndRadius: item.data.autorId === userLoged.id ? 0 : 10,
-                      borderBottomEndRadius: 10,
-                      borderBottomStartRadius: 10,
+                          ? theme.colors.white
+                          : theme.colors.primary,
+                      borderTopStartRadius: item.data.autorId !== userLoged.id ? 0 : 15,
+                      borderTopEndRadius: item.data.autorId === userLoged.id ? 0 : 15,
+                      borderBottomEndRadius: 15,
+                      borderBottomStartRadius: 15,
                       width: '80%',
-                      flexDirection: 'row',
+                      flexDirection: 'column',
                       position: 'relative',
                     }}>
-                    <View style={{flex: 1}}>
-                      <Text style={styles.textMessage}>{item.data.text}</Text>
-                    </View>
+                    {item.data.imgs &&
+                      item.data.imgs.map(img => {
+                        return (
+                          <Image
+                            key={img}
+                            source={{uri: img}}
+                            style={{width: '100%', height: 200}}
+                            onPress={() => setImgCurrent(img)}
+                          />
+                        );
+                      })}
 
-                    <View style={{position: 'absolute', bottom: 5, right: 5}}>
-                      <Text style={[styles.textMessage, {fontSize: 10}]}>
-                        {item.data.createAtDisplay}
+                    <View style={{flex: 1}}>
+                      <Text
+                        style={[
+                          styles.textMessage,
+                          {
+                            color:
+                              item.data.autorId !== userLoged.id
+                                ? theme.colors.black
+                                : theme.colors.white,
+                          },
+                        ]}>
+                        {item.data.text}
                       </Text>
                     </View>
                   </View>
+                </View>
 
-                  {item.data.autorId === userLoged.id && (
-                    <SvgXml width='10' height='10' xml={flatMessage} />
-                  )}
+                <View style={{marginTop: 2}}>
+                  <Text style={[styles.textMessage, {fontSize: 10, color: theme.colors.grey3}]}>
+                    {item.data.createAtDisplay}
+                  </Text>
                 </View>
               </View>
             );
@@ -210,30 +307,76 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
         />
       )}
 
+      {newAssets && (
+        <View style={{flex: 1, width: '100%'}}>
+          <SwiperFlatList
+            index={0}
+            showPagination
+            paginationStyleItemActive={{backgroundColor: theme.colors.primary}}
+            paginationStyleItemInactive={{backgroundColor: theme.colors.disabled}}
+            data={newAssets}
+            renderItem={({item, index}) => (
+              <View style={[{width: width, height: '100%', position: 'relative'}]}>
+                <View
+                  style={{
+                    top: 10,
+                    right: 10,
+                    position: 'absolute',
+                    zIndex: 999,
+                  }}>
+                  <Icon
+                    name={NAME_ICON.close}
+                    type='ionicon'
+                    size={35}
+                    onPress={() => {
+                      const resultt = newAssets.splice(index, 1);
+                      console.log('resultt', {resultt, newAssets});
+                      if (newAssets.length > 0) {
+                        setNewAssets([...newAssets]);
+                      } else {
+                        setNewAssets(undefined);
+                      }
+                    }}
+                  />
+                </View>
+                <Image
+                  key={item.fileName}
+                  source={{uri: item.uri}}
+                  style={{width: width, height: '100%'}}
+                  resizeMode='contain'
+                />
+              </View>
+            )}
+          />
+        </View>
+      )}
+
       {/** input */}
       <View
         style={{
-          //backgroundColor: 'blue',
-          marginBottom: 0,
-          paddingBottom: 0,
-          paddingVertical: 2,
+          borderTopEndRadius: 15,
+          borderTopStartRadius: 15,
+          backgroundColor: theme.colors.disabled,
+          paddingVertical: 15,
+          paddingHorizontal: 10,
         }}>
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
+            borderRadius: 30,
+            backgroundColor: 'white',
           }}>
           <TextInput
             multiline
             numberOfLines={numberOfLines}
             style={{
-              borderRadius: 8,
-              marginBottom: 0,
-              borderWidth: 2,
+              borderWidth: 0,
               backgroundColor: 'transparent',
               color: 'black',
               flex: 1,
+              marginHorizontal: 10,
             }}
             placeholderTextColor={'rgba(0,0,0,0.6)'}
             value={newMessage}
@@ -248,17 +391,126 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
               setNewMessage(value);
             }}
           />
+
+          <Center>
+            <Box alignItems='center' position='absolute' bottom={10}>
+              <Stagger
+                visible={isOpen}
+                initial={{
+                  opacity: 0,
+                  scale: 0,
+                  translateY: 34,
+                }}
+                animate={{
+                  translateY: 0,
+                  scale: 1,
+                  opacity: 1,
+                  transition: {
+                    type: 'spring',
+                    duration: 50,
+                    mass: 0.8,
+                    stagger: {
+                      offset: 30,
+                      reverse: true,
+                    },
+                  },
+                }}
+                exit={{
+                  translateY: 34,
+                  scale: 0.5,
+                  opacity: 0,
+                  transition: {
+                    duration: 100,
+                    stagger: {
+                      offset: 30,
+                      reverse: true,
+                    },
+                  },
+                }}>
+                <Icon
+                  onPress={() => onLaunchLibrary()}
+                  name={NAME_ICON.photo}
+                  size={15}
+                  color={theme.colors.success}
+                  reverse
+                  type='material'
+                />
+                <Icon
+                  onPress={() => onLaunchCamera()}
+                  name={NAME_ICON.camera}
+                  size={15}
+                  color={theme.colors.warning}
+                  reverse
+                  type='material'
+                />
+              </Stagger>
+            </Box>
+            <HStack alignItems='center'>
+              <Icon
+                onPress={() => onToggle()}
+                name={NAME_ICON.attachment}
+                size={15}
+                color={theme.colors.primary}
+                reverse
+                type='material'
+              />
+            </HStack>
+          </Center>
+
           <Icon
             onPress={() => onSendMessage()}
             name={NAME_ICON.sendOutline}
-            containerStyle={{margin: 0, marginLeft: 2}}
+            size={15}
             color={theme.colors.primary}
             reverse
-            disabled={newMessage === undefined || newMessage === ''}
+            disabled={handleDisabled()}
             type='ionicon'
           />
         </View>
       </View>
+
+      {imgCurrent && (
+        <View
+          style={{
+            flex: 1,
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: theme.colors.disabled,
+          }}>
+          <View
+            style={{
+              top: 10,
+              right: 10,
+              position: 'absolute',
+              zIndex: 999,
+            }}>
+            <Icon
+              name={NAME_ICON.close}
+              type='ionicon'
+              size={35}
+              onPress={() => {
+                setImgCurrent(undefined);
+              }}
+            />
+          </View>
+          <Image
+            key={imgCurrent}
+            source={{uri: imgCurrent}}
+            style={{width: width, height: '100%'}}
+            resizeMode='contain'
+          />
+        </View>
+      )}
+
+      <Dialog
+        isVisible={isLoading}
+        onBackdropPress={() => setIsLoading(false)}
+        overlayStyle={{backgroundColor: 'transparent', borderWidth: 0, elevation: 0}}>
+        <Dialog.Loading />
+      </Dialog>
     </View>
   );
 };

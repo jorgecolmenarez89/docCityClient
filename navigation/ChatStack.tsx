@@ -1,6 +1,5 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {View} from 'react-native';
 import ChatScreen from '../screens/cliente/ChatScreen';
 import ChatsScreen from '../screens/cliente/ChatsScreen';
 

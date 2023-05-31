@@ -1,10 +1,10 @@
 import React, {useEffect, useState, useCallback, useContext} from 'react';
-import {View, StyleSheet, FlatList, TouchableHighlight, RefreshControl} from 'react-native';
+import {View, FlatList, TouchableHighlight, RefreshControl} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {AuthContext} from '../../context/AuthContext';
 import {getAllChats} from '../../services/user/chat';
 import {Avatar, Text, useTheme} from '@rneui/themed';
-import {ASSETS, IS_ANDROID} from '../../config/Constant';
+import {ASSETS} from '../../config/Constant';
 import Chat from '../../models/Chat';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../config/Types';
@@ -37,8 +37,9 @@ function ChatsScreen({navigation}: ChatsScreenProps) {
   }, []);
 
   return (
-    <View>
+    <View style={{flex: 1, height: '100%'}}>
       <FlatList
+        style={{flex: 1}}
         data={chats}
         extraData={chats}
         refreshing={isLoading}

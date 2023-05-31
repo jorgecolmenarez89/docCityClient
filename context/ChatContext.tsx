@@ -1,5 +1,4 @@
 import {createContext, ReactNode, useState} from 'react';
-import {create} from 'react-test-renderer';
 import Chat from '../models/Chat';
 
 interface ChatContextData {

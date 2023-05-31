@@ -11,6 +11,7 @@ module.exports = {
           tests: ['./tests/'],
           '@components': './components',
           '@atoms': ['./components/atoms'],
+          '@organisms': ['./components/organisms'],
           '@assets': ['./assets'],
           '@config': ['./config'],
           '@context': ['./context'],
@@ -27,6 +28,21 @@ module.exports = {
       'babel-plugin-inline-import',
       {
         extensions: ['.svg'],
+      },
+    ],
+    [
+      'module:react-native-dotenv',
+      {
+        envName: 'APP_ENV',
+        moduleName: '@env',
+        path: '.env',
+        blocklist: null,
+        allowlist: null,
+        blacklist: null, // DEPRECATED
+        whitelist: null, // DEPRECATED
+        safe: false,
+        allowUndefined: true,
+        verbose: false,
       },
     ],
   ],
