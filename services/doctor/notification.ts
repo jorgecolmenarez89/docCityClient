@@ -89,6 +89,7 @@ export const sendNotificationChat = async ({
           title: 'Mensaje nuevo',
           description: message.data.text,
           chatId: chat.data.id,
+          receiver: user.id,
           ...userMap,
         },
         notification: {

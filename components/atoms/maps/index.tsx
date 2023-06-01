@@ -51,6 +51,7 @@ const MapCustom = ({
     //console.log('centerPosition()1 ==>', true);
     const {latitude, longitude} = await getCurrentLocation();
     console.log('centerPosition() ==>', {latitude, longitude});
+    onRegionChange({latitude, longitude, ...DEFAULT_REGION});
     mapViewRef.current?.animateCamera({
       center: {latitude, longitude},
     });

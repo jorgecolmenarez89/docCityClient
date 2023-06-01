@@ -71,7 +71,12 @@ function ChatsScreen({navigation}: ChatsScreenProps) {
                 borderBottomColor: theme.colors.grey1,
               }}
               key={item.data.id}
-              onPress={() => navigation.navigate(NavigationRoutes.chat, {id: item.data.id || ''})}
+              onPress={() =>
+                navigation.navigate(NavigationRoutes.chat, {
+                  id: item.data.id || '',
+                  receiver: item.data.receiver?.id || '',
+                })
+              }
               onShowUnderlay={separators.highlight}
               onHideUnderlay={separators.unhighlight}>
               <View

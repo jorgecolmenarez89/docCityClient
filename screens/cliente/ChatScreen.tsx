@@ -11,7 +11,7 @@ import {Avatar, Dialog, Icon, Image, Text, useTheme} from '@rneui/themed';
 import {ASSETS, NAME_ICON} from '../../config/Constant';
 import Chat, {ChatModel} from '../../models/Chat';
 import {RootStackParamList} from '../../config/Types';
-import {NavigationRoutes, TypeToast} from '../../config/Enum';
+import {NavigationRoutes, StateUserInUseApp, TypeToast} from '../../config/Enum';
 import ChatMessage, {ChatMessageStatus} from '../../models/ChatMessage';
 
 import {dateMessage} from '../../helpers/Converts';
@@ -28,7 +28,7 @@ const {width, height} = Dimensions.get('window');
 const ChatScreen = ({navigation, route}: ChatScreenProps) => {
   const {isOpen, onToggle} = useDisclose();
   const {theme} = useTheme();
-  const {showToast, appState} = useContext(AuthContext);
+  const {showToast, appState, userLoged} = useContext(AuthContext);
   const {checkCameraPermission} = useContext(PermisionsContext);
   const isFocused = useIsFocused();
   const listMessages = useRef<FlatList<ChatMessage>>(null);
@@ -40,7 +40,7 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
   const [newMessage, setNewMessage] = useState<string>();
   const [newAssets, setNewAssets] = useState<Asset[]>();
   const [numberOfLines, setNumberOfLines] = useState<number>(1);
-  const {userLoged} = useContext(AuthContext);
+  const [stateReceiver, setStateReceiver] = useState(StateUserInUseApp.outLine);
 
   const onLaunchLibrary = async () => {
     try {
@@ -166,7 +166,7 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
   };
 
   useEffect(() => {
-    const {id} = route.params;
+    const {id, receiver} = route.params;
     if (id) {
       loadChat(id);
     }
@@ -189,9 +189,24 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
         handleSubmit(updateChat.data.messages);
       });
 
+    const subscriberUser = firestore()
+      .collection('users')
+      .doc(receiver)
+      .onSnapshot(documentsSnapshot => {
+        console.log('documentsSnapshot user =>', {
+          data: documentsSnapshot,
+          id: receiver,
+          chat: chat,
+        });
+        if (documentsSnapshot.data()) {
+          setStateReceiver(documentsSnapshot.data().state || StateUserInUseApp.outLine);
+        }
+      });
+
     return () => {
       showSubscription.remove();
       subscriber();
+      subscriberUser();
     };
   }, [route]);
 
@@ -223,9 +238,14 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
 
         <Avatar rounded size={'small'} source={{uri: chat?.data.receiver?.photo || ASSETS.user}} />
 
-        <Text style={[styles.title, {color: theme.colors.grey2}]}>
-          {chat?.data.receiver?.fullName}
-        </Text>
+        <View style={{flexDirection: 'column'}}>
+          <Text style={[styles.title, {color: theme.colors.grey2}]}>
+            {chat?.data.receiver?.fullName}
+          </Text>
+          {stateReceiver === StateUserInUseApp.onLine && (
+            <Text style={[styles.title, {color: theme.colors.success}]}>{stateReceiver}</Text>
+          )}
+        </View>
       </View>
 
       {/** listado de mensajes*/}

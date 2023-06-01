@@ -12,7 +12,7 @@ const config = {
     ChatsStack: {
       screens: {
         Chats: 'chats',
-        Chat: 'chat/:id',
+        Chat: 'chat/:id/:receiver',
       },
     },
     Profile: 'user',

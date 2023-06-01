@@ -89,7 +89,7 @@ const useNotification = () => {
       if (supported) {
         // Opening the link with some app, if the URL scheme is "http" the web link should be opened
         // by some browser in the mobile
-        await Linking.openURL(`${PREFIXES.navigation}chat/${data.chatId}`);
+        await Linking.openURL(`${PREFIXES.navigation}chat/${data.chatId}/${data.receiver}`);
       } else {
         Alert.alert(`Don't know how to open this URL: ${PREFIXES.navigation}chat/${data.chatId}`);
       }

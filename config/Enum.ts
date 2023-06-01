@@ -14,3 +14,8 @@ export enum NavigationRoutes {
   chat = 'Chat',
   chats = 'Chats',
 }
+
+export enum StateUserInUseApp {
+  onLine = 'En linea',
+  outLine = 'Fuera de linea',
+}

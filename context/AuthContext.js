@@ -22,7 +22,7 @@ export const AuthProvider = ({children}) => {
   const [navigation, setNavigation] = useState();
   const {token, showNotification, notification, onDeleteNotification} = useNotification();
   const [chats, setChats] = useState([]);
-  const {appState} = useAppState();
+  const {appState, updateId} = useAppState();
 
   const login = async (username, password) => {
     setAuthLoading(true);
@@ -33,6 +33,7 @@ export const AuthProvider = ({children}) => {
       setIsLoading(false);
       setAuthLoading(false);
       changeUserLoged(response.data);
+      updateId(response.data.id);
     } catch (error) {
       if (error.response.status === 400) {
         setIsLoading(false);
@@ -60,6 +61,7 @@ export const AuthProvider = ({children}) => {
       setAuthLoading(false);
       setIsLoading(false);
       changeUserLoged(response.data);
+      updateId(response.data.id);
     } catch (error) {
       if (error.response.status === 400) {
         setAuthLoading(false);
@@ -84,6 +86,8 @@ export const AuthProvider = ({children}) => {
       setUserLoged(JSON.parse(userToken));
       setUserToken(userToken);
       setIsLoading(false);
+      console.log('id', JSON.parse(userToken).id);
+      updateId(JSON.parse(userToken).id);
     } catch (e) {
       setIsLoading(false);
       console.log('isLoggeIn in error' + e);
