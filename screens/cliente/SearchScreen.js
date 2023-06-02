@@ -15,8 +15,7 @@ import {AuthContext} from '../../context/AuthContext';
 
 function SearchScreen({navigation}) {
   const {theme} = useTheme();
-  const [especialidades, setEspecialidades] = useState([]);
-  const {userLoged, token} = useContext(AuthContext);
+  const {userLoged, token, getEspecialitiesAll, specialities} = useContext(AuthContext);
 
   const [locationUser, setLocationUser] = useState();
   const [especialidadId, setEspecialidadId] = useState();
@@ -27,15 +26,6 @@ function SearchScreen({navigation}) {
   useEffect(() => {
     getEspecialitiesAll();
   }, []);
-
-  const getEspecialitiesAll = async () => {
-    try {
-      const {data} = await getEspecialities();
-      setEspecialidades(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const resetSearch = async () => {
     setEspecialidadId(undefined);
@@ -49,6 +39,7 @@ function SearchScreen({navigation}) {
       user: locationUser,
       especialidadId,
     });
+    console.log('handleSearch() ==> ', {status, data});
     if (status === 200) {
       const newDoctors = data.map(doctor => new Doctor(Doctor.formatData(doctor)));
       setDoctors(newDoctors);
@@ -104,7 +95,7 @@ function SearchScreen({navigation}) {
         {!doctors && (
           <View style={styles.overlaySearch}>
             <SelectDropdown
-              data={especialidades}
+              data={specialities}
               onSelect={(selectedItem, index) => {
                 console.log('onSelect() ==>', {selectedItem, index});
                 setEspecialidadId(selectedItem.id);

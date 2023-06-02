@@ -6,7 +6,7 @@ export interface DoctorModel {
   };
   deviceToken?: string;
   dataRaw: any;
-  photo?: string;
+  url?: string;
   id: string;
 }
 
@@ -25,7 +25,7 @@ class Doctor {
         latitude: parseFloat(splitLocation[0]),
         longitude: parseFloat(splitLocation[1]),
       },
-      photo: data.photo,
+      url: data.url,
       deviceToken: data.deviceToken,
       id: data.id,
       dataRaw: data,

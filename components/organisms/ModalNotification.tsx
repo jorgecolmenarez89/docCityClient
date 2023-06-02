@@ -14,12 +14,15 @@ import {createChat} from '../../services/user/chat';
 const ModalNotification = ({
   onClose,
   notification,
+  specialities,
 }: {
   onClose: () => void;
   notification: Notification;
+  specialities: {id: number; name: string}[];
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const {userLoged, showToast, navigation, token} = useContext(AuthContext);
+  console.log('modal ==> ', {specialities, notification});
 
   if (notification.data.type === TypeNotification.request) {
     return (
@@ -48,17 +51,37 @@ const ModalNotification = ({
                 containerStyle={{marginBottom: 20}}
                 size={100}
                 rounded
-                source={{uri: notification.data.data.user.photo || ASSETS.user}}></Avatar>
+                source={{
+                  uri:
+                    notification.data.data.user.url !== 'null'
+                      ? notification.data.data.user.url
+                      : ASSETS.user,
+                }}></Avatar>
 
               <Text style={[styles.modalDescription, styles.textBold, styles.capitalize]}>
                 {notification.data.data.user.fullName}
               </Text>
 
-              <Text style={[styles.modalDescription, styles.textBold]}>
-                <Text style={[styles.modalDescription]}>
-                  {notification.data.data.user.colegioMedicoId}
+              {specialities && specialities.length > 0 && (
+                <Text style={[styles.modalDescription, styles.textBold]}>
+                  <Text style={[styles.modalDescription]}>
+                    {
+                      specialities.find(
+                        speciality =>
+                          speciality.id == notification.data.data.user.medicalSpecialityId,
+                      )?.name
+                    }
+                  </Text>
                 </Text>
-              </Text>
+              )}
+
+              {notification.data.data.user.colegioMedicoId && (
+                <Text style={[styles.modalDescription, styles.textBold]}>
+                  <Text style={[styles.modalDescription]}>
+                    {notification.data.data.user.colegioMedicoId}
+                  </Text>
+                </Text>
+              )}
             </View>
 
             <View style={styles.optionsModal}>
@@ -118,6 +141,7 @@ const ModalNotification = ({
                       type: TypeToast.success,
                     });
                     const {status, data} = await createChat({
+                      id: body.id,
                       doctor: notification.data.data.user,
                       user: {...userLoged, deviceToken: token},
                     });
@@ -125,7 +149,7 @@ const ModalNotification = ({
                     if (status) {
                       navigation.navigate('ChatsStack', {
                         screen: NavigationRoutes.chat,
-                        params: {id: data},
+                        params: {id: data, receiver: notification.data.data.user.id},
                       });
                     }
                     onClose();

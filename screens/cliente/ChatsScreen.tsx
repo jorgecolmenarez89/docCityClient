@@ -92,7 +92,12 @@ function ChatsScreen({navigation}: ChatsScreenProps) {
                   <Avatar
                     rounded
                     size={'medium'}
-                    source={{uri: item.data.receiver?.photo || ASSETS.user}}
+                    source={{
+                      uri:
+                        (item.data.receiver?.url || 'null') !== 'null'
+                          ? item.data.receiver?.url
+                          : ASSETS.user,
+                    }}
                   />
                   <Text style={{marginHorizontal: 10, textTransform: 'capitalize'}}>
                     {item.data.receiver?.fullName}

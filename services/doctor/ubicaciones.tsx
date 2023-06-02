@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {URL_MOCK} from '../../config/Constant';
+import {ASSETS, SEARCH_DISTANCE, URL_MOCK} from '../../config/Constant';
 import {axiosInstance} from '../../config/api';
 
 export const agregarUbicacion = async body => {};
@@ -11,9 +11,12 @@ export const mostrarUbicaciones = async (params: {
   especialidadId: number;
 }) => {
   try {
-    return await axios.get(`${URL_MOCK}doctors`, {
-      headers: {'Content-Type': 'application/json; charset=utf-8'},
-    });
+    return await axiosInstance({}).get(
+      `users/GetDoctorsNearMeBySpeciality/${params.user.latitude},${params.user.longitude}/${SEARCH_DISTANCE}/${params.especialidadId}`,
+      {
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+      },
+    );
   } catch (err) {
     console.log('mostrarUbicaciones() ==> err', {err});
     return {status: false, msg: err?.message};

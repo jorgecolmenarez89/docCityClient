@@ -70,7 +70,7 @@ function AppStack() {
     return () => subscriber();
   }, []);
 
-  return !userLoged.isCompletedInfo ? (
+  return userLoged.isCompletedInfo ? (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,

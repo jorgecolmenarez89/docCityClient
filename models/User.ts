@@ -6,7 +6,7 @@ export interface UserModel {
   };
   deviceToken: string;
   dataRaw: any;
-  photo?: string;
+  url?: string;
   id: string;
 }
 
@@ -28,7 +28,7 @@ class User {
       deviceToken: data.deviceToken,
       dataRaw: data,
       id: data.id,
-      photo: data.photo,
+      url: data.url,
     };
   }
 }

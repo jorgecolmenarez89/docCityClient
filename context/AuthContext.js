@@ -9,6 +9,7 @@ import {axiosInstance} from '../config/api';
 import useNotification from '../hooks/useNotification';
 import ModalNotification from '../components/organisms/ModalNotification';
 import useAppState from '../hooks/useAppState';
+import {getEspecialities} from '../services/doctor/medicine';
 
 export const AuthContext = createContext();
 
@@ -21,8 +22,8 @@ export const AuthProvider = ({children}) => {
   const [userLoged, setUserLoged] = useState(null);
   const [navigation, setNavigation] = useState();
   const {token, showNotification, notification, onDeleteNotification} = useNotification();
-  const [chats, setChats] = useState([]);
   const {appState, updateId} = useAppState();
+  const [specialities, setSpecialities] = useState([]);
 
   const login = async (username, password) => {
     setAuthLoading(true);
@@ -127,8 +128,18 @@ export const AuthProvider = ({children}) => {
     setNavigation(newNavigation);
   };
 
+  const getEspecialitiesAll = async () => {
+    try {
+      const {data} = await getEspecialities();
+      setSpecialities(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     isLoggedIn();
+    getEspecialitiesAll();
   }, []);
 
   return (
@@ -149,10 +160,15 @@ export const AuthProvider = ({children}) => {
         onUpdateNavigation,
         navigation,
         appState,
+        getEspecialitiesAll,
+        specialities,
       }}>
       {children}
       {notification && (
-        <ModalNotification onClose={() => onDeleteNotification()} {...{notification}} />
+        <ModalNotification
+          onClose={() => onDeleteNotification()}
+          {...{notification, specialities}}
+        />
       )}
     </AuthContext.Provider>
   );

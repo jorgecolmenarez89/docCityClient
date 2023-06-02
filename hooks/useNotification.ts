@@ -41,6 +41,7 @@ const showNotification = async ({notification, data}: OptionNotification) => {
   await notifee.displayNotification({
     title: notification.title,
     body: notification.body,
+    data: data,
     android: {
       channelId,
       vibrationPattern: [300, 500],
@@ -138,7 +139,7 @@ const useNotification = () => {
       });
     });
 
-    const unsubscribeNotifee = notifee.onForegroundEvent(({type, detail}) => {
+    const unsubscribeNotifee = notifee.onForegroundEvent(async ({type, detail}) => {
       console.log('onForegroundEvent() ==> unsubscribe', {type, detail});
       switch (type) {
         case EventType.DISMISSED:
@@ -146,6 +147,9 @@ const useNotification = () => {
           break;
         case EventType.PRESS:
           console.log('User pressed notification', detail.notification);
+          if (detail.notification) {
+            await managerNotification(detail.notification);
+          }
           break;
       }
     });

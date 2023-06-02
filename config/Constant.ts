@@ -46,3 +46,6 @@ export const DEFAULT_REGION = {
 export const PREFIXES = {
   navigation: 'doccity://',
 };
+
+// distancia de busqueda para doctores en mts
+export const SEARCH_DISTANCE = 9000;

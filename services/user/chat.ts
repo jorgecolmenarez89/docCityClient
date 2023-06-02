@@ -5,10 +5,10 @@ import User, {UserModel} from '../../models/User';
 import Chat from '../../models/Chat';
 import ChatMessage from '../../models/ChatMessage';
 
-export const createChat = async ({user, doctor}: {user: any; doctor: any}) => {
+export const createChat = async ({id, user, doctor}: {id?: string; user: any; doctor: any}) => {
   try {
-    const doc = await firestore().collection('chats').add(Chat.create({user, doctor}));
-    return {status: true, data: doc.id};
+    await firestore().collection('chats').doc(id).set(Chat.create({user, doctor}));
+    return {status: true, data: id};
   } catch (err: any) {
     console.log('createChat() ==> err', {err});
     return {status: false, message: 'No fue posible iniciar la conversación.'};

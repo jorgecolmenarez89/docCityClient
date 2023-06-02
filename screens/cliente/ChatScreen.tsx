@@ -167,6 +167,7 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
 
   useEffect(() => {
     const {id, receiver} = route.params;
+    console.log('useEffect() ==> { id, receiver }', {id, receiver});
     if (id) {
       loadChat(id);
     }
@@ -236,7 +237,16 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
           }}
         />
 
-        <Avatar rounded size={'small'} source={{uri: chat?.data.receiver?.photo || ASSETS.user}} />
+        <Avatar
+          rounded
+          size={'small'}
+          source={{
+            uri:
+              (chat?.data.receiver?.url || 'null') !== 'null'
+                ? chat?.data.receiver?.url
+                : ASSETS.user,
+          }}
+        />
 
         <View style={{flexDirection: 'column'}}>
           <Text style={[styles.title, {color: theme.colors.grey2}]}>
