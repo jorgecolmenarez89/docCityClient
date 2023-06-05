@@ -20,13 +20,13 @@ function showTab(route) {
   // If the focused route is not found, we need to assume it's the initial screen
   // This can happen during if there hasn't been any navigation inside the screen
   // In our case, it's "Feed" as that's the first screen inside the navigator
-  const routeName = getFocusedRouteNameFromRoute(route) ?? NavigationRoutes.chat;
+  const routeName = getFocusedRouteNameFromRoute(route) ?? NavigationRoutes.chats;
 
   switch (routeName) {
     case NavigationRoutes.chat:
-      return {display: 'none'};
+      return 'none';
     default:
-      return {display: 'flex'};
+      return undefined;
   }
 }
 
@@ -113,14 +113,18 @@ function AppStack() {
         options={({route, navigation}) => {
           const newOptions = {
             tabBarLabel: 'Chats',
-            tabBarBadge: notifications,
+            //tabBarBadge: notifications,
             tabBarLabelStyle: {
               fontSize: 12,
             },
             tabBarIcon: ({color, size}) => (
               <Icon name='chatbox-outline' color={color} size={size} type='ionicon' />
             ),
-            tabBarStyle: showTab(route),
+            tabBarStyle: {
+              height: 60,
+              backgroundColor: '#cdcdcd',
+              display: showTab(route),
+            },
           };
 
           return newOptions;
