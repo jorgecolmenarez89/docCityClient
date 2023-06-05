@@ -63,6 +63,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 const useNotification = () => {
   const [token, setToken] = useState<string>();
   const [notification, setNotification] = useState<any>();
+  const [updateVerfication, setUpdateVerfication] = useState<any>();
 
   const managerNotification = async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
     const {data} = remoteMessage;
@@ -94,6 +95,14 @@ const useNotification = () => {
       } else {
         Alert.alert(`Don't know how to open this URL: ${PREFIXES.navigation}chat/${data.chatId}`);
       }
+    } else if (data?.type === TypeNotification.verificacion) {
+      console.log('manager() ==>', {
+        data,
+        validate: data?.type === TypeNotification.verificacion,
+        type: data?.type,
+        enum: TypeNotification.verificacion,
+      });
+      await setUpdateVerfication(updateVerfication + 1);
     }
 
     await notifee.cancelNotification(remoteMessage.messageId || '');
@@ -160,7 +169,7 @@ const useNotification = () => {
     };
   }, []);
 
-  return {token, showNotification, notification, onDeleteNotification};
+  return {token, showNotification, notification, onDeleteNotification, updateVerfication};
 };
 
 export default useNotification;

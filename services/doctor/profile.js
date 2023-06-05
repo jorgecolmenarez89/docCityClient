@@ -44,3 +44,7 @@ export const formatBodyUser = body => {
     doctorUserHealthCenters: [],
   };
 };
+
+export const getProfile = async id => {
+  return await axiosInstance({isNode: true}).get(`/users/${id}`);
+};

@@ -10,6 +10,7 @@ import useNotification from '../hooks/useNotification';
 import ModalNotification from '../components/organisms/ModalNotification';
 import useAppState from '../hooks/useAppState';
 import {getEspecialities} from '../services/doctor/medicine';
+import {getProfile} from '../services/doctor/profile';
 
 export const AuthContext = createContext();
 
@@ -21,7 +22,8 @@ export const AuthProvider = ({children}) => {
   const [userToken, setUserToken] = useState(null);
   const [userLoged, setUserLoged] = useState(null);
   const [navigation, setNavigation] = useState();
-  const {token, showNotification, notification, onDeleteNotification} = useNotification();
+  const {token, showNotification, notification, onDeleteNotification, updateVerfication} =
+    useNotification();
   const {appState, updateId} = useAppState();
   const [specialities, setSpecialities] = useState([]);
 
@@ -136,6 +138,21 @@ export const AuthProvider = ({children}) => {
       console.log(error);
     }
   };
+
+  const loadData = async () => {
+    try {
+      if (userLoged) {
+        const {data} = await getProfile(userLoged.id);
+        changeUserLoged(data.data);
+      }
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [updateVerfication]);
 
   useEffect(() => {
     isLoggedIn();
