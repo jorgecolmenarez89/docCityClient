@@ -20,7 +20,7 @@ const useAppState = () => {
 
   const updateUserState = async (state: StateUserInUseApp) => {
     console.log('updateUserState() ==> ', {state, idUser});
-    await firestore().collection('users').doc(idUser).update({
+    await firestore().collection('users').doc(idUser).set({
       state: state,
     });
   };
