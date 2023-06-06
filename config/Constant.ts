@@ -3,7 +3,6 @@ import {API_URL as apiUrl, URL_MOCK as urlMock, URL_NODE as urlNode} from '@env'
 
 const locationPin = require('../assets/location-pin.png');
 const business = require('../assets/business.png');
-const gifCard = require('../assets/gif-card.png');
 const doctorPin = require('../assets/doctor-pin.png');
 const flatMessage = require('../assets/flat-message.svg');
 const flatReceiverMessage = require('../assets/flat-message-receiver.svg');
@@ -20,7 +19,6 @@ export const BACKGROUNG_COLOR_MODAL = 'rgba(0,0,0,0.6)';
 export const ASSETS = {
   locationPin: locationPin,
   business: business,
-  gifCard: gifCard,
   doctorPin: doctorPin,
   user: 'https://cdn-icons-png.flaticon.com/512/3033/3033143.png',
   flatMessage: flatMessage,

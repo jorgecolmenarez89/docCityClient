@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "android": "npm run clean-android && react-native run-android",
+    "android:release": "npm run clean-android && react-native run-android --mode=release",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "npx react-native start --reset-cache --verbose",
