@@ -2,6 +2,7 @@ export enum StatusRequest {
   started = 'iniciada',
   inProgress = 'en proceso',
   cancelada = 'cancelada',
+  finished = 'finalizada',
 }
 
 export enum TypeToast {
