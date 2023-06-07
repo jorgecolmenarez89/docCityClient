@@ -1,12 +1,14 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar, Alert} from 'react-native';
 import {CheckBox, Button} from '@rneui/themed';
 import {AuthContext} from '../../context/AuthContext';
 import {insertTriaje} from '../../services/doctor/triaje';
-import {updateDoctorInfo, formatBodyUser} from '../../services/doctor/profile';
+import {updateDoctorInfo, formatBodyUser, updateUserInfo} from '../../services/doctor/profile';
+import {useLocation} from '../../hooks/useLocation';
 
 function TriajeScreen({navigation}) {
   const {userLoged, changeUserLoged} = useContext(AuthContext);
+  const {getCurrentLocation} = useLocation();
 
   const [answerToQuestion1, setAnswerToQuestion1] = useState('');
   const [answerToQuestion2, setAnswerToQuestion2] = useState('');
@@ -21,6 +23,11 @@ function TriajeScreen({navigation}) {
   const [answerToQuestion11, setAnswerToQuestion11] = useState('');
   const [answerToQuestion12, setAnswerToQuestion12] = useState('');
   const [loading, setLoading] = useState(false);
+  const [coordinantes, setCoordinates] = useState('');
+
+  useEffect(() => {
+    updatePosition();
+  }, []);
 
   const toggleCheckbox1 = (e, value) => {
     setAnswerToQuestion1(value);
@@ -103,13 +110,30 @@ function TriajeScreen({navigation}) {
           answerToQuestion11,
           answerToQuestion12,
         };
-        const bodyUser = formatBodyUser({
-          ...userLoged,
+        const bodyUser = {
+          id: userLoged.id,
+          userName: userLoged.userName,
+          email: userLoged.email,
+          fullName: userLoged.fullName,
+          colegioMedicoId: userLoged.colegioMedicoId,
+          experienceYears: userLoged.experienceYears,
+          medicalSpecialityId: userLoged.medicalSpecialityId,
+          sexo: '',
+          isAuthorizedDoctor: false,
+          phoneNumber: userLoged.phoneNumber,
+          deviceToken: userLoged.deviceToken,
+          geoLocation: coordinantes,
+          url: '',
+          urlCredential: '',
+          isLocalizable: true,
+          statusDoctor: 'active',
+          statusDoctorDescription: 'active',
           isCompletedInfo: true,
-        });
+        };
+        console.log('bodyUser', bodyUser);
         await insertTriaje(bodyTriaje);
-        await updateDoctorInfo(bodyUser);
-        changeUserLoged(bodyUser);
+        await updateUserInfo(bodyUser);
+        changeUserLoged({...userLoged, ...bodyUser});
         setLoading(false);
         Alert.alert('Exito', 'Datos actualizados correctamente');
       } catch (error) {
@@ -118,6 +142,11 @@ function TriajeScreen({navigation}) {
         Alert.alert('Error', 'Ocurrio un error intente nuevamente');
       }
     }
+  };
+
+  const updatePosition = async () => {
+    const {latitude, longitude} = await getCurrentLocation();
+    setCoordinates(`${latitude},${longitude}`);
   };
 
   return (
