@@ -150,7 +150,7 @@ function ProfileScreen({navigation}) {
       geoLocation: userLoged.geoLocation,
       url,
       urlCredential: userLoged.urlCredential,
-      isLocalizable: active,
+      isLocalizable: userLoged.isLocalizable ? userLoged.isLocalizable : false,
       statusDoctor: userLoged.statusDoctor,
       statusDoctorDescription: userLoged.statusDoctorDescription,
       isCompletedInfo: userLoged.isCompletedInfo,
