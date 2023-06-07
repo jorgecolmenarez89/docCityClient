@@ -13,6 +13,7 @@ import Chat from '../models/Chat';
 import ChatStack from './ChatStack';
 import {NavigationRoutes} from '../config/Enum';
 import {getFocusedRouteNameFromRoute, useNavigation} from '@react-navigation/native';
+import {getProfile} from '../services/doctor/profile';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,6 +35,10 @@ function AppStack() {
   const {userLoged, onUpdateNavigation} = useContext(AuthContext);
   const {chats, notifications, updateNotifications, updateChats} = useContext(ChatContext);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   useEffect(() => {
     // Escuchar si cambia alguno de mis chats
@@ -69,6 +74,15 @@ function AppStack() {
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, []);
+
+  const loadData = async () => {
+    try {
+      const {data} = await getProfile(userLoged.id);
+      changeUserLoged(data.data);
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
 
   return userLoged.isCompletedInfo ? (
     <Tab.Navigator

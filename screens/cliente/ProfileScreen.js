@@ -21,7 +21,7 @@ function ProfileScreen({navigation}) {
   const [sex, setSex] = useState('');
   const [loading, setLoading] = useState(false);
   const [defaultSex, setDefaultSex] = useState('');
-  const [url, setUrl] = useState(null);
+  const [url, setUrl] = useState('');
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -68,8 +68,10 @@ function ProfileScreen({navigation}) {
           const path = `images/${userLoged.id}/${filename}`;
           uploadImageAndGetUrl(uploadUri, path).then(url => {
             setUrl(url);
+            handleUpdateAvatar(url);
           });
         });
+        setIsVisible(false);
       }
     });
   };
@@ -121,8 +123,10 @@ function ProfileScreen({navigation}) {
             const path = `images/${userLoged.id}/${filename}`;
             uploadImageAndGetUrl(uploadUri, path).then(url => {
               setUrl(url);
+              handleUpdateAvatar(url);
             });
           });
+          setIsVisible(false);
         }
       });
     } else {
@@ -132,17 +136,30 @@ function ProfileScreen({navigation}) {
 
   const handleUpdate = async () => {
     const body = {
-      ...userLoged,
+      id: userLoged.id,
       userName: userLoged.userName,
+      email: userLoged.email,
+      fullName: userLoged.fullName,
+      colegioMedicoId: userLoged.colegioMedicoId,
+      experienceYears: userLoged.experienceYears,
+      medicalSpecialityId: userLoged.medicalSpecialityId,
       sexo: sex,
+      isAuthorizedDoctor: userLoged.isAuthorizedDoctor,
       phoneNumber: phone,
+      deviceToken: userLoged.deviceToken,
+      geoLocation: userLoged.geoLocation,
       url,
+      urlCredential: userLoged.urlCredential,
+      isLocalizable: active,
+      statusDoctor: userLoged.statusDoctor,
+      statusDoctorDescription: userLoged.statusDoctorDescription,
+      isCompletedInfo: userLoged.isCompletedInfo,
     };
     const formatBody = formatBodyUser(body);
     console.log('formatBody', formatBody);
     try {
       await updateUserInfo(formatBody);
-      changeUserLoged(formatBody);
+      changeUserLoged({...userLoged, ...body});
       Alert.alert('Exito', 'Datos actualizados correctamente');
     } catch (error) {
       console.log('error', error);
@@ -158,6 +175,25 @@ function ProfileScreen({navigation}) {
       return url;
     } catch (err) {
       Alert.alert(err);
+    }
+  };
+
+  const handleUpdateAvatar = async urlRecibida => {
+    //setLoading(true);
+    const body = {
+      ...userLoged,
+      url: urlRecibida,
+    };
+    try {
+      console.log('body avatar', body);
+      await updateUserInfo(body);
+      changeUserLoged({...userLoged, ...body});
+      //setLoading(false);
+      Alert.alert('Exito', 'Avatar actualizado correctamente');
+    } catch (error) {
+      console.log('error', error.response.data);
+      //setLoading(false);
+      Alert.alert('Error', 'Ocurrio un error intente nuevamente');
     }
   };
 
@@ -182,36 +218,18 @@ function ProfileScreen({navigation}) {
           <Text style={styles.title}>Editar Perfil</Text>
         </View>
         <View style={styles.contentImage}>
-          {!fileData && (
-            <Avatar
-              size={100}
-              rounded
-              source={{uri: 'https://cdn-icons-png.flaticon.com/512/147/147133.png'}}>
-              <Avatar.Accessory
-                size={23}
-                style={{backgroundColor: '#0b445e'}}
-                onPress={() => setIsVisible(true)}
-              />
-            </Avatar>
-          )}
-
-          {fileData &&
-            fileData.assets.map((url, i) => (
-              <View style={styles.imageContainer} key={'img-' + i}>
-                <Avatar
-                  size={100}
-                  rounded
-                  source={{
-                    uri: url.uri,
-                  }}>
-                  <Avatar.Accessory
-                    size={23}
-                    style={{backgroundColor: '#66bfc5'}}
-                    onPress={() => setIsVisible(true)}
-                  />
-                </Avatar>
-              </View>
-            ))}
+          <Avatar
+            size={100}
+            rounded
+            source={{
+              uri: url != '' ? url : 'https://cdn-icons-png.flaticon.com/512/147/147133.png',
+            }}>
+            <Avatar.Accessory
+              size={23}
+              style={{backgroundColor: '#0b445e'}}
+              onPress={() => setIsVisible(true)}
+            />
+          </Avatar>
         </View>
 
         <View style={styles.inputContent}>
