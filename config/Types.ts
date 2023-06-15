@@ -4,4 +4,5 @@ export type RootStackParamList = {
   Chats?: undefined;
   Chat?: {id: string; receiver?: string};
   Profile?: undefined;
+  CargaAdd?: undefined;
 };

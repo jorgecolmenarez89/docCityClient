@@ -5,7 +5,7 @@ import DashboardScreen from '../screens/cliente/DashboardScreen';
 import SearchStack from '../navigation/SearchStack';
 import ChatsScreen from '../screens/cliente/ChatsScreen';
 import ProfileStack from '../navigation/ProfileStack';
-import TriajeStack from '../navigation/TriajeStack';
+import CargaStack from '../navigation/CargaStack';
 import {AuthContext} from '../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
 import {ChatContext} from '../context/ChatContext';
@@ -32,7 +32,7 @@ function showTab(route) {
 }
 
 function AppStack() {
-  const {userLoged, onUpdateNavigation} = useContext(AuthContext);
+  const {userLoged, onUpdateNavigation, changeUserLoged} = useContext(AuthContext);
   const {chats, notifications, updateNotifications, updateChats} = useContext(ChatContext);
   const navigation = useNavigation();
 
@@ -159,7 +159,7 @@ function AppStack() {
       />
     </Tab.Navigator>
   ) : (
-    <TriajeStack />
+    <CargaStack />
   );
 }
 
