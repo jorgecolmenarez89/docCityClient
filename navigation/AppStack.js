@@ -32,7 +32,7 @@ function showTab(route) {
 }
 
 function AppStack() {
-  const {userLoged, onUpdateNavigation} = useContext(AuthContext);
+  const {userLoged, onUpdateNavigation, changeUserLoged} = useContext(AuthContext);
   const {chats, notifications, updateNotifications, updateChats} = useContext(ChatContext);
   const navigation = useNavigation();
 
