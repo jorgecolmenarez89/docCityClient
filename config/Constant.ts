@@ -34,6 +34,7 @@ export const NAME_ICON = {
   photo: 'photo',
   camera: 'camera-alt',
   attachment: 'attachment',
+  dotsVertical: 'dots-vertical',
 };
 
 export const DEFAULT_REGION = {

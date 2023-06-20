@@ -1,24 +1,23 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, StyleSheet, Alert} from 'react-native';
+import {View, Text, StyleSheet, Alert, TouchableOpacity} from 'react-native';
+import {Popover, Button as Butt, Divider} from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SelectDropdown from 'react-native-select-dropdown';
-import {Button, ButtonGroup, useTheme} from '@rneui/themed';
-import {getEspecialities} from '../../services/doctor/medicine';
+import {Button, useTheme, Icon} from '@rneui/themed';
 import MapCustom from '../../components/atoms/maps';
-import {Card} from '@rneui/themed';
-import {ASSETS} from '../../config/Constant';
+import {NAME_ICON} from '../../config/Constant';
 import {mostrarUbicaciones} from '../../services/doctor/ubicaciones';
 import Doctor from '../../models/Doctor';
-import {Icon} from '@rneui/base';
 import {sendNotificationRequest} from '../../services/doctor/notification';
 import {AuthContext} from '../../context/AuthContext';
+import MapFilterComponet from '../../components/molecules/MapFilter';
 
 function SearchScreen({navigation}) {
   const {theme} = useTheme();
   const {userLoged, token, getEspecialitiesAll, specialities} = useContext(AuthContext);
 
   const [locationUser, setLocationUser] = useState();
-  const [especialidadId, setEspecialidadId] = useState();
+  const [filterValues, setFilterValues] = useState({specialtyId: undefined});
   const [doctors, setDoctors] = useState();
 
   const [loading, setLoading] = useState(false);
@@ -37,18 +36,26 @@ function SearchScreen({navigation}) {
     setLoading(true);
     const {status, data} = await mostrarUbicaciones({
       user: locationUser,
-      especialidadId,
+      especialidadId: filterValues.especialidadId,
     });
     console.log('handleSearch() ==> ', {status, data});
     if (status === 200) {
-      const newDoctors = data.map(doctor => new Doctor(Doctor.formatData(doctor)));
-      setDoctors(newDoctors);
-      console.log('handleSearch() ==>', {userLoged});
-      const result = await sendNotificationRequest({
-        doctors: newDoctors,
-        user: {...userLoged, deviceToken: token},
-      });
-      console.log('handleSearch() ==> result', {result, userLoged});
+      if (data && data.length > 0) {
+        const newDoctors = data.map(doctor => new Doctor(Doctor.formatData(doctor)));
+        setDoctors(newDoctors);
+        console.log('handleSearch() ==>', {userLoged});
+        const result = await sendNotificationRequest({
+          doctors: newDoctors,
+          user: {...userLoged, deviceToken: token},
+        });
+        console.log('handleSearch() ==> result', {result, userLoged});
+      } else {
+        setDoctors(undefined);
+        Alert.alert(
+          'No hay resultados',
+          'No se encontró ningún medico que coincida con tu búsqueda.',
+        );
+      }
     } else {
       Alert.alert('Error', 'No fue posible enviar la información por el momento');
     }
@@ -56,7 +63,7 @@ function SearchScreen({navigation}) {
   };
 
   const validButton = () => {
-    if (especialidadId !== undefined && locationUser !== undefined) {
+    if (filterValues.especialidadId !== undefined && locationUser !== undefined) {
       return false;
     }
     return true;
@@ -92,41 +99,8 @@ function SearchScreen({navigation}) {
             longitude: region.longitude,
           })
         }>
-        {!doctors && (
-          <View style={styles.overlaySearch}>
-            <SelectDropdown
-              data={specialities}
-              onSelect={(selectedItem, index) => {
-                console.log('onSelect() ==>', {selectedItem, index});
-                setEspecialidadId(selectedItem.id);
-              }}
-              buttonTextAfterSelection={(selectedItem, index) => {
-                return selectedItem.name;
-              }}
-              rowTextForSelection={(item, index) => {
-                return item.name;
-              }}
-              buttonStyle={styles.dropdown1BtnStyle}
-              buttonTextStyle={styles.dropdown1BtnTxtStyle}
-              renderDropdownIcon={isOpened => {
-                return (
-                  <FontAwesome
-                    name={isOpened ? 'chevron-up' : 'chevron-down'}
-                    color={'#9fa0af'}
-                    size={16}
-                  />
-                );
-              }}
-              dropdownIconPosition={'right'}
-              dropdownStyle={styles.dropdown1DropdownStyle}
-              rowStyle={styles.dropdown1RowStyle}
-              rowTextStyle={styles.dropdown1RowTxtStyle}
-              defaultButtonText={'Especialidad Médica'}
-            />
-          </View>
-        )}
+        {!doctors && <MapFilterComponet values={filterValues} onChangeValues={setFilterValues} />}
       </MapCustom>
-
       {!doctors && (
         <View style={styles.inputContent}>
           <Button
@@ -137,7 +111,6 @@ function SearchScreen({navigation}) {
             buttonStyle={{
               borderRadius: 10,
               height: 50,
-              marginTop: 10,
             }}
             titleStyle={{
               fontFamily: 'Poppins-SemiBold',
@@ -164,11 +137,13 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   inputContent: {
+    marginTop: 10,
     marginBottom: 12,
     marginHorizontal: 10,
   },
   dropdown1BtnStyle: {
-    width: '100%',
+    //width: '100%',
+    flex: 1,
     height: 50,
     backgroundColor: '#FFF',
     borderRadius: 6,
@@ -196,9 +171,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
   },
   overlaySearch: {
-    //backgroundColor: 'white',
+    //backgroundColor: 'cyan',
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    position: 'relative',
   },
   payContainer: {},
   payCard: {

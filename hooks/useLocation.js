@@ -20,12 +20,12 @@ export const useLocation = () => {
 
   const getCurrentLocation = async () => {
     //obtenter la ubicacion actual del usaurio
-    console.log('useLocation() 2 => ', true);
+    //console.log('useLocation() 2 => ', true);
     setErrLocation(undefined);
     return new Promise((resolve, reject) => {
       Geolocation.getCurrentPosition(
         ({coords}) => {
-          console.log('getCurrentPosition() 4 =>', {coords});
+          //console.log('getCurrentPosition() 4 =>', {coords});
           setHasLocation(true);
           setuserLocation(coords);
           resolve({
@@ -34,7 +34,7 @@ export const useLocation = () => {
           });
         },
         err => {
-          console.log('getCurrentLocation() ==> err =>', {err});
+          //console.log('getCurrentLocation() ==> err =>', {err});
           setHasLocation(false);
           reject({err});
         },
@@ -53,7 +53,7 @@ export const useLocation = () => {
     //si se mueve el usurio que el gps lo sigaimport {
     watchId.current = Geolocation.watchPosition(
       ({coords}) => {
-        console.log(coords);
+        //console.log(coords);
         setuserLocation({
           latitude: coords.latitude,
           longitude: coords.longitude,
@@ -74,12 +74,12 @@ export const useLocation = () => {
   useEffect(() => {
     getCurrentLocation()
       .then(location => {
-        console.log('getCurrentLocation() => location ==>', {location});
+        //console.log('getCurrentLocation() => location ==>', {location});
         setInitialPosition(location);
         setuserLocation(location);
       })
       .catch(async ({err}) => {
-        console.log('getCurrentLocation() => err ==>', {err});
+        //console.log('getCurrentLocation() => err ==>', {err});
         setErrLocation({msg: err.message, code: err.code});
       });
   }, []);

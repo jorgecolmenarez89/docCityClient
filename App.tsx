@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {NativeBaseProvider} from 'native-base';
 
 import {ThemeProvider, createTheme} from '@rneui/themed';
