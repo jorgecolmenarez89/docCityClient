@@ -29,6 +29,7 @@ export const NAME_ICON = {
   // ionicons
   sendOutline: 'send-outline',
   close: 'close-circle-outline',
+  checkmark: 'checkmark-outline',
   // materials
   arrowLeft: 'arrow-back-ios',
   photo: 'photo',

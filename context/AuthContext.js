@@ -11,6 +11,7 @@ import ModalNotification from '../components/organisms/ModalNotification';
 import useAppState from '../hooks/useAppState';
 import {getEspecialities} from '../services/doctor/medicine';
 import {getProfile} from '../services/doctor/profile';
+import {getRegions} from '../services/doctor/address';
 
 export const AuthContext = createContext();
 
@@ -26,6 +27,7 @@ export const AuthProvider = ({children}) => {
     useNotification();
   const {appState, updateId} = useAppState();
   const [specialities, setSpecialities] = useState([]);
+  const [regions, setRegions] = useState([]);
 
   const login = async (username, password) => {
     setAuthLoading(true);
@@ -139,6 +141,15 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  const getRegionsAll = async () => {
+    try {
+      const {data} = await getRegions();
+      setRegions(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const loadData = async () => {
     try {
       if (userLoged) {
@@ -157,6 +168,7 @@ export const AuthProvider = ({children}) => {
   useEffect(() => {
     isLoggedIn();
     getEspecialitiesAll();
+    getRegionsAll();
   }, []);
 
   return (
@@ -179,6 +191,8 @@ export const AuthProvider = ({children}) => {
         appState,
         getEspecialitiesAll,
         specialities,
+        getRegionsAll,
+        regions,
       }}>
       {children}
       {notification && (

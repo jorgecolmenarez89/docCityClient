@@ -23,6 +23,40 @@ export const mostrarUbicaciones = async (params: {
   }
 };
 
+export const mostrarUbicacionesByDescription = async (params: {
+  user: {longitude: string; latitude: string};
+  description: string;
+}) => {
+  try {
+    return await axiosInstance({}).get(
+      `users/GetDoctorsNearMe/${params.user.latitude},${params.user.longitude}/${SEARCH_DISTANCE}`,
+      {
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+      },
+    );
+  } catch (err) {
+    console.log('mostrarUbicaciones() ==> err', {err});
+    return {status: false, msg: err?.message};
+  }
+};
+
+export const mostrarUbicacionesByRegion = async (params: {
+  user: {longitude: string; latitude: string};
+  regionId: string;
+}) => {
+  try {
+    return await axiosInstance({}).get(
+      `users/GetDoctorsNearMe/${params.user.latitude},${params.user.longitude}/${SEARCH_DISTANCE}`,
+      {
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+      },
+    );
+  } catch (err) {
+    console.log('mostrarUbicaciones() ==> err', {err});
+    return {status: false, msg: err?.message};
+  }
+};
+
 export const eliminarUbicacion = id => {};
 
 export const mostarUbicacion = id => {};

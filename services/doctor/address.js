@@ -1,4 +1,5 @@
 import {axiosInstance} from '../../config/api';
+import {URL_MOCK} from '../../config/Constant';
 
 export const getProivinces = () => {
   return axiosInstance.get(`/address/GetEstados`);
@@ -30,4 +31,8 @@ export const getCities = () => {
 
 export const getCitiesByParroquieId = id => {
   return axiosInstance.get(`/address/GetCiudadesByParroquiaId/${id}`);
+};
+
+export const getRegions = () => {
+  return axiosInstance({url: URL_MOCK}).get(`/regions`);
 };

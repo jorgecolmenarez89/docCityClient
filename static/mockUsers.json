@@ -51,4 +51,13 @@
         "geoLocation": "10.09031143886397,-69.31937902492285",
         "deviceToken": "eIyitCqoQZ-eoit7HM4VMw:APA91bEu9FXDyvAQlQTxuRwnn8z5vv2MQ9UX3zbUSzUeEQWncOTvudYLONPsQg0sEUir-43fDLywcsJnwmUxLaBTG7PU07OoZMxV48HrIHXI4eSkPXb4vshtTMn_VB2GoQbqCpv26dIm"
     }
-]}
+],
+  "regions": [
+    { "id": 1,
+    "name": "Caribe"},
+    { "id": 2,
+    "name": "Llanos"},
+    { "id": 3,
+    "name": "Centro"}
+  ]
+}

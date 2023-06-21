@@ -6,18 +6,27 @@ import SelectDropdown from 'react-native-select-dropdown';
 import {Button, useTheme, Icon} from '@rneui/themed';
 import MapCustom from '../../components/atoms/maps';
 import {NAME_ICON} from '../../config/Constant';
-import {mostrarUbicaciones} from '../../services/doctor/ubicaciones';
+import {
+  mostrarUbicaciones,
+  mostrarUbicacionesByDescription,
+  mostrarUbicacionesByRegion,
+} from '../../services/doctor/ubicaciones';
 import Doctor from '../../models/Doctor';
 import {sendNotificationRequest} from '../../services/doctor/notification';
 import {AuthContext} from '../../context/AuthContext';
 import MapFilterComponet from '../../components/molecules/MapFilter';
+import {onSaveSearch} from '../../services/doctor/request';
 
 function SearchScreen({navigation}) {
   const {theme} = useTheme();
   const {userLoged, token, getEspecialitiesAll, specialities} = useContext(AuthContext);
 
   const [locationUser, setLocationUser] = useState();
-  const [filterValues, setFilterValues] = useState({specialtyId: undefined});
+  const [filterValues, setFilterValues] = useState({
+    specialtyId: undefined,
+    regionId: undefined,
+    description: '',
+  });
   const [doctors, setDoctors] = useState();
 
   const [loading, setLoading] = useState(false);
@@ -27,23 +36,60 @@ function SearchScreen({navigation}) {
   }, []);
 
   const resetSearch = async () => {
-    setEspecialidadId(undefined);
+    setFilterValues({
+      specialtyId: undefined,
+      regionId: undefined,
+      description: '',
+    });
     setLocationUser(undefined);
     setDoctors(undefined);
   };
 
   const handleSearch = async () => {
     setLoading(true);
-    const {status, data} = await mostrarUbicaciones({
-      user: locationUser,
-      especialidadId: filterValues.especialidadId,
-    });
+    let status;
+    let data;
+    let typeSearch;
+
+    if (filterValues.specialtyId) {
+      const {status: sta, data: dat} = await mostrarUbicaciones({
+        user: locationUser,
+        especialidadId: filterValues.specialtyId,
+      });
+      status = sta;
+      data = dat;
+      typeSearch = 'specialty';
+    } else if (filterValues.regionId) {
+      const {status: sta, data: dat} = await mostrarUbicacionesByRegion({
+        user: locationUser,
+        regionId: filterValues.regionId,
+      });
+      status = sta;
+      data = dat;
+      typeSearch = 'region';
+    } else if (filterValues.description) {
+      const {status: sta, data: dat} = await mostrarUbicacionesByDescription({
+        user: locationUser,
+        description: filterValues.description,
+      });
+      status = sta;
+      data = dat;
+      typeSearch = 'description';
+    }
+
     console.log('handleSearch() ==> ', {status, data});
     if (status === 200) {
       if (data && data.length > 0) {
         const newDoctors = data.map(doctor => new Doctor(Doctor.formatData(doctor)));
         setDoctors(newDoctors);
-        console.log('handleSearch() ==>', {userLoged});
+        const resultOne = await onSaveSearch({
+          status: 'green',
+          user: userLoged,
+          doctors: data,
+          type: typeSearch,
+          data: filterValues.description,
+        });
+        console.log('handleSearch() ==>', {userLoged, resultOne});
         const result = await sendNotificationRequest({
           doctors: newDoctors,
           user: {...userLoged, deviceToken: token},
@@ -59,11 +105,17 @@ function SearchScreen({navigation}) {
     } else {
       Alert.alert('Error', 'No fue posible enviar la información por el momento');
     }
+
     setLoading(false);
   };
 
   const validButton = () => {
-    if (filterValues.especialidadId !== undefined && locationUser !== undefined) {
+    if (
+      (filterValues.specialtyId !== undefined ||
+        filterValues.regionId !== undefined ||
+        filterValues.description !== '') &&
+      locationUser !== undefined
+    ) {
       return false;
     }
     return true;
@@ -99,7 +151,9 @@ function SearchScreen({navigation}) {
             longitude: region.longitude,
           })
         }>
-        {!doctors && <MapFilterComponet values={filterValues} onChangeValues={setFilterValues} />}
+        {!doctors && (
+          <MapFilterComponet values={filterValues} onChangeValues={setFilterValues} onlyOneFilter />
+        )}
       </MapCustom>
       {!doctors && (
         <View style={styles.inputContent}>
