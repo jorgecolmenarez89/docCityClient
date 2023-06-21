@@ -1,6 +1,28 @@
 import {useEffect, useState, useRef} from 'react';
+import {PermissionsAndroid} from 'react-native';
 //import Geolocation from '@react-native-community/geolocation';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation, {requestAuthorization} from 'react-native-geolocation-service';
+
+const handleRequestAuthorization = async () => {
+  try {
+    const result = await PermissionsAndroid.requestMultiple([
+      'android.permission.ACCESS_COARSE_LOCATION',
+      'android.permission.ACCESS_FINE_LOCATION',
+    ]);
+
+    console.log('handleRequestAuthorization() => result', {result});
+    if (
+      result['android.permission.ACCESS_FINE_LOCATION'] === 'granted' &&
+      result['android.permission.ACCESS_COARSE_LOCATION'] === 'granted'
+    ) {
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.log('handleRequestAuthorization() => err', {err});
+    return false;
+  }
+};
 
 export const useLocation = () => {
   const [hasLocation, setHasLocation] = useState(false);
@@ -22,31 +44,35 @@ export const useLocation = () => {
     //obtenter la ubicacion actual del usaurio
     //console.log('useLocation() 2 => ', true);
     setErrLocation(undefined);
-    return new Promise((resolve, reject) => {
-      Geolocation.getCurrentPosition(
-        ({coords}) => {
-          //console.log('getCurrentPosition() 4 =>', {coords});
-          setHasLocation(true);
-          setuserLocation(coords);
-          resolve({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-          });
-        },
-        err => {
-          //console.log('getCurrentLocation() ==> err =>', {err});
-          setHasLocation(false);
-          reject({err});
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 60000,
-          interval: 1000,
-          fastestInterval: 100,
-          maximumAge: 10000,
-        },
-      );
-    });
+    const result = await handleRequestAuthorization();
+
+    if (result) {
+      return new Promise((resolve, reject) => {
+        Geolocation.getCurrentPosition(
+          ({coords}) => {
+            //console.log('getCurrentPosition() 4 =>', {coords});
+            setHasLocation(true);
+            setuserLocation(coords);
+            resolve({
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+            });
+          },
+          err => {
+            //console.log('getCurrentLocation() ==> err =>', {err});
+            setHasLocation(false);
+            reject({err});
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 60000,
+            interval: 1000,
+            fastestInterval: 100,
+            maximumAge: 10000,
+          },
+        );
+      });
+    }
   };
 
   const followUserLocation = () => {
