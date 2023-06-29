@@ -93,7 +93,7 @@ function AppStack() {
           backgroundColor: '#cdcdcd',
         },
         tabBarActiveTintColor: '#0b445e',
-        abBarInactiveTintColor: '#7d7d7d',
+        abBarInactiveTintColor: '#828282',
       }}>
       <Tab.Screen
         name='Home'

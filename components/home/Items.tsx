@@ -1,23 +1,37 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Alert} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {Image} from '@rneui/themed';
 
-const Items = () => {
+const Items = ({navigation}: any) => {
   const [items, setItems] = useState([
     {
       icon: '',
       name: 'Mis Consultas',
+      url: require('../../assets/icono-consultas.png'),
+      route: 'Profile',
+      screen: 'ConsultasS',
     },
     {
       icon: '',
       name: 'Historia médica',
+      url: require('../../assets/icono-historia-medica.png'),
+      route: '',
+      screen: 'ConsultasS',
     },
     {
       icon: '',
       name: 'Mis Vacunas',
+      url: require('../../assets/icono-vacunas.png'),
+      route: 'Profile',
+      screen: 'VacunasS',
     },
     {
       icon: '',
       name: 'Mi GiftCare',
+      url: require('../../assets/icono-giftCare.png'),
+      route: 'Profile',
+      screen: 'InstrumentosS',
     },
   ]);
 
@@ -25,7 +39,15 @@ const Items = () => {
     <View style={styles.container}>
       {items.map((item, i) => (
         <View key={'item-w' + i} style={styles.item}>
-          <View style={styles.round}></View>
+          {/*<View style={styles.round}></View> */}
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(item.route, {
+                screen: item.screen,
+              });
+            }}>
+            <Image style={{width: 70, height: 70}} source={item.url} />
+          </TouchableOpacity>
           <View style={styles.contenText}>
             <Text style={styles.textItem}>{item.name}</Text>
           </View>
@@ -62,6 +84,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   textItem: {
+    color: '#040303',
     textAlign: 'center',
     fontFamily: 'Poppins-Regular',
     fontSize: 13,

@@ -32,6 +32,9 @@ function CardSolicitar({navigation}) {
                 fontFamily: 'Poppins-SemiBold',
                 fontSize: 15,
               }}
+              onPress={() => {
+                navigation.navigate('Search');
+              }}
             />
           </View>
         </View>

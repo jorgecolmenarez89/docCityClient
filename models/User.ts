@@ -8,6 +8,8 @@ export interface UserModel {
   dataRaw: any;
   url?: string;
   id: string;
+  age?: number;
+  relationship?: string;
 }
 
 class User {

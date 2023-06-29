@@ -20,7 +20,8 @@ function CargaSatck() {
         name='CargaAdd'
         component={CargaAddScreen}
         options={{
-          headerShown: false,
+          title: '',
+          headerTransparent: true,
         }}
       />
     </Stack.Navigator>

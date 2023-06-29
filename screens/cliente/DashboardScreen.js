@@ -8,13 +8,17 @@ import Items from '../../components/home/Items';
 import Populares from '../../components/home/Populares';
 import {AuthContext} from '../../context/AuthContext';
 import {requestOpenedPacient, updateRequest} from '../../services/doctor/request';
-import {Avatar} from '@rneui/themed';
+import {Avatar, Icon} from '@rneui/themed';
 import {ASSETS} from '../../config/Constant';
 import {NavigationRoutes, StatusRequest} from '../../config/Enum';
 import {Rating} from 'react-native-ratings';
+import {getLocationDetails} from '../../services/doctor/address';
+import {useLocation} from '../../hooks/useLocation';
 
 function DashboardScreen({navigation}) {
   const {userLoged, specialities} = useContext(AuthContext);
+  const {getCurrentLocation} = useLocation();
+
   const [requests, setRequests] = useState();
   const [request, setRequest] = useState();
   const [isRanking, setIsRanking] = useState(false);
@@ -37,6 +41,7 @@ function DashboardScreen({navigation}) {
       valoracion: 5,
     },
   ]);
+  const [details, setDetails] = useState(null);
 
   const onLoadLastRequest = async () => {
     try {
@@ -70,21 +75,52 @@ function DashboardScreen({navigation}) {
     };
   }, [userLoged]);
 
+  useEffect(() => {
+    getAdress();
+  }, []);
+
+  const getAdress = async () => {
+    const {latitude, longitude} = await getCurrentLocation();
+    const {data} = await getLocationDetails(latitude, longitude);
+    setDetails(data);
+  };
+
+  const getFormatState = state => {
+    if (state.includes('State')) {
+      return state.split('State')[0];
+    } else {
+      return state;
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <View style={styles.ubicationContainer}>
-          <Text>DashboardScreen</Text>
-        </View>
+        {details && (
+          <View style={styles.ubicationContainer}>
+            <View style={styles.ubicationContainerTitleContent}>
+              <Icon
+                type='ionicon'
+                color='#06060a'
+                name='location-outline'
+                style={{marginRight: 5}}
+              />
+              <Text style={styles.descriptionText}>Ubicación</Text>
+            </View>
+            <Text style={styles.descriptionText}>
+              {details.countryRegion}, {getFormatState(details.adminDistrict)}
+            </Text>
+          </View>
+        )}
 
-        <CardSolicitar />
+        <CardSolicitar navigation={navigation} />
         <View style={styles.spacer} />
 
         <View style={styles.sectionSeparatpor}>
           <Text style={styles.sectionTitle}>Información de interes</Text>
         </View>
 
-        <Items />
+        <Items navigation={navigation} />
 
         {requests && (
           <View style={styles.sectionSeparatpor}>
@@ -230,6 +266,18 @@ const styles = StyleSheet.create({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
+    marginBottom: 15,
+  },
+  ubicationContainerTitleContent: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  descriptionText: {
+    fontFamily: 'Poppins-Medium',
+    color: '#06060a',
   },
   spacer: {
     marginVertical: 8,

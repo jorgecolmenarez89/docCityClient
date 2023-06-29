@@ -1,24 +1,25 @@
 import {axiosInstance} from '../../config/api';
 import Carga from '../../models/Carga';
+import User from '../../models/User';
 
-let relatives: Carga[] = [
-  new Carga({
-    id: 1,
-    name: 'Isabella',
-    relationship: 'Hija',
-    age: 4,
-    sex: 'Femenino',
-  }),
-  new Carga({
-    id: 1,
-    name: 'Leida',
-    relationship: 'Abuela',
-    age: 78,
-    sex: 'Femenino',
-  }),
-];
+let relatives: User[] = [];
 
-export const getCargas = () => {
+/*new Carga({
+  id: 1,
+  name: 'Isabella',
+  relationship: 'Hija',
+  age: 4,
+  sex: 'Femenino',
+}),
+new Carga({
+  id: 1,
+  name: 'Leida',
+  relationship: 'Abuela',
+  age: 78,
+  sex: 'Femenino',
+}),*/
+
+export const getCargas = (userId: string) => {
   //return axiosInstance({isNode: false}).get(`/relatives/getRelatives`);
   return relatives;
 };

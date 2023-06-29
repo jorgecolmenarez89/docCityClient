@@ -6,7 +6,8 @@ const RATING_IMAGE = require('../../assets/rating.png');
 
 function Populares({title, speciality, stars, onPress}) {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <View style={styles.container}>
+      {/*<TouchableOpacity style={styles.container} onPress={onPress}>*/}
       <View style={styles.content}>
         <View style={styles.iconContent}></View>
         <View style={styles.infoContent}>
@@ -26,7 +27,8 @@ function Populares({title, speciality, stars, onPress}) {
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+      {/*</TouchableOpacity>*/}
+    </View>
   );
 }
 
@@ -34,7 +36,7 @@ export default Populares;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#cdcdcd',
+    backgroundColor: '#d5d6d7',
     padding: 10,
     borderRadius: 10,
     minHeight: 100,
@@ -45,7 +47,7 @@ const styles = StyleSheet.create({
   },
   iconContent: {
     marginRight: 10,
-    backgroundColor: '#828282',
+    backgroundColor: '#999a9b',
     borderRadius: 6,
     width: 80,
     height: 80,
@@ -54,18 +56,21 @@ const styles = StyleSheet.create({
     display: 'flex',
   },
   title: {
-    fontFamily: 'Poppins-SemiBold',
+    color: '#393738',
+    fontFamily: 'Poppins-Medium',
     fontSize: 17,
   },
   optionsContent: {
     display: 'flex',
   },
   text: {
+    color: '#979798',
     fontFamily: 'Poppins-Medium',
     fontSize: 14,
   },
   textRating: {
-    fontFamily: 'Poppins-SemiBold',
+    color: '#979798',
+    fontFamily: 'Poppins-Regular',
     fontSize: 14,
     marginLeft: 5,
   },

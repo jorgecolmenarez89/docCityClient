@@ -1,21 +1,30 @@
 import React, {useEffect, useState, useRef, useContext} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {View, Text, FlatList, TouchableHighlight, RefreshControl, StyleSheet} from 'react-native';
-import {Button} from '@rneui/themed';
+import {View, Text, FlatList, Alert, StyleSheet} from 'react-native';
+import {Button, Image} from '@rneui/themed';
 import {RootStackParamList} from '../../config/Types';
-import Carga from '../../models/Carga';
+import User from '../../models/User';
 import {getCargas} from '../../services/user/carga';
 import Relative from '../../components/home/Relative';
 import {AuthContext} from '../../context/AuthContext';
+import {useLocation} from '../../hooks/useLocation';
+import {updateUserInfo} from '../../services/doctor/profile';
 
 type CargaListScreenProps = NativeStackScreenProps<RootStackParamList>;
 
 function CargaListScreen({navigation}: CargaListScreenProps) {
-  const {userLoged} = useContext(AuthContext);
-  const [relatives, setRelatives] = useState<Carga[]>([]);
-  const listCargas = useRef<FlatList<Carga>>(null);
+  const {userLoged, changeUserLoged} = useContext(AuthContext);
+  const {getCurrentLocation} = useLocation();
+  const [relatives, setRelatives] = useState<User[]>([]);
+  const listCargas = useRef<FlatList<User>>(null);
+  const [busco, setBusco] = useState<boolean>(false);
+  const [coordinantes, setCoordinates] = useState<string>('');
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingOmitir, setLoadingOmitir] = useState<boolean>(false);
 
   useEffect(() => {
+    updatePosition();
     getRelatives();
   }, []);
 
@@ -26,69 +35,125 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
 		} catch (error) {
 			console.log(error)
 		}*/
-    const data: Carga[] = getCargas();
+    const data: User[] = getCargas(userLoged.id);
     setRelatives(data);
+    setBusco(true);
+  };
+
+  const updatePosition = async () => {
+    const {latitude, longitude} = await getCurrentLocation();
+    setCoordinates(`${latitude},${longitude}`);
+  };
+
+  const handleOmitir = () => {
+    setLoadingOmitir(true);
+    updateData();
+  };
+
+  const updateData = async () => {
+    try {
+      const bodyUser = {
+        id: userLoged.id,
+        userName: userLoged.userName,
+        email: userLoged.email,
+        fullName: userLoged.fullName,
+        colegioMedicoId: userLoged.colegioMedicoId,
+        experienceYears: userLoged.experienceYears,
+        medicalSpecialityId: userLoged.medicalSpecialityId,
+        sexo: '',
+        isAuthorizedDoctor: false,
+        phoneNumber: userLoged.phoneNumber,
+        deviceToken: userLoged.deviceToken,
+        geoLocation: coordinantes,
+        url: '',
+        urlCredential: '',
+        isLocalizable: true,
+        statusDoctor: '',
+        statusDoctorDescription: '',
+        isCompletedInfo: true,
+      };
+      await updateUserInfo(bodyUser);
+      changeUserLoged({...userLoged, ...bodyUser});
+      setLoadingOmitir(false);
+      Alert.alert('Exito', 'Datos actualizados correctamente');
+    } catch (error) {
+      console.log('error', error);
+      setLoadingOmitir(false);
+      Alert.alert('Error', 'Ocurrio un error intente nuevamente');
+    }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Comencemos Agregando tus Familiares</Text>
-      </View>
-
-      <View style={styles.contentButton}>
-        <View style={styles.contentButtonItem}>
-          <Button
-            raised={false}
-            title='Agregar nuevo'
-            buttonStyle={{
-              backgroundColor: '#0b445e',
-              borderRadius: 30,
-              height: 50,
-            }}
-            titleStyle={{
-              fontFamily: 'Poppins-Bold',
-              fontSize: 17,
-            }}
-            onPress={() => navigation.navigate('CargaAdd')}
-          />
+      {busco && relatives.length == 0 && (
+        <View style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
+          <View style={styles.contentButton}>
+            <View style={{width: '100%', display: 'flex', height: 'auto'}}>
+              <View style={styles.header}>
+                <Text style={styles.headerTitle}>Bienvenido a </Text>
+                <Image style={{width: 120, height: 50}} source={require('../../assets/icon.jpg')} />
+              </View>
+              <View style={styles.header}>
+                <Text style={styles.headerText}>Para comenzar puedes</Text>
+              </View>
+              <View style={styles.contentButtonItem}>
+                <Button
+                  raised={false}
+                  title='Agregar familiar'
+                  buttonStyle={{
+                    backgroundColor: '#0b445e',
+                    borderRadius: 30,
+                    height: 50,
+                  }}
+                  titleStyle={{
+                    fontFamily: 'Poppins-Bold',
+                    fontSize: 17,
+                  }}
+                  onPress={() => navigation.navigate('CargaAdd')}
+                />
+              </View>
+              <View style={styles.contentButtonItem}>
+                <Button
+                  raised={false}
+                  title='Omitir este paso'
+                  buttonStyle={{
+                    backgroundColor: '#0b445e',
+                    borderRadius: 30,
+                    height: 50,
+                  }}
+                  titleStyle={{
+                    fontFamily: 'Poppins-Bold',
+                    fontSize: 18,
+                  }}
+                  onPress={() => handleOmitir()}
+                  loading={loadingOmitir}
+                />
+              </View>
+            </View>
+          </View>
         </View>
-        <View style={styles.contentButtonItem}>
-          <Button
-            raised={false}
-            title='Solo para mi'
-            buttonStyle={{
-              backgroundColor: '#0b445e',
-              borderRadius: 30,
-              height: 50,
-            }}
-            titleStyle={{
-              fontFamily: 'Poppins-Bold',
-              fontSize: 18,
-            }}
-            onPress={() => {}}
-          />
-        </View>
-      </View>
+      )}
 
-      <FlatList
-        ref={listCargas}
-        style={{flex: 1}}
-        data={relatives}
-        extraData={relatives}
-        renderItem={({item, index}: {item: Carga; index: number}) => {
-          return (
-            <Relative
-              key={'ralative' + index}
-              name={item.data.name}
-              relation={item.data.relationship}
-              age={item.data.age}
-              onPress={() => {}}
-            />
-          );
-        }}
-        ItemSeparatorComponent={() => <View style={{height: 5}}></View>}
-      />
+      {busco && relatives.length > 0 && (
+        <FlatList
+          ref={listCargas}
+          style={{flex: 1}}
+          data={relatives}
+          extraData={relatives}
+          renderItem={({item, index}: {item: User; index: number}) => {
+            return (
+              <Relative
+                key={'ralative' + index}
+                name={item.data.fullName}
+                relation={item.data.relationship}
+                age={item.data.age}
+                onPress={() => {}}
+              />
+            );
+          }}
+          ItemSeparatorComponent={() => <View style={{height: 5}}></View>}
+        />
+      )}
     </View>
   );
 }
@@ -97,7 +162,7 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flex: 1,
-    backgroundColor: '#f6f7fc',
+    backgroundColor: '#fff',
   },
   header: {
     marginTop: 20,
@@ -111,15 +176,19 @@ const styles = StyleSheet.create({
     color: '#15193f',
     fontFamily: 'Poppins-SemiBold',
   },
+  headerText: {
+    fontSize: 18,
+    color: '#15193f',
+    fontFamily: 'Poppins-SemiBold',
+  },
   contentButton: {
-    marginVertical: 15,
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
+    alignItems: 'center',
   },
   contentButtonItem: {
-    flex: 1,
     paddingHorizontal: 10,
+    marginVertical: 7,
   },
 });
 
