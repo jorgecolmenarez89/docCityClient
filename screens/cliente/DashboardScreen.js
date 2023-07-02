@@ -1,9 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {Button, Dialog} from '@rneui/themed';
-import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar, Modal} from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar} from 'react-native';
 import CardSolicitar from '../../components/home/CardSolicitar';
-import CardBuscar from '../../components/home/CardBuscar';
 import Items from '../../components/home/Items';
 import Populares from '../../components/home/Populares';
 import {AuthContext} from '../../context/AuthContext';
@@ -14,6 +13,7 @@ import {NavigationRoutes, StatusRequest} from '../../config/Enum';
 import {Rating} from 'react-native-ratings';
 import {getLocationDetails} from '../../services/doctor/address';
 import {useLocation} from '../../hooks/useLocation';
+import {getPopulars} from '../../services/user/doctors';
 
 function DashboardScreen({navigation}) {
   const {userLoged, specialities} = useContext(AuthContext);
@@ -24,23 +24,7 @@ function DashboardScreen({navigation}) {
   const [isRanking, setIsRanking] = useState(false);
   const [valRanking, setValRanking] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [populars, setPopulars] = useState([
-    {
-      name: 'Alexander Zambrano',
-      especialidad: 'Traumatólogo',
-      valoracion: 5,
-    },
-    {
-      name: 'Maria Lugo',
-      especialidad: 'Ginecotólogo',
-      valoracion: 5,
-    },
-    {
-      name: 'Jose Aldana',
-      especialidad: 'Cardiólogo',
-      valoracion: 5,
-    },
-  ]);
+  const [populars, setPopulars] = useState([]);
   const [details, setDetails] = useState(null);
 
   const onLoadLastRequest = async () => {
@@ -77,6 +61,7 @@ function DashboardScreen({navigation}) {
 
   useEffect(() => {
     getAdress();
+    getPopulares();
   }, []);
 
   const getAdress = async () => {
@@ -91,6 +76,11 @@ function DashboardScreen({navigation}) {
     } else {
       return state;
     }
+  };
+
+  const getPopulares = async () => {
+    const {data} = await getPopulars();
+    setPopulars(data.data);
   };
 
   return (
@@ -133,7 +123,6 @@ function DashboardScreen({navigation}) {
             <View style={{marginBottom: 15}} key={'popular-' + i}>
               <Populares
                 onPress={() => {
-                  console.log('p ==>', p);
                   setRequest(p);
                 }}
                 title={p.doctorUser.fullName}
@@ -155,7 +144,12 @@ function DashboardScreen({navigation}) {
 
         {populars.map((p, i) => (
           <View style={{marginBottom: 15}} key={'popular-' + i}>
-            <Populares title={p.name} stars={p.valoracion} speciality={p.especialidad} />
+            <Populares
+              title={p.DoctorUser.FullName}
+              stars={p.avgRating}
+              speciality={p.DoctorUser.Speciality.Name}
+              profile={p.DoctorUser.Url}
+            />
           </View>
         ))}
       </ScrollView>

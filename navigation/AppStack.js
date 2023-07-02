@@ -101,7 +101,7 @@ function AppStack() {
         options={{
           tabBarLabel: 'Home',
           tabBarLabelStyle: {
-            fontSize: 12,
+            fontSize: 14,
           },
           tabBarIcon: ({color, size}) => (
             <Icon name='home-outline' color={color} size={size} type='ionicon' />
@@ -114,7 +114,7 @@ function AppStack() {
         options={{
           tabBarLabel: 'Encontrar',
           tabBarLabelStyle: {
-            fontSize: 12,
+            fontSize: 14,
           },
           tabBarIcon: ({color, size}) => (
             <Icon name='location-outline' color={color} size={size} type='ionicon' />
@@ -129,7 +129,7 @@ function AppStack() {
             tabBarLabel: 'Chats',
             //tabBarBadge: notifications,
             tabBarLabelStyle: {
-              fontSize: 12,
+              fontSize: 14,
             },
             tabBarIcon: ({color, size}) => (
               <Icon name='chatbox-outline' color={color} size={size} type='ionicon' />
@@ -150,7 +150,7 @@ function AppStack() {
         options={{
           tabBarLabel: 'Perfil',
           tabBarLabelStyle: {
-            fontSize: 12,
+            fontSize: 14,
           },
           tabBarIcon: ({color, size}) => (
             <Icon name='person-outline' color={color} size={size} type='ionicon' />
