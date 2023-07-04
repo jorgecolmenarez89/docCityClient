@@ -2,7 +2,6 @@ import axios from 'axios';
 import {API_URL, API_URL_NODE} from './Constant';
 
 export const axiosInstance = ({isNode, url}: {isNode?: boolean; url?: string}) => {
-  console.log(API_URL_NODE);
   if (isNode) {
     return axios.create(
       {baseURL: API_URL_NODE},

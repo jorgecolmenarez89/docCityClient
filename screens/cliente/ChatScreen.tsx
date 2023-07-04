@@ -75,6 +75,7 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
 
   const loadChat = async (id: string) => {
     const {status, data} = await getChatById(id, userLoged);
+    console.log('chat', data);
     if (status && data) {
       setChat(data);
       setMessages(data.data.messages || []);

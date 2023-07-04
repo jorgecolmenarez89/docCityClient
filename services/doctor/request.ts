@@ -26,3 +26,21 @@ export const requestFinish = async (id: string) => {
     return {status: false, msg: err.message};
   }
 };
+
+export const requestById = async (id: string) => {
+  try {
+    return await axiosInstance({isNode: false}).get(`users/GetRequestByRequestId/${id}`);
+  } catch (err: any) {
+    console.log('requestFinish() ==> err', {err});
+    return {status: false, msg: err.message};
+  }
+};
+
+export const getRatingDoctor = async (id: string) => {
+  try {
+    return await axiosInstance({isNode: true}).get(`getRatingDoctor/${id}`);
+  } catch (err: any) {
+    console.log('getRatingDoctor() ==> err', {err});
+    return {status: false, msg: err.message};
+  }
+};
