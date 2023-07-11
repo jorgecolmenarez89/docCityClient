@@ -21,7 +21,6 @@ function ChatsScreen({navigation}: ChatsScreenProps) {
   const loadAllChats = async () => {
     setIsLoading(true);
     const {status, data} = await getAllChats({user: userLoged});
-    console.log('loadAllChats() ==> { status, data }', {status, data});
     if (status) {
       setChats(data);
     } else {

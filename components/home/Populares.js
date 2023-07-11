@@ -5,8 +5,6 @@ import {Rating} from 'react-native-ratings';
 const RATING_IMAGE = require('../../assets/rating.png');
 
 function Populares({title, speciality, stars, profile, onPress}) {
-  console.log('profile', profile);
-
   return (
     <View style={styles.container}>
       {/*<TouchableOpacity style={styles.container} onPress={onPress}>*/}

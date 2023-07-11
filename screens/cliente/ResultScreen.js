@@ -145,7 +145,6 @@ function ResultScreen({route}) {
   };
 
   const changeIndex = index => {
-    console.log(index);
     buildMarkers(results[index]);
   };
 

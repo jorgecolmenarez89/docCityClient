@@ -4,6 +4,7 @@ import {Image} from '@rneui/themed';
 import CustomHeader from '../../components/CustomHeader';
 import {AuthContext} from '../../context/AuthContext';
 import {requestFinish} from '../../services/doctor/request';
+import moment from 'moment';
 
 function ConsultasScreen({navigation}) {
   const {userLoged} = useContext(AuthContext);
@@ -44,7 +45,7 @@ function ConsultasScreen({navigation}) {
           <View style={styles.optionsContent}>
             <Text style={styles.text}>{item.doctorUser.speciality.Name}</Text>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={styles.textRating}>Fecha</Text>
+              <Text style={styles.textRating}>{moment(item.createdAt).format('MM/DD/YYYY')}</Text>
             </View>
           </View>
         </View>

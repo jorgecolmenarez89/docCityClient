@@ -19,14 +19,12 @@ const useAppState = () => {
   };
 
   const updateUserState = async (state: StateUserInUseApp) => {
-    console.log('updateUserState() ==> ', {state, idUser});
     await firestore().collection('users').doc(idUser).set({
       state: state,
     });
   };
 
   const handleAppStateChange = nextAppState => {
-    console.log('handleAppStateChange() ==> ', {nextAppState, idUser});
     if (nextAppState === 'active') {
       setAppState(StateUserInUseApp.onLine);
       updateUserState(StateUserInUseApp.onLine);

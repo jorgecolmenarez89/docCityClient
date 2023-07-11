@@ -13,10 +13,10 @@ function Relative({name, relation, age, onPress}) {
           <Text style={styles.title}>{name}</Text>
           <View style={styles.optionsContent}>
             <Text style={styles.text}>{relation}</Text>
-            <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+            {/*<View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
               <Text style={styles.text}>Edad:</Text>
               <Text style={styles.textRating}>{age}</Text>
-            </View>
+            </View>*/}
           </View>
         </View>
       </View>
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#cdcdcd',
     padding: 10,
     borderRadius: 10,
-    minHeight: 100,
+    minHeight: 90,
   },
   content: {
     display: 'flex',
@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
   iconContent: {
     marginRight: 10,
     borderRadius: 6,
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
   },
   infoContent: {
     display: 'flex',

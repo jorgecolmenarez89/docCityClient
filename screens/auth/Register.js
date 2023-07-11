@@ -12,6 +12,7 @@ function Register({navigation}) {
   const [loading, setLoading] = useState(false);
 
   const [user, setUser] = useState({
+    userId: '',
     username: '',
     email: '',
     password: '',

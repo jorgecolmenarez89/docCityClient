@@ -39,16 +39,13 @@ function SearchScreen({navigation}) {
       user: locationUser,
       especialidadId,
     });
-    console.log('handleSearch() ==> ', {status, data});
     if (status === 200) {
       const newDoctors = data.map(doctor => new Doctor(Doctor.formatData(doctor)));
       setDoctors(newDoctors);
-      console.log('handleSearch() ==>', {userLoged});
       const result = await sendNotificationRequest({
         doctors: newDoctors,
         user: {...userLoged, deviceToken: token},
       });
-      console.log('handleSearch() ==> result', {result, userLoged});
     } else {
       Alert.alert('Error', 'No fue posible enviar la información por el momento');
     }
@@ -97,7 +94,6 @@ function SearchScreen({navigation}) {
             <SelectDropdown
               data={specialities}
               onSelect={(selectedItem, index) => {
-                console.log('onSelect() ==>', {selectedItem, index});
                 setEspecialidadId(selectedItem.id);
               }}
               buttonTextAfterSelection={(selectedItem, index) => {

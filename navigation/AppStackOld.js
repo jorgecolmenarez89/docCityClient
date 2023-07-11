@@ -18,8 +18,6 @@ export default function AppStackOld() {
   const {permissions} = useContext(PermisionsContext);
   const {logout, userLoged} = useContext(AuthContext);
 
-  console.log('permissions', permissions);
-
   if (permissions.loactionStatus === 'unavailable') {
     return <LoadingScreen />;
   }

@@ -84,8 +84,6 @@ function VacunasScreen({navigation}) {
     setIsEdit(true);
     setOpenModal(true);
     setFormData(item);
-    console.log(item.createdAt);
-    console.log(new Date(item.createdAt));
     setDate(new Date(moment(item.createdAt)));
   };
 

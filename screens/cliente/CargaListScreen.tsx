@@ -1,7 +1,8 @@
-import React, {useEffect, useState, useRef, useContext} from 'react';
+import React, {useEffect, useState, useRef, useContext, useMemo} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 import {View, Text, FlatList, Alert, StyleSheet} from 'react-native';
-import {Button, Image} from '@rneui/themed';
+import {Button, Image, FAB} from '@rneui/themed';
 import {RootStackParamList} from '../../config/Types';
 import User from '../../models/User';
 import {getCargas} from '../../services/user/carga';
@@ -23,21 +24,28 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingOmitir, setLoadingOmitir] = useState<boolean>(false);
 
+  const nav = useNavigation();
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      getRelatives();
+    }
+  }, [isFocused]);
+
   useEffect(() => {
     updatePosition();
     getRelatives();
   }, []);
 
-  const getRelatives = () => {
-    /*try {
-			const data: Carga[] = await getCargas();
-			console.log('data', data)
-		} catch (error) {
-			console.log(error)
-		}*/
-    const data: User[] = getCargas(userLoged.id);
-    setRelatives(data);
-    setBusco(true);
+  const getRelatives = async () => {
+    try {
+      const {data} = await getCargas(userLoged.id);
+      setRelatives(data.userChildren);
+      setBusco(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const updatePosition = async () => {
@@ -75,7 +83,7 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
       await updateUserInfo(bodyUser);
       changeUserLoged({...userLoged, ...bodyUser});
       setLoadingOmitir(false);
-      Alert.alert('Exito', 'Datos actualizados correctamente');
+      //Alert.alert('Exito', 'Datos actualizados correctamente');
     } catch (error) {
       console.log('error', error);
       setLoadingOmitir(false);
@@ -135,24 +143,67 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
       )}
 
       {busco && relatives.length > 0 && (
-        <FlatList
-          ref={listCargas}
-          style={{flex: 1}}
-          data={relatives}
-          extraData={relatives}
-          renderItem={({item, index}: {item: User; index: number}) => {
-            return (
-              <Relative
-                key={'ralative' + index}
-                name={item.data.fullName}
-                relation={item.data.relationship}
-                age={item.data.age}
-                onPress={() => {}}
+        <View style={{flex: 1, display: 'flex', paddingHorizontal: 10}}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Mis Familiares</Text>
+          </View>
+
+          <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+            <View style={styles.contentButtonItem}>
+              <Button
+                raised={false}
+                title='Agregar +'
+                buttonStyle={{
+                  backgroundColor: '#0b445e',
+                  borderRadius: 30,
+                  height: 50,
+                  paddingHorizontal: 20,
+                }}
+                titleStyle={{
+                  fontFamily: 'Poppins-SemiBold',
+                  fontSize: 17,
+                }}
+                onPress={() => navigation.navigate('CargaAdd')}
               />
-            );
-          }}
-          ItemSeparatorComponent={() => <View style={{height: 5}}></View>}
-        />
+            </View>
+            <View style={styles.contentButtonItem}>
+              <Button
+                raised={false}
+                title='Continuar'
+                buttonStyle={{
+                  backgroundColor: '#0b445e',
+                  borderRadius: 30,
+                  height: 50,
+                  width: 130,
+                }}
+                titleStyle={{
+                  fontFamily: 'Poppins-SemiBold',
+                  fontSize: 18,
+                }}
+                onPress={() => handleOmitir()}
+                loading={loadingOmitir}
+              />
+            </View>
+          </View>
+          <FlatList
+            ref={listCargas}
+            style={{flex: 1, marginTop: 15}}
+            data={relatives}
+            extraData={relatives}
+            renderItem={({item, index}: {item: any; index: number}) => {
+              return (
+                <Relative
+                  key={'ralative' + index}
+                  name={item.fullName}
+                  relation={'Parentezco'}
+                  age={item.age}
+                  onPress={() => {}}
+                />
+              );
+            }}
+            ItemSeparatorComponent={() => <View style={{height: 5}}></View>}
+          />
+        </View>
       )}
     </View>
   );

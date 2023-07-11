@@ -20,8 +20,7 @@ new Carga({
 }),*/
 
 export const getCargas = (userId: string) => {
-  //return axiosInstance({isNode: false}).get(`/relatives/getRelatives`);
-  return relatives;
+  return axiosInstance({isNode: false}).get(`/users/GetUserChildrenByUserId/${userId}`);
 };
 
 export const agregarCarga = (body: Carga) => {

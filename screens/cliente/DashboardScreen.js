@@ -30,8 +30,6 @@ function DashboardScreen({navigation}) {
   const onLoadLastRequest = async () => {
     try {
       const {status, data} = await requestOpenedPacient(userLoged.id);
-      console.log('onLoadLastRequest() => {status, data}', {status, data});
-
       if (status === 200) {
         if (data.data.length > 0) {
           setRequests(data.data);
@@ -40,6 +38,7 @@ function DashboardScreen({navigation}) {
         }
       }
     } catch (err) {
+      console.log('error onLoadLastRequest', onLoadLastRequest);
       setRequests(undefined);
     }
   };
@@ -53,7 +52,6 @@ function DashboardScreen({navigation}) {
       .onSnapshot(documentsSnapshot => {
         onLoadLastRequest();
       });
-    console.log('useEffeect() 2 ==>', {requests, userLoged});
     return () => {
       subscriberRequest();
     };
@@ -65,9 +63,13 @@ function DashboardScreen({navigation}) {
   }, []);
 
   const getAdress = async () => {
-    const {latitude, longitude} = await getCurrentLocation();
-    const {data} = await getLocationDetails(latitude, longitude);
-    setDetails(data);
+    try {
+      const {latitude, longitude} = await getCurrentLocation();
+      const {data} = await getLocationDetails(latitude, longitude);
+      setDetails(data);
+    } catch (error) {
+      console.log('error  getAdress', error);
+    }
   };
 
   const getFormatState = state => {
@@ -79,8 +81,12 @@ function DashboardScreen({navigation}) {
   };
 
   const getPopulares = async () => {
-    const {data} = await getPopulars();
-    setPopulars(data.data);
+    try {
+      const {data} = await getPopulars();
+      setPopulars(data.data);
+    } catch (error) {
+      console.log('error  getPopulares', error);
+    }
   };
 
   return (
@@ -233,7 +239,6 @@ function DashboardScreen({navigation}) {
                   status: StatusRequest.finished,
                   serviceRating: `${valRanking}`,
                 });
-                console.log('press => ', {status, data, request});
                 setIsLoading(false);
                 setRequest(undefined);
                 setIsRanking(false);

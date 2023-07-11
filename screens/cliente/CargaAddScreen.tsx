@@ -8,20 +8,24 @@ import {
   RefreshControl,
   StyleSheet,
   TextInput,
+  Alert,
 } from 'react-native';
 import {Button, Icon} from '@rneui/themed';
 import {RootStackParamList} from '../../config/Types';
 import {AuthContext} from '../../context/AuthContext';
+import {validateEmail} from '../../helpers';
+import {axiosInstance} from '../../config/api';
 
 type CargaListScreenProps = NativeStackScreenProps<RootStackParamList>;
 
 function CargaAddScreen({navigation}: CargaListScreenProps) {
-  const {changeUserLoged, token} = useContext(AuthContext);
+  const {userLoged, token} = useContext(AuthContext);
   const [hidePassword, setHidePassword] = useState(true);
   const [hideRepeatPassword, setHideRepeatPassword] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const [user, setUser] = useState({
+    parentUserId: '',
     username: '',
     email: '',
     password: '',
@@ -35,6 +39,46 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
       ...user,
       [name]: text,
     });
+  };
+
+  const handleRegister = async () => {
+    if (user.username === '') {
+      Alert.alert('Atención', 'Campo usuario es requerido');
+    } else if (user.email == '') {
+      Alert.alert('Atención', 'Campo correo electrónico es requerido');
+    } else if (user.fullName == '') {
+      Alert.alert('Atención', 'Campo Nombres es requerido');
+    } else if (user.password == '') {
+      Alert.alert('Atención', 'Campo Contraseña es requerido');
+    } else if (user.repeatPassword == '') {
+      Alert.alert('Atención', 'Campo Repetir contraseña es requerido');
+    } else if (user.repeatPassword != user.password) {
+      Alert.alert('Atención', 'Las contraseñas son distintas');
+    } else if (!validateEmail(user.email)) {
+      Alert.alert('Atención', 'Formato de corre invalido');
+    } else {
+      const url = '/users/CreateUserChild';
+      const body = {
+        ...user,
+        parentUserId: userLoged.id,
+      };
+      try {
+        const response = await axiosInstance({isNode: false}).post(url, body, {
+          headers: {'Content-Type': 'application/json'},
+        });
+        setLoading(true);
+        navigation.goBack();
+      } catch (error: any) {
+        console.log('error', error);
+        if (error.response.status === 400) {
+          setLoading(false);
+          Alert.alert('Atención', error.response.data);
+        } else {
+          Alert.alert('Error', 'Ha Ocurrido un error intente nuevamente');
+          setLoading(false);
+        }
+      }
+    }
   };
 
   return (
@@ -128,8 +172,10 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
         <View style={styles.inputContainer}>
           <Button
             raised={false}
-            title='Crear cuenta'
-            onPress={() => {}}
+            title='Guardar Familiar'
+            onPress={() => {
+              handleRegister();
+            }}
             buttonStyle={{
               backgroundColor: '#0b445e',
               borderRadius: 30,
