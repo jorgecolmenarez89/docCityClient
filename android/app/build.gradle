@@ -139,9 +139,11 @@ android {
     }
     buildTypes {
         debug {
+            crunchPngs false // or true
             signingConfig signingConfigs.debug
         }
         release {
+            crunchPngs false // or true
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             // signingConfig signingConfigs.debug por defecto

@@ -103,7 +103,7 @@ function DashboardScreen({navigation}) {
                 title={p.doctorUser.fullName}
                 stars={0}
                 speciality={
-                  specialities.find(spec => spec.id === p.doctorUser.medicalSpecialityId).name
+                  specialities.find(spec => spec.id === p.doctorUser.medicalSpecialityId).name || ''
                 }
               />
             </View>

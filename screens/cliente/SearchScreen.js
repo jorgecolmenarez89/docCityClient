@@ -51,59 +51,65 @@ function SearchScreen({navigation}) {
     let data;
     let typeSearch;
 
-    if (filterValues.specialtyId) {
-      const {status: sta, data: dat} = await mostrarUbicaciones({
-        user: locationUser,
-        especialidadId: filterValues.specialtyId,
-      });
-      status = sta;
-      data = dat;
-      typeSearch = 'specialty';
-    } else if (filterValues.regionId) {
-      const {status: sta, data: dat} = await mostrarUbicacionesByRegion({
-        user: locationUser,
-        regionId: filterValues.regionId,
-      });
-      status = sta;
-      data = dat;
-      typeSearch = 'region';
-    } else if (filterValues.description) {
-      const {status: sta, data: dat} = await mostrarUbicacionesByDescription({
-        user: locationUser,
-        description: filterValues.description,
-      });
-      status = sta;
-      data = dat;
-      typeSearch = 'description';
-    }
-
-    console.log('handleSearch() ==> ', {status, data});
-    if (status === 200) {
-      if (data && data.length > 0) {
-        const newDoctors = data.map(doctor => new Doctor(Doctor.formatData(doctor)));
-        setDoctors(newDoctors);
-        const resultOne = await onSaveSearch({
-          status: 'green',
-          user: userLoged,
-          doctors: data,
-          type: typeSearch,
-          data: filterValues.description,
+    try {
+      if (filterValues.specialtyId) {
+        const {status: sta, data: dat} = await mostrarUbicaciones({
+          user: locationUser,
+          especialidadId: filterValues.specialtyId,
         });
-        console.log('handleSearch() ==>', {userLoged, resultOne});
-        const result = await sendNotificationRequest({
-          doctors: newDoctors,
-          user: {...userLoged, deviceToken: token},
+        status = sta;
+        data = dat;
+        typeSearch = 'specialty';
+      } else if (filterValues.regionId) {
+        const {status: sta, data: dat} = await mostrarUbicacionesByRegion({
+          user: locationUser,
+          regionId: filterValues.regionId,
         });
-        console.log('handleSearch() ==> result', {result, userLoged});
-      } else {
-        setDoctors(undefined);
-        Alert.alert(
-          'No hay resultados',
-          'No se encontró ningún medico que coincida con tu búsqueda.',
-        );
+        status = sta;
+        data = dat;
+        typeSearch = 'region';
+      } else if (filterValues.description) {
+        const {status: sta, data: dat} = await mostrarUbicacionesByDescription({
+          user: locationUser,
+          description: filterValues.description,
+        });
+        status = sta;
+        data = dat;
+        typeSearch = 'description';
       }
-    } else {
-      Alert.alert('Error', 'No fue posible enviar la información por el momento');
+
+      console.log('handleSearch() ==> ', {status, data});
+      if (status === 200) {
+        if (data && data.length > 0) {
+          const newDoctors = data.map(doctor => new Doctor(Doctor.formatData(doctor)));
+          setDoctors(newDoctors);
+          const {status: statusOne, data: dataOne} = await onSaveSearch({
+            status: 'green',
+            user: userLoged,
+            doctors: data,
+            type: typeSearch,
+            data: filterValues.description,
+          });
+          if (statusOne === 200) {
+            //console.log('handleSearch() ==>', {dataOne});
+            const result = await sendNotificationRequest({
+              doctors: newDoctors,
+              user: {...userLoged, deviceToken: token},
+              idSearch: dataOne.data.id,
+            });
+          }
+        } else {
+          setDoctors(undefined);
+          Alert.alert(
+            'No hay resultados',
+            'No se encontró ningún medico que coincida con tu búsqueda.',
+          );
+        }
+      } else {
+        Alert.alert('Error', 'No fue posible enviar la información por el momento');
+      }
+    } catch (err) {
+      console.log('handleSearch() ==> err', {err});
     }
 
     setLoading(false);

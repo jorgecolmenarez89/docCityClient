@@ -10,9 +10,11 @@ import User from '../../models/User';
 export const sendNotificationRequest = async ({
   doctors,
   user,
+  idSearch,
 }: {
   doctors: Doctor[];
   user: UserModel;
+  idSearch?: string;
 }) => {
   try {
     console.log('sendNotificationRequest() ==> user', {user});
@@ -37,6 +39,7 @@ export const sendNotificationRequest = async ({
           type: 'request',
           title: 'Solicitud de servició',
           description: 'El siguiente usuario solicita una consulta:',
+          idSearch: idSearch,
           ...userMap,
         },
         notification: {

@@ -1,18 +1,20 @@
 {
   "extends": "@tsconfig/react-native/tsconfig.json",
-  "baseUrl": ".",
-  "paths": {
-    "*": ["*"],
-    "@components/*": ["components/*"],
-    "@atoms/*": ["components/atoms/*"],
-    "@assets/*": ["assets/*"],
-    "@config/*": ["config/*"],
-    "@context/*": ["context/*"],
-    "@helpers/*": ["helpers/*"],
-    "@hooks/*": ["hooks/*"],
-    "@navigation/*": ["navigation/*"],
-    "@screens/*": ["screens/*"],
-    "@services/*": ["services/*"],
-    "@models/*": ["models/*"]
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": ["*"],
+      "@components/*": ["components/*"],
+      "@atoms/*": ["components/atoms/*"],
+      "@assets/*": ["assets/*"],
+      "@config/*": ["config/*"],
+      "@context/*": ["context/*"],
+      "@helpers/*": ["helpers/*"],
+      "@hooks/*": ["hooks/*"],
+      "@navigation/*": ["navigation/*"],
+      "@screens/*": ["screens/*"],
+      "@services/*": ["services/*"],
+      "@models/*": ["models/*"]
+    }
   }
 }
