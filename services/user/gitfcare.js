@@ -9,3 +9,7 @@ export const addGifcare = body => {
     headers: {'Content-Type': 'application/json'},
   });
 };
+
+export const checkMoney = email => {
+  return axiosInstance({isNode: false}).get(`GiftCareInfo/GetGiftCareUserByEmail/${email}`);
+};
