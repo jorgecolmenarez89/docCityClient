@@ -61,7 +61,6 @@ function ProfileScreen({navigation}) {
         const source = {uri: response.uri};
         setFileData(response);
         response.assets.forEach(item => {
-          console.log('item', item.uri);
           const {uri} = item;
           const filename = 'avatar';
           const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
@@ -116,7 +115,6 @@ function ProfileScreen({navigation}) {
           const source = {uri: res.uri};
           setFileData(res);
           res.assets.forEach(item => {
-            console.log('item', item.uri);
             const {uri} = item;
             const filename = 'avatar';
             const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
@@ -156,7 +154,6 @@ function ProfileScreen({navigation}) {
       isCompletedInfo: userLoged.isCompletedInfo,
     };
     const formatBody = formatBodyUser(body);
-    console.log('formatBody', formatBody);
     try {
       await updateUserInfo(formatBody);
       changeUserLoged({...userLoged, ...body});
@@ -185,7 +182,6 @@ function ProfileScreen({navigation}) {
       url: urlRecibida,
     };
     try {
-      console.log('body avatar', body);
       await updateUserInfo(body);
       changeUserLoged({...userLoged, ...body});
       //setLoading(false);

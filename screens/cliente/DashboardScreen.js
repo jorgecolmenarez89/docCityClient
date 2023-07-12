@@ -1,48 +1,35 @@
 import React, {useContext, useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {Button, Dialog} from '@rneui/themed';
-import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar, Modal} from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar} from 'react-native';
 import CardSolicitar from '../../components/home/CardSolicitar';
-import CardBuscar from '../../components/home/CardBuscar';
 import Items from '../../components/home/Items';
 import Populares from '../../components/home/Populares';
 import {AuthContext} from '../../context/AuthContext';
 import {requestOpenedPacient, updateRequest} from '../../services/doctor/request';
-import {Avatar} from '@rneui/themed';
+import {Avatar, Icon} from '@rneui/themed';
 import {ASSETS} from '../../config/Constant';
 import {NavigationRoutes, StatusRequest} from '../../config/Enum';
 import {Rating} from 'react-native-ratings';
+import {getLocationDetails} from '../../services/doctor/address';
+import {useLocation} from '../../hooks/useLocation';
+import {getPopulars} from '../../services/user/doctors';
 
 function DashboardScreen({navigation}) {
   const {userLoged, specialities} = useContext(AuthContext);
+  const {getCurrentLocation} = useLocation();
+
   const [requests, setRequests] = useState();
   const [request, setRequest] = useState();
   const [isRanking, setIsRanking] = useState(false);
   const [valRanking, setValRanking] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [populars, setPopulars] = useState([
-    {
-      name: 'Alexander Zambrano',
-      especialidad: 'Traumatólogo',
-      valoracion: 5,
-    },
-    {
-      name: 'Maria Lugo',
-      especialidad: 'Ginecotólogo',
-      valoracion: 5,
-    },
-    {
-      name: 'Jose Aldana',
-      especialidad: 'Cardiólogo',
-      valoracion: 5,
-    },
-  ]);
+  const [populars, setPopulars] = useState([]);
+  const [details, setDetails] = useState(null);
 
   const onLoadLastRequest = async () => {
     try {
       const {status, data} = await requestOpenedPacient(userLoged.id);
-      console.log('onLoadLastRequest() => {status, data}', {status, data});
-
       if (status === 200) {
         if (data.data.length > 0) {
           setRequests(data.data);
@@ -51,6 +38,7 @@ function DashboardScreen({navigation}) {
         }
       }
     } catch (err) {
+      console.log('error onLoadLastRequest', onLoadLastRequest);
       setRequests(undefined);
     }
   };
@@ -64,27 +52,71 @@ function DashboardScreen({navigation}) {
       .onSnapshot(documentsSnapshot => {
         onLoadLastRequest();
       });
-    console.log('useEffeect() 2 ==>', {requests, userLoged});
     return () => {
       subscriberRequest();
     };
   }, [userLoged]);
 
+  useEffect(() => {
+    getAdress();
+    getPopulares();
+  }, []);
+
+  const getAdress = async () => {
+    try {
+      const {latitude, longitude} = await getCurrentLocation();
+      const {data} = await getLocationDetails(latitude, longitude);
+      setDetails(data);
+    } catch (error) {
+      console.log('error  getAdress', error);
+    }
+  };
+
+  const getFormatState = state => {
+    if (state.includes('State')) {
+      return state.split('State')[0];
+    } else {
+      return state;
+    }
+  };
+
+  const getPopulares = async () => {
+    try {
+      const {data} = await getPopulars();
+      setPopulars(data.data);
+    } catch (error) {
+      console.log('error  getPopulares', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <View style={styles.ubicationContainer}>
-          <Text>DashboardScreen</Text>
-        </View>
+        {details && (
+          <View style={styles.ubicationContainer}>
+            <View style={styles.ubicationContainerTitleContent}>
+              <Icon
+                type='ionicon'
+                color='#06060a'
+                name='location-outline'
+                style={{marginRight: 5}}
+              />
+              <Text style={styles.descriptionText}>Ubicación</Text>
+            </View>
+            <Text style={styles.descriptionText}>
+              {details.countryRegion}, {getFormatState(details.adminDistrict)}
+            </Text>
+          </View>
+        )}
 
-        <CardSolicitar />
+        <CardSolicitar navigation={navigation} />
         <View style={styles.spacer} />
 
         <View style={styles.sectionSeparatpor}>
           <Text style={styles.sectionTitle}>Información de interes</Text>
         </View>
 
-        <Items />
+        <Items navigation={navigation} />
 
         {requests && (
           <View style={styles.sectionSeparatpor}>
@@ -97,7 +129,6 @@ function DashboardScreen({navigation}) {
             <View style={{marginBottom: 15}} key={'popular-' + i}>
               <Populares
                 onPress={() => {
-                  console.log('p ==>', p);
                   setRequest(p);
                 }}
                 title={p.doctorUser.fullName}
@@ -119,7 +150,12 @@ function DashboardScreen({navigation}) {
 
         {populars.map((p, i) => (
           <View style={{marginBottom: 15}} key={'popular-' + i}>
-            <Populares title={p.name} stars={p.valoracion} speciality={p.especialidad} />
+            <Populares
+              title={p.DoctorUser.FullName}
+              stars={p.avgRating}
+              speciality={p.DoctorUser.Speciality.Name}
+              profile={p.DoctorUser.Url}
+            />
           </View>
         ))}
       </ScrollView>
@@ -203,7 +239,6 @@ function DashboardScreen({navigation}) {
                   status: StatusRequest.finished,
                   serviceRating: `${valRanking}`,
                 });
-                console.log('press => ', {status, data, request});
                 setIsLoading(false);
                 setRequest(undefined);
                 setIsRanking(false);
@@ -230,6 +265,18 @@ const styles = StyleSheet.create({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
+    marginBottom: 15,
+  },
+  ubicationContainerTitleContent: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  descriptionText: {
+    fontFamily: 'Poppins-Medium',
+    color: '#06060a',
   },
   spacer: {
     marginVertical: 8,

@@ -130,7 +130,6 @@ function TriajeScreen({navigation}) {
           statusDoctorDescription: 'active',
           isCompletedInfo: true,
         };
-        console.log('bodyUser', bodyUser);
         await insertTriaje(bodyTriaje);
         await updateUserInfo(bodyUser);
         changeUserLoged({...userLoged, ...bodyUser});

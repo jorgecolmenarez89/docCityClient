@@ -1,18 +1,31 @@
-import React, {useContext, useState} from 'react';
-import {View, Text, StyleSheet, TextInput, Alert} from 'react-native';
-import {AuthContext} from '../../context/AuthContext';
+import React, {useEffect, useState, useCallback, useContext} from 'react';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableHighlight,
+  RefreshControl,
+  StyleSheet,
+  TextInput,
+  Alert,
+} from 'react-native';
 import {Button, Icon} from '@rneui/themed';
+import {RootStackParamList} from '../../config/Types';
+import {AuthContext} from '../../context/AuthContext';
 import {validateEmail} from '../../helpers';
 import {axiosInstance} from '../../config/api';
 
-function Register({navigation}) {
-  const {changeUserLoged, token} = useContext(AuthContext);
+type CargaListScreenProps = NativeStackScreenProps<RootStackParamList>;
+
+function CargaAddScreen({navigation}: CargaListScreenProps) {
+  const {userLoged, token} = useContext(AuthContext);
   const [hidePassword, setHidePassword] = useState(true);
   const [hideRepeatPassword, setHideRepeatPassword] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const [user, setUser] = useState({
-    userId: '',
+    parentUserId: '',
     username: '',
     email: '',
     password: '',
@@ -21,7 +34,7 @@ function Register({navigation}) {
     deviceToken: token,
   });
 
-  const handleChange = (text, name) => {
+  const handleChange = (text: string, name: string) => {
     setUser({
       ...user,
       [name]: text,
@@ -44,15 +57,18 @@ function Register({navigation}) {
     } else if (!validateEmail(user.email)) {
       Alert.alert('Atención', 'Formato de corre invalido');
     } else {
-      //register(user)
-      const url = '/users/CreateUser';
+      const url = '/users/CreateUserChild';
+      const body = {
+        ...user,
+        parentUserId: userLoged.id,
+      };
       try {
-        const response = await axiosInstance({isNode: false}).post(url, user, {
+        const response = await axiosInstance({isNode: false}).post(url, body, {
           headers: {'Content-Type': 'application/json'},
         });
         setLoading(true);
-        changeUserLoged(response.data);
-      } catch (error) {
+        navigation.goBack();
+      } catch (error: any) {
         console.log('error', error);
         if (error.response.status === 400) {
           setLoading(false);
@@ -76,7 +92,7 @@ function Register({navigation}) {
             width: '100%',
             marginBottom: 30,
           }}>
-          <Text style={styles.title}>Registro</Text>
+          <Text style={styles.title}>Registar Familiar</Text>
         </View>
         <View style={styles.inputContainer}>
           {/*<Text style={styles.label}>Usuario</Text>*/}
@@ -156,8 +172,10 @@ function Register({navigation}) {
         <View style={styles.inputContainer}>
           <Button
             raised={false}
-            title='Crear cuenta'
-            onPress={() => handleRegister()}
+            title='Guardar Familiar'
+            onPress={() => {
+              handleRegister();
+            }}
             buttonStyle={{
               backgroundColor: '#0b445e',
               borderRadius: 30,
@@ -169,23 +187,10 @@ function Register({navigation}) {
             loading={loading}
           />
         </View>
-        <View style={styles.inputContainer}>
-          <Button
-            title='Ya tengo cuenta'
-            onPress={() => navigation.navigate('Login')}
-            type='clear'
-            titleStyle={{
-              color: '#4c71c9',
-              fontFamily: 'Poppins-SemiBold',
-            }}
-          />
-        </View>
       </View>
     </View>
   );
 }
-
-export default Register;
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -238,3 +243,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
   },
 });
+
+export default CargaAddScreen;

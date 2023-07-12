@@ -49,7 +49,11 @@ function ProfileNewScreen({navigation}) {
             style={{
               position: 'absolute',
               right: 0,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}>
+            <Text style={{fontFamily: 'Poppins-SemiBold', color: '#163539'}}>Salir</Text>
             <Icon
               name='log-out-outline'
               color='#163539'

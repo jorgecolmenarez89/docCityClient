@@ -31,7 +31,6 @@ export const AuthProvider = ({children}) => {
 
   const login = async (username, password) => {
     setAuthLoading(true);
-    console.log('login() => { token }', {token});
     const url = `/users/GetUserInfoForLogin/${username}/${password}/${token}`;
     try {
       const response = await axiosInstance.get(url);
@@ -91,7 +90,6 @@ export const AuthProvider = ({children}) => {
       setUserLoged(JSON.parse(userToken));
       setUserToken(userToken);
       setIsLoading(false);
-      console.log('id', JSON.parse(userToken).id);
       updateId(JSON.parse(userToken).id);
     } catch (e) {
       setIsLoading(false);

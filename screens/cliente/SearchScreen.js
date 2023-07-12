@@ -1,9 +1,21 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, StyleSheet, Alert, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  Linking,
+  Modal,
+  TouchableOpacity,
+  TouchableHighlight,
+} from 'react-native';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import {Popover, Button as Butt, Divider} from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SelectDropdown from 'react-native-select-dropdown';
-import {Button, useTheme, Icon} from '@rneui/themed';
+import {Button, ButtonGroup, useTheme, Dialog, Image, ListItem, Avatar} from '@rneui/themed';
+import {getEspecialities} from '../../services/doctor/medicine';
 import MapCustom from '../../components/atoms/maps';
 import {NAME_ICON} from '../../config/Constant';
 import {
@@ -16,11 +28,13 @@ import {sendNotificationRequest} from '../../services/doctor/notification';
 import {AuthContext} from '../../context/AuthContext';
 import MapFilterComponet from '../../components/molecules/MapFilter';
 import {onSaveSearch} from '../../services/doctor/request';
+import {checkMoney} from '../../services/user/gitfcare';
+import {getCargas} from '../../services/user/carga';
 
 function SearchScreen({navigation}) {
+  const isFocused = useIsFocused();
   const {theme} = useTheme();
   const {userLoged, token, getEspecialitiesAll, specialities} = useContext(AuthContext);
-
   const [locationUser, setLocationUser] = useState();
   const [filterValues, setFilterValues] = useState({
     specialtyId: undefined,
@@ -28,12 +42,138 @@ function SearchScreen({navigation}) {
     description: '',
   });
   const [doctors, setDoctors] = useState();
-
   const [loading, setLoading] = useState(false);
+  const [loadingCheck, setLoadingCheck] = useState(true);
+  const [openDialog, setOpenDialog] = useState(true);
+  const [messageDialog, setMessageDialog] = useState('');
+  const [reesponseGC, setResponseGC] = useState({
+    success: false,
+    found: 0,
+    message: '',
+    todoOk: false,
+  });
+  const [gifCareData, setGifCareData] = useState(null);
+  const url = 'https://play.google.com/store/apps/details?id=com.veidthealth.giftcareapp&pli=1';
+  const [relatives, setRelatives] = useState([]);
+
+  const [modalRelative, setModalRelative] = useState(false);
+
+  useEffect(() => {
+    console.log('isFocused');
+    if (isFocused) {
+      tryAgain();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     getEspecialitiesAll();
+    getRelatives();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('useCallback');
+      getSaldo();
+    }, []),
+  );
+
+  const getRelatives = async () => {
+    try {
+      const {data} = await getCargas(userLoged.id);
+      //setRelatives(data.userChildren);
+      setRelatives([
+        {
+          id: '351718e9-3d45-483b-862d-7324ae656f33',
+          parentUserId: 'b7453b26-8189-44ab-a6ee-4f726c014dc3',
+          userName: 'andresito',
+          email: 'andresito@hotmail.com',
+          fullName: 'Andrez nuñez',
+          sexo: '',
+          phoneNumber: null,
+          deviceToken:
+            'eDLxjG51SAGtMIkqzjj4Bu:APA91bH_NwfeVrOjxhCn9Hn7Eu2_QJkvKFDgur1lBn2ek1NVO9ZfW_lO_ESF-YEQY_YJFOvoRWJVE97ZI0htkUF504UYap2MYAE7cJkB8eICaEd1xMCtHGv_RyWmzVnRuCeqHTl3ItpX',
+          geoLocation: null,
+          url: null,
+          urlCredential: null,
+        },
+        {
+          id: 'eb33bef5-e61e-4eec-9e68-cc1002c7a487',
+          parentUserId: 'b7453b26-8189-44ab-a6ee-4f726c014dc3',
+          userName: 'test',
+          email: 'test1@gmail.com',
+          fullName: 'Test infante',
+          sexo: '',
+          phoneNumber: null,
+          deviceToken:
+            'eDLxjG51SAGtMIkqzjj4Bu:APA91bH_NwfeVrOjxhCn9Hn7Eu2_QJkvKFDgur1lBn2ek1NVO9ZfW_lO_ESF-YEQY_YJFOvoRWJVE97ZI0htkUF504UYap2MYAE7cJkB8eICaEd1xMCtHGv_RyWmzVnRuCeqHTl3ItpX',
+          geoLocation: null,
+          url: null,
+          urlCredential: null,
+        },
+        {
+          id: 'edaaa0ef-9067-47dd-979d-bd4d3f45d5b3',
+          parentUserId: 'b7453b26-8189-44ab-a6ee-4f726c014dc3',
+          userName: 'santiaguito',
+          email: 'lamentem1@gmail.com',
+          fullName: 'Santiago Rojas',
+          sexo: '',
+          phoneNumber: null,
+          deviceToken:
+            'eDLxjG51SAGtMIkqzjj4Bu:APA91bH_NwfeVrOjxhCn9Hn7Eu2_QJkvKFDgur1lBn2ek1NVO9ZfW_lO_ESF-YEQY_YJFOvoRWJVE97ZI0htkUF504UYap2MYAE7cJkB8eICaEd1xMCtHGv_RyWmzVnRuCeqHTl3ItpX',
+          geoLocation: null,
+          url: null,
+          urlCredential: null,
+        },
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const buildMesage = balance => {
+    if (balance === 0) {
+      return 'Detectamos tu tarjeta sin embargo no posee fondos, debereas recargar el mismo desde la app GiftCare';
+    } else if (balance > 0 && balance < 10) {
+      return 'Detectamos tu tarjeta sin embargo no posee monto minimo para una consulta, debereas recargar el mismo desde la app GiftCare';
+    } else {
+      return 'Fondos suficientes, presiona continuar para realizar la busqueda';
+    }
+  };
+
+  const getSaldo = async () => {
+    setLoadingCheck(true);
+    setOpenDialog(true);
+    try {
+      const response = await checkMoney(userLoged.email);
+      setGifCareData(response.data);
+      setResponseGC({
+        success: true,
+        found: response.data.balance,
+        message: buildMesage(response.data.balance),
+        todoOk: response.data.balance < 10 ? false : true,
+      });
+      setLoadingCheck(false);
+    } catch (error) {
+      console.log('error dado', error);
+      if (error.response.status === 404) {
+        setResponseGC({
+          success: false,
+          found: -400,
+          message: 'No posees tarjeta GiftCare con tu cuenta de Correo, puedes:',
+          todoOk: false,
+        });
+        setLoadingCheck(false);
+      } else {
+        setResponseGC({
+          success: false,
+          found: -500,
+          message: 'Ha Ocurrido un error intente nuevamente',
+          todoOk: false,
+        });
+        setLoadingCheck(false);
+      }
+    }
+  };
 
   const resetSearch = async () => {
     setFilterValues({
@@ -127,6 +267,26 @@ function SearchScreen({navigation}) {
     return true;
   };
 
+  const tryAgain = () => {
+    setLoadingCheck(true);
+    getSaldo();
+  };
+
+  const handleContinue = () => {
+    /*if(relatives.length > 0){
+      setModalRelative(true)
+    } else {
+      setOpenDialog(false);
+    }*/
+    setModalRelative(true);
+  };
+
+  const selectedRelative = relative => {
+    console.log(relative);
+  };
+
+  const forMe = () => {};
+
   return (
     <View style={styles.container}>
       <MapCustom
@@ -179,6 +339,132 @@ function SearchScreen({navigation}) {
           />
         </View>
       )}
+
+      <Dialog isVisible={openDialog} onBackdropPress={() => {}}>
+        <Dialog.Title title='Verificando Saldo' />
+        {loadingCheck && <Dialog.Loading />}
+        {!loadingCheck && (
+          <View style={{display: 'flex', width: '100%'}}>
+            {!reesponseGC.success && reesponseGC.found === -400 && (
+              <View style={styles.styleResponse}>
+                <Text>{reesponseGC.message}</Text>
+                <View style={{width: '100%', display: 'flex', alignItems: 'center', marginTop: 15}}>
+                  <Image
+                    source={require('../../assets/google-play.png')}
+                    style={{
+                      height: 70,
+                      width: 70,
+                    }}
+                  />
+                  <Button
+                    title='Descargar desde Play Store'
+                    type='clear'
+                    onPress={async () => {
+                      await Linking.openURL(url);
+                    }}
+                  />
+                  <Dialog.Actions>
+                    <Dialog.Button title='Cancelar' onPress={() => navigation.navigate('Home')} />
+                    <Dialog.Button
+                      title='Volver a intentar'
+                      onPress={() => {
+                        tryAgain();
+                      }}
+                    />
+                  </Dialog.Actions>
+                </View>
+              </View>
+            )}
+            {!reesponseGC.success && reesponseGC.found === -500 && (
+              <View style={styles.styleResponse}>
+                <Text>{reesponseGC.message}</Text>
+                <Dialog.Actions>
+                  <Dialog.Button
+                    title='Volver a intentar'
+                    onPress={() => {
+                      tryAgain();
+                    }}
+                  />
+                </Dialog.Actions>
+              </View>
+            )}
+            {reesponseGC.success && !reesponseGC.todoOk && (
+              <View style={styles.styleResponse}>
+                <Text>{reesponseGC.message}</Text>
+                <Dialog.Actions>
+                  <Dialog.Button
+                    title='Salir de esta pantalla'
+                    onPress={() => {
+                      navigation.navigate('Home');
+                    }}
+                  />
+                </Dialog.Actions>
+              </View>
+            )}
+            {reesponseGC.success && reesponseGC.todoOk && (
+              <View style={styles.styleResponse}>
+                <Text>{reesponseGC.message}</Text>
+                <Dialog.Actions>
+                  <Dialog.Button
+                    title='Continuar'
+                    onPress={() => {
+                      handleContinue();
+                    }}
+                  />
+                </Dialog.Actions>
+              </View>
+            )}
+          </View>
+        )}
+      </Dialog>
+
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={modalRelative}
+        onRequestClose={() => {
+          setModalRelative(false);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={{width: '100%', display: 'flex', alignItems: 'center', marginBottom: 7}}>
+              <Text style={styles.modalTitle}>Para quien es la Consulta ?</Text>
+            </View>
+            <View style={{width: '100%', display: 'flex'}}>
+              <Button
+                title='Es para mi'
+                type='clear'
+                onPress={() => {
+                  forMe();
+                }}
+              />
+              <View>
+                <Text style={styles.titleFamiliar}>Para un Familiar</Text>
+              </View>
+
+              {relatives.map((r, i) => (
+                <ListItem
+                  key={r.id}
+                  Component={TouchableOpacity}
+                  onPress={() => {
+                    selectedRelative(r);
+                  }}
+                  bottomDivider
+                  containerStyle={{
+                    paddingVertical: 6,
+                  }}>
+                  <Avatar source={require('../../assets/user-icon.png')} />
+                  <ListItem.Content>
+                    <ListItem.Title>{r.fullName}</ListItem.Title>
+                    <ListItem.Subtitle>Patentezco</ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron />
+                </ListItem>
+              ))}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -245,5 +531,41 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 0,
     elevation: 0,
+  },
+  styleResponse: {
+    width: '100%',
+    display: 'flex',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    width: '85%',
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 2,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 16,
+    color: '#15193f',
+    fontFamily: 'Poppins-Medium',
+  },
+  titleFamiliar: {
+    fontSize: 16,
+    color: '#15193f',
+    fontFamily: 'Poppins-Regular',
   },
 });

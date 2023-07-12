@@ -6,7 +6,7 @@ function Inicio({navigation}) {
   return (
     <View style={styles.container}>
       <View style={styles.contentImg}>
-        <Image style={styles.stretch} source={require('../../assets/chequeo-medico.jpg')} />
+        <Image style={styles.stretch} source={require('../../assets/chequeo-medico.png')} />
       </View>
       <View style={styles.contentInfo}>
         <Text style={styles.title}>Permitenos atenderter desde tu uibicación</Text>

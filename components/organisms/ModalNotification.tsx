@@ -22,7 +22,6 @@ const ModalNotification = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const {userLoged, showToast, navigation, token} = useContext(AuthContext);
-  console.log('modal ==> ', {specialities, notification});
 
   if (notification.data.type === TypeNotification.request) {
     return (
@@ -145,7 +144,6 @@ const ModalNotification = ({
                       doctor: notification.data.data.user,
                       user: {...userLoged, deviceToken: token},
                     });
-                    console.log('createChat =>', {navigation});
                     if (status) {
                       navigation.navigate('ChatsStack', {
                         screen: NavigationRoutes.chat,

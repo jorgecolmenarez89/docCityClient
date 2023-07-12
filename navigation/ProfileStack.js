@@ -6,6 +6,7 @@ import ProfileNewScreen from '../screens/cliente/ProfileNewScreen';
 import VacunasScreen from '../screens/cliente/VacunasScreen';
 import ConsultasScreen from '../screens/cliente/ConsultasScreen';
 import InstrumentosScreen from '../screens/cliente/InstrumentosScreen';
+import ConsultasDetailScreen from '../screens/cliente/ConsultasDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,15 @@ const ProfileStack = () => {
           component={ConsultasScreen}
           options={{
             title: 'Mis Consultas',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name='ConsultasDeatilS'
+          initialParams={{id: null}}
+          component={ConsultasDetailScreen}
+          options={{
+            title: 'Detalle de Consulta',
             headerShown: false,
           }}
         />
