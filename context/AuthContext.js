@@ -28,6 +28,7 @@ export const AuthProvider = ({children}) => {
   const {appState, updateId} = useAppState();
   const [specialities, setSpecialities] = useState([]);
   const [regions, setRegions] = useState([]);
+  const [userSelected, setUserSelected] = useState(null);
 
   const login = async (username, password) => {
     setAuthLoading(true);
@@ -191,6 +192,8 @@ export const AuthProvider = ({children}) => {
         specialities,
         getRegionsAll,
         regions,
+        userSelected,
+        setUserSelected,
       }}>
       {children}
       {notification && (

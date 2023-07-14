@@ -34,7 +34,8 @@ import {getCargas} from '../../services/user/carga';
 function SearchScreen({navigation}) {
   const isFocused = useIsFocused();
   const {theme} = useTheme();
-  const {userLoged, token, getEspecialitiesAll, specialities} = useContext(AuthContext);
+  const {userLoged, token, getEspecialitiesAll, specialities, setUserSelected} =
+    useContext(AuthContext);
   const [locationUser, setLocationUser] = useState();
   const [filterValues, setFilterValues] = useState({
     specialtyId: undefined,
@@ -148,9 +149,9 @@ function SearchScreen({navigation}) {
       setGifCareData(response.data);
       setResponseGC({
         success: true,
-        found: response.data.balance,
+        found: 30, //response.data.balance,
         message: buildMesage(response.data.balance),
-        todoOk: response.data.balance < 10 ? false : true,
+        todoOk: true, //response.data.balance < 10 ? false : true,
       });
       setLoadingCheck(false);
     } catch (error) {
@@ -273,19 +274,26 @@ function SearchScreen({navigation}) {
   };
 
   const handleContinue = () => {
-    /*if(relatives.length > 0){
-      setModalRelative(true)
+    if (relatives.length > 0) {
+      setModalRelative(true);
     } else {
+      setUserSelected(userLoged);
       setOpenDialog(false);
-    }*/
-    setModalRelative(true);
+    }
   };
 
   const selectedRelative = relative => {
     console.log(relative);
+    setUserSelected(relative);
+    checkTriaje(relative);
   };
 
-  const forMe = () => {};
+  const forMe = () => {
+    setUserSelected(userLoged);
+    checkTriaje(userLoged);
+  };
+
+  const checkTriaje = user => {};
 
   return (
     <View style={styles.container}>
