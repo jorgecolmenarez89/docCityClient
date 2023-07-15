@@ -1,26 +1,44 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {Image} from '@rneui/themed';
+import {Image, Button, Icon} from '@rneui/themed';
 import {Rating} from 'react-native-ratings';
 const USER_IMAGE = require('../../assets/user-icon.png');
 
-function Relative({name, relation, age, onPress}) {
+function Relative({name, relation, age, onClick}) {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <View style={styles.container}>
       <View style={styles.content}>
         <Image style={styles.iconContent} source={require('../../assets/user-icon.png')} />
-        <View style={styles.infoContent}>
-          <Text style={styles.title}>{name}</Text>
-          <View style={styles.optionsContent}>
-            <Text style={styles.text}>{relation}</Text>
-            {/*<View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={styles.text}>Edad:</Text>
-              <Text style={styles.textRating}>{age}</Text>
-            </View>*/}
+        <View style={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <View style={styles.infoContent}>
+            <Text style={styles.title}>{name}</Text>
+            <View style={styles.optionsContent}>
+              <Text style={styles.text}>{relation}</Text>
+              {/*<View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={styles.text}>Edad:</Text>
+                <Text style={styles.textRating}>{age}</Text>
+              </View>*/}
+            </View>
+          </View>
+          <View
+            style={{
+              width: '32%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+            }}>
+            <Icon
+              name='settings-outline'
+              color='#0b445e'
+              size={30}
+              type='ionicon'
+              onPress={() => onClick()}
+            />
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -31,7 +49,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#cdcdcd',
     padding: 10,
     borderRadius: 10,
-    minHeight: 90,
+    height: 90,
   },
   content: {
     display: 'flex',
@@ -45,6 +63,7 @@ const styles = StyleSheet.create({
   },
   infoContent: {
     display: 'flex',
+    flex: 1,
   },
   title: {
     fontFamily: 'Poppins-SemiBold',
@@ -61,5 +80,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     fontSize: 14,
     marginLeft: 5,
+  },
+  butonT: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 16,
+    color: '#0b445e',
   },
 });

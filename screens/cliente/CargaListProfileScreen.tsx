@@ -13,16 +13,13 @@ import {updateUserInfo} from '../../services/doctor/profile';
 
 type CargaListScreenProps = NativeStackScreenProps<RootStackParamList>;
 
-function CargaListScreen({navigation}: CargaListScreenProps) {
+function CargaListProfileScreen({navigation}: CargaListScreenProps) {
   const {userLoged, changeUserLoged} = useContext(AuthContext);
   const {getCurrentLocation} = useLocation();
   const [relatives, setRelatives] = useState<User[]>([]);
   const listCargas = useRef<FlatList<User>>(null);
   const [busco, setBusco] = useState<boolean>(false);
   const [coordinantes, setCoordinates] = useState<string>('');
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [loadingOmitir, setLoadingOmitir] = useState<boolean>(false);
 
   const nav = useNavigation();
   const isFocused = useIsFocused();
@@ -34,7 +31,6 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
   }, [isFocused]);
 
   useEffect(() => {
-    updatePosition();
     getRelatives();
   }, []);
 
@@ -53,44 +49,6 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
     setCoordinates(`${latitude},${longitude}`);
   };
 
-  const handleOmitir = () => {
-    setLoadingOmitir(true);
-    updateData();
-  };
-
-  const updateData = async () => {
-    try {
-      const bodyUser = {
-        id: userLoged.id,
-        userName: userLoged.userName,
-        email: userLoged.email,
-        fullName: userLoged.fullName,
-        colegioMedicoId: userLoged.colegioMedicoId,
-        experienceYears: userLoged.experienceYears,
-        medicalSpecialityId: userLoged.medicalSpecialityId,
-        sexo: '',
-        isAuthorizedDoctor: false,
-        phoneNumber: userLoged.phoneNumber,
-        deviceToken: userLoged.deviceToken,
-        geoLocation: coordinantes,
-        url: '',
-        urlCredential: '',
-        isLocalizable: true,
-        statusDoctor: '',
-        statusDoctorDescription: '',
-        isCompletedInfo: true,
-      };
-      await updateUserInfo(bodyUser);
-      changeUserLoged({...userLoged, ...bodyUser});
-      setLoadingOmitir(false);
-      //Alert.alert('Exito', 'Datos actualizados correctamente');
-    } catch (error) {
-      console.log('error', error);
-      setLoadingOmitir(false);
-      Alert.alert('Error', 'Ocurrio un error intente nuevamente');
-    }
-  };
-
   return (
     <View style={styles.container}>
       {busco && relatives.length == 0 && (
@@ -98,11 +56,7 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
           <View style={styles.contentButton}>
             <View style={{width: '100%', display: 'flex', height: 'auto'}}>
               <View style={styles.header}>
-                <Text style={styles.headerTitle}>Bienvenido a </Text>
-                <Image style={{width: 120, height: 50}} source={require('../../assets/icon.jpg')} />
-              </View>
-              <View style={styles.header}>
-                <Text style={styles.headerText}>Para comenzar puedes</Text>
+                <Text style={styles.headerText}>No posses Carga Familiar</Text>
               </View>
               <View style={styles.contentButtonItem}>
                 <Button
@@ -117,24 +71,7 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
                     fontFamily: 'Poppins-Bold',
                     fontSize: 17,
                   }}
-                  onPress={() => navigation.navigate('CargaAdd')}
-                />
-              </View>
-              <View style={styles.contentButtonItem}>
-                <Button
-                  raised={false}
-                  title='Omitir este paso'
-                  buttonStyle={{
-                    backgroundColor: '#0b445e',
-                    borderRadius: 30,
-                    height: 50,
-                  }}
-                  titleStyle={{
-                    fontFamily: 'Poppins-Bold',
-                    fontSize: 18,
-                  }}
-                  onPress={() => handleOmitir()}
-                  loading={loadingOmitir}
+                  onPress={() => navigation.navigate('CargaAddP')}
                 />
               </View>
             </View>
@@ -163,25 +100,7 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
                   fontFamily: 'Poppins-SemiBold',
                   fontSize: 17,
                 }}
-                onPress={() => navigation.navigate('CargaAdd')}
-              />
-            </View>
-            <View style={styles.contentButtonItem}>
-              <Button
-                raised={false}
-                title='Continuar'
-                buttonStyle={{
-                  backgroundColor: '#0b445e',
-                  borderRadius: 30,
-                  height: 50,
-                  width: 130,
-                }}
-                titleStyle={{
-                  fontFamily: 'Poppins-SemiBold',
-                  fontSize: 18,
-                }}
-                onPress={() => handleOmitir()}
-                loading={loadingOmitir}
+                onPress={() => navigation.navigate('CargaAddP')}
               />
             </View>
           </View>
@@ -199,7 +118,7 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
                     relation={'Parentezco'}
                     age={item.age}
                     onClick={() => {
-                      navigation.navigate('CargaDetail', {
+                      navigation.navigate('CargaDetailP', {
                         id: item.id,
                       });
                     }}
@@ -249,4 +168,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CargaListScreen;
+export default CargaListProfileScreen;

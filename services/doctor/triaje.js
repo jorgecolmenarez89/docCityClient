@@ -5,3 +5,13 @@ export const insertTriaje = body => {
     headers: {'Content-Type': 'application/json'},
   });
 };
+
+export const getTriaje = userId => {
+  return axiosInstance({isNode: false}).get(`/triaje/GetTriajesByUserId/${userId}`);
+};
+
+export const updateTriaje = body => {
+  return axiosInstance({isNode: false}).put(`/triaje/UpdateTriaje`, body, {
+    headers: {'Content-Type': 'application/json'},
+  });
+};

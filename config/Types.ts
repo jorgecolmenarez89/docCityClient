@@ -5,4 +5,7 @@ export type RootStackParamList = {
   Chat?: {id: string; receiver?: string};
   Profile?: undefined;
   CargaAdd?: undefined;
+  CargaDetail?: {id: string};
+  CargaAddP?: undefined;
+  CargaDetailP?: {id: string};
 };
