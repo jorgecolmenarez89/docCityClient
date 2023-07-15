@@ -5,7 +5,7 @@ import Chat, {ChatModel} from '../../models/Chat';
 import ChatMessage from '../../models/ChatMessage';
 import Doctor, {DoctorModel} from '../../models/Doctor';
 import {TypeNotification} from '../../models/Notification';
-import User from '../../models/User';
+import User, {UserModel} from '../../models/User';
 
 export const sendNotificationRequest = async ({
   doctors,
@@ -98,6 +98,60 @@ export const sendNotificationChat = async ({
         notification: {
           title: 'Mensaje nuevo',
           body: `${message.data.text}`,
+        },
+      },
+      {
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+      },
+    );
+  } catch (err: any) {
+    console.log('sendNotificationRequest() ==> err', {err});
+    return {status: false, msg: `err: ${err.message}`};
+  }
+};
+
+export const sendNotificationDoctorFinish = async ({
+  doctor,
+  user,
+  idRequest,
+}: {
+  doctor: DoctorModel;
+  user: UserModel;
+  idRequest: string;
+}) => {
+  try {
+    console.log('sendNotificationDoctorFinish() ==> user', {user});
+    let userMap = {};
+    for (const [key, value] of Object.entries(user)) {
+      console.log(`${key}: ${value}`);
+      //Object.defineProperty(userMap, `user.${key}`, {
+      //value: value,
+      //writable: false,
+      //});
+      const newKey = 'user_' + key;
+      console.log('newKey', newKey);
+      userMap[newKey] = `${value}`;
+    }
+    console.log('sendNotificationDoctorFinish() ==> userMap', {
+      userMap,
+      neess: {...userMap},
+      idRequest,
+    });
+
+    return await axios.create({baseURL: URL_NODE}).post(
+      '/send-notifications',
+      {
+        registrationTokens: doctor.deviceToken,
+        data: {
+          type: TypeNotification.finishRequest,
+          title: 'Consulta finalizada',
+          description: 'Realiza el resumen de la consulta',
+          idRequest: `${idRequest}`,
+          ...userMap,
+        },
+        notification: {
+          title: 'Consulta finalizada',
+          body: `Realiza el resumen de la consulta`,
         },
       },
       {

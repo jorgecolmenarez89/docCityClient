@@ -38,5 +38,5 @@ export const getLocationDetails = (latitude, longitude) => {
 };
 
 export const getRegions = () => {
-  return axiosInstance({url: URL_MOCK}).get(`/regions`);
+  return axiosInstance({}).get(`address/GetRegiones`);
 };

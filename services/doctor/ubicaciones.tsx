@@ -45,12 +45,9 @@ export const mostrarUbicacionesByRegion = async (params: {
   regionId: string;
 }) => {
   try {
-    return await axiosInstance({}).get(
-      `users/GetDoctorsNearMe/${params.user.latitude},${params.user.longitude}/${SEARCH_DISTANCE}`,
-      {
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
-      },
-    );
+    return await axiosInstance({}).get(`users/GetDoctorsByRegion/${params.regionId}`, {
+      headers: {'Content-Type': 'application/json; charset=utf-8'},
+    });
   } catch (err) {
     console.log('mostrarUbicaciones() ==> err', {err});
     return {status: false, msg: err?.message};

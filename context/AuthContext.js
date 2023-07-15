@@ -52,6 +52,10 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  const handleUserSelected = user => {
+    setUserSelected(user);
+  };
+
   const register = async data => {
     setAuthLoading(true);
     const url = '/users/CreateUser';
@@ -193,7 +197,7 @@ export const AuthProvider = ({children}) => {
         getRegionsAll,
         regions,
         userSelected,
-        setUserSelected,
+        setUserSelected: handleUserSelected,
       }}>
       {children}
       {notification && (

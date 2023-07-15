@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {Image} from '@rneui/themed';
 import {Rating} from 'react-native-ratings';
 const RATING_IMAGE = require('../../assets/rating.png');
@@ -7,36 +7,36 @@ const RATING_IMAGE = require('../../assets/rating.png');
 function Populares({title, speciality, stars, profile, onPress}) {
   return (
     <View style={styles.container}>
-      {/*<TouchableOpacity style={styles.container} onPress={onPress}>*/}
-      <View style={styles.content}>
-        <View style={styles.iconContent}>
-          <Image
-            source={{uri: profile}}
-            style={{
-              width: 70,
-              height: 70,
-              borderRadius: 6,
-            }}
-          />
-        </View>
-        <View style={styles.infoContent}>
-          <Text style={styles.title}>{title}</Text>
-          <View style={styles.optionsContent}>
-            <Text style={styles.text}>{speciality}</Text>
-            <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={styles.textRating}>{stars}</Text>
-              <Image
-                source={RATING_IMAGE}
-                style={{
-                  width: 20,
-                  height: 20,
-                }}
-              />
+      <TouchableOpacity style={styles.container} onPress={onPress}>
+        <View style={styles.content}>
+          <View style={styles.iconContent}>
+            <Image
+              source={{uri: profile}}
+              style={{
+                width: 70,
+                height: 70,
+                borderRadius: 6,
+              }}
+            />
+          </View>
+          <View style={styles.infoContent}>
+            <Text style={styles.title}>{title}</Text>
+            <View style={styles.optionsContent}>
+              <Text style={styles.text}>{speciality}</Text>
+              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={styles.textRating}>{stars}</Text>
+                <Image
+                  source={RATING_IMAGE}
+                  style={{
+                    width: 20,
+                    height: 20,
+                  }}
+                />
+              </View>
             </View>
           </View>
         </View>
-      </View>
-      {/*</TouchableOpacity>*/}
+      </TouchableOpacity>
     </View>
   );
 }

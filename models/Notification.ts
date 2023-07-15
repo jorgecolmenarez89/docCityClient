@@ -2,6 +2,7 @@ export enum TypeNotification {
   request = 'request',
   chat = 'chat',
   verificacion = 'verificacion',
+  finishRequest = 'finishRequest',
 }
 export interface NotificationModel {
   id?: string | number;
