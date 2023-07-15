@@ -5,7 +5,6 @@ import Triaje from '../../components/Triaje';
 
 function CargaDetailScreen({navigation, route}: any) {
   const {id} = route.params;
-
   return (
     <View style={{flex: 1, backgroundColor: '#f6f7fc', paddingTop: 50}}>
       <View style={{flex: 1, paddingHorizontal: 20, width: '100%'}}>

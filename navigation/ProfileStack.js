@@ -9,6 +9,10 @@ import InstrumentosScreen from '../screens/cliente/InstrumentosScreen';
 import ConsultasDetailScreen from '../screens/cliente/ConsultasDetailScreen';
 import TriajeScreen from '../screens/cliente/TriajeScreen';
 
+import CargaListProfileScreen from '../screens/cliente/CargaListProfileScreen';
+import CargaAddScreen from '../screens/cliente/CargaAddScreen';
+import CargaDetailScreen from '../screens/cliente/CargaDetailScreen';
+
 const Stack = createNativeStackNavigator();
 
 const ProfileStack = () => {
@@ -67,6 +71,32 @@ const ProfileStack = () => {
         <Stack.Screen
           name='TriajeSC'
           component={TriajeScreen}
+          options={{
+            title: '',
+            headerTransparent: true,
+          }}
+        />
+
+        <Stack.Screen
+          name='CargaListP'
+          component={CargaListProfileScreen}
+          options={{
+            title: '',
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name='CargaAddP'
+          component={CargaAddScreen}
+          options={{
+            title: '',
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name='CargaDetailP'
+          initialParams={{id: null}}
+          component={CargaDetailScreen}
           options={{
             title: '',
             headerTransparent: true,

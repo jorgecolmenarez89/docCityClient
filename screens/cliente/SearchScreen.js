@@ -7,7 +7,7 @@ import {
   Linking,
   Modal,
   TouchableOpacity,
-  TouchableHighlight,
+  ActivityIndicator,
 } from 'react-native';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
 import {useFocusEffect} from '@react-navigation/native';
@@ -30,11 +30,12 @@ import MapFilterComponet from '../../components/molecules/MapFilter';
 import {onSaveSearch} from '../../services/doctor/request';
 import {checkMoney} from '../../services/user/gitfcare';
 import {getCargas} from '../../services/user/carga';
+import {getTriaje} from '../../services/doctor/triaje';
 
 function SearchScreen({navigation}) {
   const isFocused = useIsFocused();
   const {theme} = useTheme();
-  const {userLoged, token, getEspecialitiesAll, specialities, setUserSelected} =
+  const {userLoged, token, getEspecialitiesAll, specialities, userSelected, setUserSelected} =
     useContext(AuthContext);
   const [locationUser, setLocationUser] = useState();
   const [filterValues, setFilterValues] = useState({
@@ -56,8 +57,14 @@ function SearchScreen({navigation}) {
   const [gifCareData, setGifCareData] = useState(null);
   const url = 'https://play.google.com/store/apps/details?id=com.veidthealth.giftcareapp&pli=1';
   const [relatives, setRelatives] = useState([]);
-
   const [modalRelative, setModalRelative] = useState(false);
+  const [loadingTriaje, setLoadingTriaje] = useState(false);
+  const [modalTriaje, setModalTriaje] = useState(false);
+  const [dataTriaje, setDataTriaje] = useState({
+    success: false,
+    message: '',
+    expirate: false,
+  });
 
   useEffect(() => {
     console.log('isFocused');
@@ -106,7 +113,7 @@ function SearchScreen({navigation}) {
       setResponseGC({
         success: true,
         found: 30, //response.data.balance,
-        message: buildMesage(response.data.balance),
+        message: buildMesage(30), // buildMesage(response.data.balance),
         todoOk: true, //response.data.balance < 10 ? false : true,
       });
       setLoadingCheck(false);
@@ -232,23 +239,47 @@ function SearchScreen({navigation}) {
   const handleContinue = () => {
     if (relatives.length > 0) {
       setModalRelative(true);
+      setOpenDialog(false);
     } else {
       setUserSelected(userLoged);
+      checkTriaje(userLoged);
       setOpenDialog(false);
     }
   };
 
   const selectedRelative = relative => {
     setUserSelected(relative);
+    setModalRelative(false);
     checkTriaje(relative);
   };
 
   const forMe = () => {
     setUserSelected(userLoged);
+    setModalRelative(false);
     checkTriaje(userLoged);
   };
 
-  const checkTriaje = user => {};
+  const checkTriaje = async user => {
+    setModalTriaje(true);
+    setLoadingTriaje(true);
+    try {
+      const {data} = await getTriaje(user.id);
+      setDataTriaje({
+        success: true,
+        message: 'Se ha verificado el Triaje',
+        expirate: false,
+      });
+      setLoadingTriaje(false);
+    } catch (error) {
+      console.log('error en triaje', error);
+      setDataTriaje({
+        success: false,
+        message: 'No has llenado el Formulario de triaje',
+        expirate: false,
+      });
+      setLoadingTriaje(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -356,9 +387,15 @@ function SearchScreen({navigation}) {
                 <Text>{reesponseGC.message}</Text>
                 <Dialog.Actions>
                   <Dialog.Button
-                    title='Salir de esta pantalla'
+                    title='Salir'
                     onPress={() => {
                       navigation.navigate('Home');
+                    }}
+                  />
+                  <Dialog.Button
+                    title='Reintentar'
+                    onPress={() => {
+                      tryAgain();
                     }}
                   />
                 </Dialog.Actions>
@@ -425,6 +462,80 @@ function SearchScreen({navigation}) {
                 </ListItem>
               ))}
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={modalTriaje}
+        onRequestClose={() => {
+          setModalTriaje(false);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            {loadingTriaje && (
+              <View style={{width: '100%', display: 'flex', alignItems: 'center'}}>
+                <Text style={styles.modalTitle}>Verificando Triaje</Text>
+                <ActivityIndicator size={50} color='black' />
+              </View>
+            )}
+
+            {!loadingTriaje && (
+              <>
+                <View
+                  style={{width: '100%', display: 'flex', alignItems: 'center', marginBottom: 7}}>
+                  <Text style={styles.modalTitle}>{dataTriaje.message}</Text>
+                </View>
+
+                {dataTriaje.success && (
+                  <View style={{width: '100%', display: 'flex'}}>
+                    <Button
+                      title='Aceptar'
+                      type='clear'
+                      onPress={() => {
+                        setModalTriaje(false);
+                      }}
+                    />
+                  </View>
+                )}
+                {!dataTriaje.success && (
+                  <View
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'flex-end',
+                    }}>
+                    <Button
+                      title='Reintentar'
+                      type='clear'
+                      onPress={() => {
+                        tryAgain();
+                      }}
+                    />
+
+                    <Button
+                      title='Completar Triaje'
+                      type='clear'
+                      onPress={() => {
+                        if (relatives.length > 0) {
+                          navigation.navigate('Profile', {
+                            screen: 'CargaDetailP',
+                            params: {
+                              id: userSelected.id,
+                            },
+                          });
+                        } else {
+                          navigation.navigate('TriajeSC');
+                        }
+                      }}
+                    />
+                  </View>
+                )}
+              </>
+            )}
           </View>
         </View>
       </Modal>
@@ -510,7 +621,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 2,
     paddingVertical: 15,
-    paddingHorizontal: 25,
+    paddingHorizontal: 15,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
