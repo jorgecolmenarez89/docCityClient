@@ -7,6 +7,7 @@ import VacunasScreen from '../screens/cliente/VacunasScreen';
 import ConsultasScreen from '../screens/cliente/ConsultasScreen';
 import InstrumentosScreen from '../screens/cliente/InstrumentosScreen';
 import ConsultasDetailScreen from '../screens/cliente/ConsultasDetailScreen';
+import TriajeScreen from '../screens/cliente/TriajeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -61,6 +62,14 @@ const ProfileStack = () => {
           options={{
             title: 'Istrumentos de Pago',
             headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name='TriajeSC'
+          component={TriajeScreen}
+          options={{
+            title: '',
+            headerTransparent: true,
           }}
         />
       </Stack.Navigator>

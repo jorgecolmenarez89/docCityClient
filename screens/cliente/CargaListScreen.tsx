@@ -143,7 +143,7 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
       )}
 
       {busco && relatives.length > 0 && (
-        <View style={{flex: 1, display: 'flex', paddingHorizontal: 10}}>
+        <View style={{flex: 1, display: 'flex', paddingHorizontal: 10, width: '100%'}}>
           <View style={styles.header}>
             <Text style={styles.headerText}>Mis Familiares</Text>
           </View>
@@ -185,24 +185,30 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
               />
             </View>
           </View>
-          <FlatList
-            ref={listCargas}
-            style={{flex: 1, marginTop: 15}}
-            data={relatives}
-            extraData={relatives}
-            renderItem={({item, index}: {item: any; index: number}) => {
-              return (
-                <Relative
-                  key={'ralative' + index}
-                  name={item.fullName}
-                  relation={'Parentezco'}
-                  age={item.age}
-                  onPress={() => {}}
-                />
-              );
-            }}
-            ItemSeparatorComponent={() => <View style={{height: 5}}></View>}
-          />
+
+          <View style={{flex: 1, marginTop: 15}}>
+            <FlatList
+              ref={listCargas}
+              data={relatives}
+              extraData={relatives}
+              renderItem={({item, index}: {item: any; index: number}) => {
+                return (
+                  <Relative
+                    key={'ralative' + index}
+                    name={item.fullName}
+                    relation={'Parentezco'}
+                    age={item.age}
+                    onClick={() => {
+                      navigation.navigate('CargaDetail', {
+                        id: item.id,
+                      });
+                    }}
+                  />
+                );
+              }}
+              ItemSeparatorComponent={() => <View style={{height: 5}}></View>}
+            />
+          </View>
         </View>
       )}
     </View>
@@ -213,7 +219,7 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#red',
   },
   header: {
     marginTop: 20,

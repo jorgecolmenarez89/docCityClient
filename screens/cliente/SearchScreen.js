@@ -81,51 +81,7 @@ function SearchScreen({navigation}) {
   const getRelatives = async () => {
     try {
       const {data} = await getCargas(userLoged.id);
-      //setRelatives(data.userChildren);
-      setRelatives([
-        {
-          id: '351718e9-3d45-483b-862d-7324ae656f33',
-          parentUserId: 'b7453b26-8189-44ab-a6ee-4f726c014dc3',
-          userName: 'andresito',
-          email: 'andresito@hotmail.com',
-          fullName: 'Andrez nuñez',
-          sexo: '',
-          phoneNumber: null,
-          deviceToken:
-            'eDLxjG51SAGtMIkqzjj4Bu:APA91bH_NwfeVrOjxhCn9Hn7Eu2_QJkvKFDgur1lBn2ek1NVO9ZfW_lO_ESF-YEQY_YJFOvoRWJVE97ZI0htkUF504UYap2MYAE7cJkB8eICaEd1xMCtHGv_RyWmzVnRuCeqHTl3ItpX',
-          geoLocation: null,
-          url: null,
-          urlCredential: null,
-        },
-        {
-          id: 'eb33bef5-e61e-4eec-9e68-cc1002c7a487',
-          parentUserId: 'b7453b26-8189-44ab-a6ee-4f726c014dc3',
-          userName: 'test',
-          email: 'test1@gmail.com',
-          fullName: 'Test infante',
-          sexo: '',
-          phoneNumber: null,
-          deviceToken:
-            'eDLxjG51SAGtMIkqzjj4Bu:APA91bH_NwfeVrOjxhCn9Hn7Eu2_QJkvKFDgur1lBn2ek1NVO9ZfW_lO_ESF-YEQY_YJFOvoRWJVE97ZI0htkUF504UYap2MYAE7cJkB8eICaEd1xMCtHGv_RyWmzVnRuCeqHTl3ItpX',
-          geoLocation: null,
-          url: null,
-          urlCredential: null,
-        },
-        {
-          id: 'edaaa0ef-9067-47dd-979d-bd4d3f45d5b3',
-          parentUserId: 'b7453b26-8189-44ab-a6ee-4f726c014dc3',
-          userName: 'santiaguito',
-          email: 'lamentem1@gmail.com',
-          fullName: 'Santiago Rojas',
-          sexo: '',
-          phoneNumber: null,
-          deviceToken:
-            'eDLxjG51SAGtMIkqzjj4Bu:APA91bH_NwfeVrOjxhCn9Hn7Eu2_QJkvKFDgur1lBn2ek1NVO9ZfW_lO_ESF-YEQY_YJFOvoRWJVE97ZI0htkUF504UYap2MYAE7cJkB8eICaEd1xMCtHGv_RyWmzVnRuCeqHTl3ItpX',
-          geoLocation: null,
-          url: null,
-          urlCredential: null,
-        },
-      ]);
+      setRelatives(data.userChildren);
     } catch (error) {
       console.log(error);
     }
@@ -283,7 +239,6 @@ function SearchScreen({navigation}) {
   };
 
   const selectedRelative = relative => {
-    console.log(relative);
     setUserSelected(relative);
     checkTriaje(relative);
   };
