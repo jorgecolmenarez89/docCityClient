@@ -14,10 +14,10 @@ import {useFocusEffect} from '@react-navigation/native';
 import {Popover, Button as Butt, Divider} from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SelectDropdown from 'react-native-select-dropdown';
-import {Button, ButtonGroup, useTheme, Dialog, Image, ListItem, Avatar} from '@rneui/themed';
+import {Button, ButtonGroup, useTheme, Dialog, Image, ListItem, Avatar, Icon} from '@rneui/themed';
 import {getEspecialities} from '../../services/doctor/medicine';
 import MapCustom from '../../components/atoms/maps';
-import {NAME_ICON} from '../../config/Constant';
+import {DEVELOPED, NAME_ICON} from '../../config/Constant';
 import {
   mostrarUbicaciones,
   mostrarUbicacionesByDescription,
@@ -120,12 +120,21 @@ function SearchScreen({navigation}) {
     } catch (error) {
       console.log('error dado', error);
       if (error.response.status === 404) {
-        setResponseGC({
-          success: false,
-          found: -400,
-          message: 'No posees tarjeta GiftCare con tu cuenta de Correo, puedes:',
-          todoOk: false,
-        });
+        if (!DEVELOPED) {
+          setResponseGC({
+            success: false,
+            found: -400,
+            message: 'No posees tarjeta GiftCare con tu cuenta de Correo, puedes:',
+            todoOk: false,
+          });
+        } else {
+          setResponseGC({
+            success: true,
+            found: 30,
+            message: buildMesage(30),
+            todoOk: true,
+          });
+        }
         setLoadingCheck(false);
       } else {
         setResponseGC({
@@ -248,8 +257,11 @@ function SearchScreen({navigation}) {
   };
 
   const selectedRelative = relative => {
-    setUserSelected(relative);
     setModalRelative(false);
+    console.log(relative);
+    if (!DEVELOPED) {
+      setUserSelected(relative);
+    }
     checkTriaje(relative);
   };
 
@@ -257,6 +269,8 @@ function SearchScreen({navigation}) {
     setUserSelected(userLoged);
     setModalRelative(false);
     checkTriaje(userLoged);
+    setModalRelative(false);
+    setOpenDialog(false);
   };
 
   const checkTriaje = async user => {

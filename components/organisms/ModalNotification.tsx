@@ -21,6 +21,7 @@ const ModalNotification = ({
   specialities: {id: number; name: string}[];
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [widthCard, setWidthCard] = useState(0);
   const {userLoged, showToast, navigation, token} = useContext(AuthContext);
 
   if (notification.data.type === TypeNotification.request) {
@@ -45,21 +46,25 @@ const ModalNotification = ({
                 alignItems: 'center',
                 marginHorizontal: 20,
                 marginBottom: 20,
+                width: '100%',
               }}>
-              <Avatar
-                containerStyle={{marginBottom: 20}}
-                size={100}
-                rounded
-                source={{
-                  uri:
-                    notification.data.data.user.url !== 'null'
-                      ? notification.data.data.user.url
-                      : ASSETS.user,
-                }}></Avatar>
-
-              <Text style={[styles.modalDescription, styles.textBold, styles.capitalize]}>
-                {notification.data.data.user.fullName}
-              </Text>
+              {/**
+               */}
+              <View
+                style={{width: '100%', height: 150}}
+                onLayout={event => {
+                  setWidthCard(event.nativeEvent.layout?.width || 0);
+                }}>
+                <Image
+                  style={{width: widthCard, height: 150}}
+                  resizeMode='contain'
+                  source={
+                    notification.data.data.user.urlCredential !== 'null'
+                      ? {uri: notification.data.data.user.urlCredential}
+                      : ASSETS.cardDefault
+                  }
+                />
+              </View>
 
               {specialities && specialities.length > 0 && (
                 <Text style={[styles.modalDescription, styles.textBold]}>
@@ -70,14 +75,6 @@ const ModalNotification = ({
                           speciality.id == notification.data.data.user.medicalSpecialityId,
                       )?.name
                     }
-                  </Text>
-                </Text>
-              )}
-
-              {notification.data.data.user.colegioMedicoId && (
-                <Text style={[styles.modalDescription, styles.textBold]}>
-                  <Text style={[styles.modalDescription]}>
-                    {notification.data.data.user.colegioMedicoId}
                   </Text>
                 </Text>
               )}
@@ -179,6 +176,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
+    width: '90%',
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 20,

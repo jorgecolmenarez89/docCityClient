@@ -14,6 +14,7 @@ import {Rating} from 'react-native-ratings';
 import {getLocationDetails} from '../../services/doctor/address';
 import {useLocation} from '../../hooks/useLocation';
 import {getPopulars} from '../../services/user/doctors';
+import {sendNotificationDoctorFinish} from '../../services/doctor/notification';
 
 function DashboardScreen({navigation}) {
   const {userLoged, specialities} = useContext(AuthContext);
@@ -239,6 +240,12 @@ function DashboardScreen({navigation}) {
                   status: StatusRequest.finished,
                   serviceRating: `${valRanking}`,
                 });
+                const {status: sta, data: dat} = await sendNotificationDoctorFinish({
+                  doctor: request.doctorUser,
+                  user: request.pacientUser,
+                  idRequest: request.id,
+                });
+                console.log('onPress() -> data', {dat, sta});
                 setIsLoading(false);
                 setRequest(undefined);
                 setIsRanking(false);

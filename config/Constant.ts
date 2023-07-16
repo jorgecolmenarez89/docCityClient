@@ -6,6 +6,7 @@ const business = require('../assets/business.png');
 const doctorPin = require('../assets/doctor-pin.png');
 const flatMessage = require('../assets/flat-message.svg');
 const flatReceiverMessage = require('../assets/flat-message-receiver.svg');
+const cardDefault = require('../assets/card-default.png');
 
 export const IS_ANDROID = Platform.OS === 'android';
 
@@ -21,6 +22,7 @@ export const ASSETS = {
   business: business,
   doctorPin: doctorPin,
   user: 'https://cdn-icons-png.flaticon.com/512/3033/3033143.png',
+  cardDefault: cardDefault,
   flatMessage: flatMessage,
   flatReceiverMessage: flatReceiverMessage,
 };
@@ -49,3 +51,5 @@ export const PREFIXES = {
 
 // distancia de busqueda para doctores en mts
 export const SEARCH_DISTANCE = 9000;
+
+export const DEVELOPED = true;
