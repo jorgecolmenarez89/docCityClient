@@ -1,24 +1,36 @@
 import React, {useContext, useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
-import {Button, Dialog} from '@rneui/themed';
-import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar} from 'react-native';
+import {AirbnbRating} from 'react-native-ratings';
+import {Button, Dialog, Image} from '@rneui/themed';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  Modal,
+  Dimensions,
+} from 'react-native';
 import CardSolicitar from '../../components/home/CardSolicitar';
 import Items from '../../components/home/Items';
 import Populares from '../../components/home/Populares';
+import PopularHome from '../../components/home/PopularHome';
 import {AuthContext} from '../../context/AuthContext';
 import {requestOpenedPacient, updateRequest} from '../../services/doctor/request';
-import {Avatar, Icon} from '@rneui/themed';
+import {Avatar, Icon, useTheme} from '@rneui/themed';
 import {ASSETS} from '../../config/Constant';
 import {NavigationRoutes, StatusRequest} from '../../config/Enum';
 import {Rating} from 'react-native-ratings';
 import {getLocationDetails} from '../../services/doctor/address';
 import {useLocation} from '../../hooks/useLocation';
-import {getPopulars} from '../../services/user/doctors';
+import {getPopulars, getPopular} from '../../services/user/doctors';
 import {sendNotificationDoctorFinish} from '../../services/doctor/notification';
 
 function DashboardScreen({navigation}) {
   const {userLoged, specialities} = useContext(AuthContext);
   const {getCurrentLocation} = useLocation();
+  const {theme} = useTheme();
 
   const [requests, setRequests] = useState();
   const [request, setRequest] = useState();
@@ -27,6 +39,12 @@ function DashboardScreen({navigation}) {
   const [isLoading, setIsLoading] = useState(false);
   const [populars, setPopulars] = useState([]);
   const [details, setDetails] = useState(null);
+  const [openModalPopular, setOpenModalPopular] = useState(false);
+  const [popularDetail, setPopularDetail] = useState(null);
+  const [medicalDetail, setMedicalDetail] = useState(null);
+
+  const {width, height} = Dimensions.get('window');
+  const ratio = width / 541; //541 is actual image width
 
   const onLoadLastRequest = async () => {
     try {
@@ -87,6 +105,18 @@ function DashboardScreen({navigation}) {
       setPopulars(data.data);
     } catch (error) {
       console.log('error  getPopulares', error);
+    }
+  };
+
+  const viewDetail = async p => {
+    setPopularDetail(p);
+    try {
+      const {data} = await getPopular(p.MedicoId);
+      console.log('doctor', data.data);
+      setMedicalDetail(data.data);
+      setOpenModalPopular(true);
+    } catch (error) {
+      console.log('error en detalle de popular', error);
     }
   };
 
@@ -151,11 +181,12 @@ function DashboardScreen({navigation}) {
 
         {populars.map((p, i) => (
           <View style={{marginBottom: 15}} key={'popular-' + i}>
-            <Populares
+            <PopularHome
               title={p.DoctorUser.FullName}
               stars={p.avgRating}
               speciality={p.DoctorUser.Speciality.Name}
               profile={p.DoctorUser.Url}
+              onPress={() => viewDetail(p)}
             />
           </View>
         ))}
@@ -255,6 +286,91 @@ function DashboardScreen({navigation}) {
           </View>
         </Dialog>
       )}
+
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={openModalPopular}
+        onRequestClose={() => {
+          setOpenModalPopular(false);
+        }}
+        style={{margin: 0}}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={{display: 'flex', alignItems: 'flex-end', width: '100%'}}>
+              <Icon
+                type='ionicon'
+                name='close-outline'
+                color='#0b445e'
+                onPress={() => {
+                  setOpenModalPopular(false);
+                }}
+                size={30}
+              />
+            </View>
+            <View style={{width: '100%', display: 'flex', flex: 1}}>
+              {medicalDetail && (
+                <View style={{flex: 1}}>
+                  <View style={styles.center}>
+                    <Image
+                      source={{
+                        uri: medicalDetail.url,
+                      }}
+                      style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: 50,
+                      }}
+                    />
+                  </View>
+
+                  <View style={styles.header}>
+                    <Text style={styles.titleHeader}>{medicalDetail.fullName}</Text>
+                    <Text style={styles.textHeader}>
+                      {popularDetail.DoctorUser.Speciality.Name}
+                    </Text>
+                    <View
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: '100%',
+                        alignItems: 'center',
+                      }}>
+                      <Text style={{...styles.textHeader, marginTop: 4}}>Ranking: </Text>
+                      <AirbnbRating
+                        showRating={false}
+                        count={5}
+                        defaultRating={popularDetail.avgRating}
+                        size={20}
+                        isDisabled
+                        selectedColor='white'
+                        starContainerStyle={{
+                          paddingRight: 10,
+                        }}
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.body}>
+                    <View style={{width: '100%', marginTop: 20, display: 'flex'}}>
+                      <Text style={styles.bodyText}>Credencial:</Text>
+                      <Image
+                        source={{
+                          uri: medicalDetail.urlCredential,
+                        }}
+                        style={{
+                          width: width - 40,
+                          height: 362 * ratio,
+                          borderRadius: 6,
+                        }}
+                      />
+                    </View>
+                  </View>
+                </View>
+              )}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -293,6 +409,82 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     fontSize: 16,
     color: '#06060a',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    width: '100%',
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 2,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    flex: 1,
+  },
+  header: {
+    marginTop: 10,
+    height: 130,
+    backgroundColor: '#005d81',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    display: 'flex',
+  },
+  body: {
+    marginTop: -30,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    flex: 1,
+    padding: 10,
+  },
+  titleHeader: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 17,
+    color: '#fff',
+  },
+  textHeader: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 15,
+    color: '#fff',
+  },
+  textDiagnostic: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 15,
+  },
+  styleTabview: {
+    width: '100%',
+    marginTop: 10,
+  },
+  message: {
+    marginBottom: 10,
+  },
+  textMessage: {
+    color: 'white',
+  },
+  center: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bodyText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 15,
+    color: '#15193f',
   },
 });
 

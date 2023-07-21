@@ -27,3 +27,7 @@ export const getEspecialistasByCenter = (centerId, especialidadId) => {
 export const getPopulars = () => {
   return axiosInstance({isNode: true}).get(`/getPopularDoctors`);
 };
+
+export const getPopular = id => {
+  return axiosInstance({isNode: true}).get(`/users/${id}`);
+};
