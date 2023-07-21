@@ -42,9 +42,9 @@ const SingleMap = ({
     };
   };
 
-  if (!hasLocation) {
+  /*if (!hasLocation) {
     return <LoadingScreen />;
-  }
+  }*/
 
   return (
     <>

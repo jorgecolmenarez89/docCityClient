@@ -132,7 +132,7 @@ function AppStack() {
             fontSize: 14,
           },
           tabBarIcon: ({color, size}) => (
-            <Icon name='location-outline' color={color} size={size} type='ionicon' />
+            <Icon name='map-outline' color={color} size={size} type='ionicon' />
           ),
         }}
       />

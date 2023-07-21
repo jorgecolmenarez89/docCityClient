@@ -17,7 +17,7 @@ function CardSolicitar({navigation}) {
         </View>
         <View style={styles.busquedaContainer}>
           <View style={styles.ubicationContainer}>
-            <Text style={styles.textContent}>Encuantra a tu especialista más cercano</Text>
+            <Text style={styles.textContent}>Encuentra a tu especialista más cercano</Text>
           </View>
           <View style={styles.botonContainer}>
             <Button
