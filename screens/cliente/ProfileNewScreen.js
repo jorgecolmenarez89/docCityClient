@@ -35,116 +35,120 @@ function ProfileNewScreen({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <View style={styles.titleContainer}>
-          <View
-            style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}>
-            <Text style={styles.title}>Mi Perfil</Text>
-          </View>
-          <View
-            style={{
-              position: 'absolute',
-              right: 0,
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Text style={{fontFamily: 'Poppins-SemiBold', color: '#163539'}}>Salir</Text>
-            <Icon
-              name='log-out-outline'
-              color='#163539'
-              size={30}
-              type='ionicon'
-              onPress={() => {
-                logout();
-              }}
-            />
-          </View>
-        </View>
-
-        <View style={styles.spacer}></View>
-
-        <View style={styles.namesContainer}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={getImage()}
+        <View style={styles.wrapper}>
+          <View style={styles.titleContainer}>
+            <View
               style={{
-                width: 60,
-                height: 70,
-                borderRadius: 6,
-              }}
-            />
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.titleCard}>{fullName}</Text>
-            <View style={styles.botonContainer}>
-              <Button
-                raised={false}
-                buttonStyle={{
-                  backgroundColor: '#0caec6',
-                  borderRadius: 6,
-                  height: 30,
-                  padding: 0,
-                  width: 125,
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+              }}>
+              <Text style={styles.title}>Mi Perfil</Text>
+            </View>
+            <View
+              style={{
+                position: 'absolute',
+                right: 0,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Text style={{fontFamily: 'Poppins-SemiBold', color: '#163539'}}>Salir</Text>
+              <Icon
+                name='log-out-outline'
+                color='#163539'
+                size={30}
+                type='ionicon'
+                onPress={() => {
+                  logout();
                 }}
-                titleStyle={{
-                  fontFamily: 'Poppins-Medium',
-                  fontSize: 17,
-                }}
-                onPress={() => navigation.navigate('ProfileEditS')}>
-                ACTUALIZAR
-              </Button>
+              />
             </View>
           </View>
-        </View>
-
-        <View style={styles.spacer}></View>
-
-        <View style={styles.subContainer}>
-          <View
-            style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-            }}>
-            <Text style={styles.title}>Informacion de Interes</Text>
+          <View style={styles.spacer}></View>
+          <View style={styles.namesContainer}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={getImage()}
+                style={{
+                  width: 60,
+                  height: 70,
+                  borderRadius: 6,
+                }}
+              />
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={styles.titleCard}>{fullName}</Text>
+              <View style={styles.botonContainer}>
+                <Button
+                  raised={false}
+                  buttonStyle={{
+                    backgroundColor: '#0caec6',
+                    borderRadius: 6,
+                    height: 30,
+                    padding: 0,
+                    width: 125,
+                  }}
+                  titleStyle={{
+                    fontFamily: 'Poppins-Medium',
+                    fontSize: 17,
+                  }}
+                  onPress={() => navigation.navigate('ProfileEditS')}>
+                  ACTUALIZAR
+                </Button>
+              </View>
+            </View>
           </View>
+          <View style={styles.spacer}></View>
+          <View style={styles.subContainer}>
+            <View
+              style={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+              }}>
+              <Text style={styles.title}>Información de interés</Text>
+            </View>
+          </View>
+          <View style={styles.spacer}></View>
+          <CardGrey
+            title='Mis Consultas'
+            options={['Lorem Ipsum']}
+            onPressEvent={() => navigation.navigate('ConsultasS')}
+            image={require('../../assets/icono-consultas.png')}
+          />
+          <View style={styles.spacer}></View>
+          <CardGrey
+            title='Mis Familiares'
+            options={['Lorem Ipsum']}
+            onPressEvent={() => navigation.navigate('CargaListP')}
+            image={require('../../assets/icono-historia-medica.png')}
+          />
+          <View style={styles.spacer}></View>
+          <CardGrey
+            title='Mis Vacunas'
+            options={['Lorem Ipsum']}
+            onPressEvent={() => navigation.navigate('VacunasS')}
+            image={require('../../assets/icono-vacunas.png')}
+          />
+          <View style={styles.spacer}></View>
+          <CardGrey
+            title='Mis GiftCare'
+            options={['Lorem Ipsum']}
+            onPressEvent={() => navigation.navigate('InstrumentosS')}
+            image={require('../../assets/icono-giftCare.png')}
+          />
+          <View style={styles.spacer}></View>
+          <CardGrey
+            title='Mi Triaje'
+            options={['Lorem Ipsum']}
+            onPressEvent={() => navigation.navigate('TriajeSC')}
+            image={require('../../assets/icono-giftCare.png')}
+          />
+          <View style={styles.spacer}></View>
         </View>
-        <View style={styles.spacer}></View>
-
-        <CardGrey
-          title='Mis Consultas'
-          options={['Lorem Ipsum']}
-          onPressEvent={() => navigation.navigate('ConsultasS')}
-          image={require('../../assets/icono-consultas.png')}
-        />
-        <View style={styles.spacer}></View>
-        <CardGrey
-          title='Mis Vacunas'
-          options={['Lorem Ipsum']}
-          onPressEvent={() => navigation.navigate('VacunasS')}
-          image={require('../../assets/icono-vacunas.png')}
-        />
-        <View style={styles.spacer}></View>
-        <CardGrey
-          title='Mis Instumentos de Pago'
-          options={['Lorem Ipsum']}
-          onPressEvent={() => navigation.navigate('InstrumentosS')}
-          image={require('../../assets/icono-giftCare.png')}
-        />
-        <View style={styles.spacer}></View>
-        <CardGrey
-          title='Mi Triaje'
-          options={['Lorem Ipsum']}
-          onPressEvent={() => navigation.navigate('TriajeSC')}
-          image={require('../../assets/icono-giftCare.png')}
-        />
-        <View style={styles.spacer}></View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -157,6 +161,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f6f7fc',
     paddingTop: StatusBar.currentHeight,
+  },
+  wrapper: {
+    width: '100%',
     paddingHorizontal: 20,
   },
   titleContainer: {

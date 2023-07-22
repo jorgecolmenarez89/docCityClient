@@ -67,8 +67,9 @@ function SearchScreen({navigation}) {
   });
 
   useEffect(() => {
-    console.log('isFocused');
+    console.log('isFocused', isFocused);
     if (isFocused) {
+      console.log('entro aqui');
       tryAgain();
     }
   }, [isFocused]);
@@ -112,9 +113,9 @@ function SearchScreen({navigation}) {
       setGifCareData(response.data);
       setResponseGC({
         success: true,
-        found: 30, //response.data.balance,
-        message: buildMesage(30), // buildMesage(response.data.balance),
-        todoOk: true, //response.data.balance < 10 ? false : true,
+        found: 6, //response.data.balance,
+        message: buildMesage(6), // buildMesage(response.data.balance),
+        todoOk: false, //response.data.balance < 10 ? false : true,
       });
       setLoadingCheck(false);
     } catch (error) {
@@ -241,6 +242,7 @@ function SearchScreen({navigation}) {
   };
 
   const tryAgain = () => {
+    setOpenDialog(true);
     setLoadingCheck(true);
     getSaldo();
   };

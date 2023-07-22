@@ -75,7 +75,7 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
         geoLocation: coordinantes,
         url: '',
         urlCredential: '',
-        isLocalizable: true,
+        isLocalizable: false,
         statusDoctor: '',
         statusDoctorDescription: '',
         isCompletedInfo: true,

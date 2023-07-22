@@ -36,11 +36,15 @@ function DetailConsultation({navigation, route}: DetailScreenProps) {
   }, [route]);
 
   const getRequestData = async (id: any) => {
-    const {data} = await requestById(id);
-    setRequest(data);
-    const {data: rango} = await getRatingDoctor(data.doctorUser.id);
-    const stars = rango.data[0].avgRating;
-    setRankinkg(stars);
+    try {
+      const {data} = await requestById(id);
+      setRequest(data.data);
+      const {data: rango} = await getRatingDoctor(data.data.doctorUser.id);
+      const stars = rango.data[0].avgRating;
+      setRankinkg(stars);
+    } catch (error) {
+      console.log('error en getRequestData', error);
+    }
   };
 
   const loadChat = async (id: string) => {
@@ -67,7 +71,7 @@ function DetailConsultation({navigation, route}: DetailScreenProps) {
           <View style={styles.center}>
             <Image
               source={{
-                uri: 'https://firebasestorage.googleapis.com/v0/b/doccity-5034b.appspot.com/o/images%2F0d8a2509-e34c-47d2-b3c2-0e88e0068e19%2Favatar?alt=media&token=151a7398-9a70-4e50-b3bf-b4920309e92b',
+                uri: request.doctorUser.url,
               }}
               style={{
                 width: 80,
@@ -79,7 +83,7 @@ function DetailConsultation({navigation, route}: DetailScreenProps) {
 
           <View style={styles.header}>
             <Text style={styles.titleHeader}>{request.doctorUser.fullName}</Text>
-            <Text style={styles.textHeader}>Ginecologo</Text>
+            <Text style={styles.textHeader}>{request.doctorUser.speciality.Name}</Text>
             <View
               style={{display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center'}}>
               <Text style={{...styles.textHeader, marginTop: 4}}>Ranking: </Text>
@@ -103,12 +107,7 @@ function DetailConsultation({navigation, route}: DetailScreenProps) {
             </Tab>
             <TabView value={index} onChange={setIndex} animationType='spring'>
               <TabView.Item style={styles.styleTabview}>
-                <Text style={styles.textDiagnostic}>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
-                  Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-                  unknown printer took a galley of type and scrambled it to make a type specimen
-                  book. It has survived not only five centuries,
-                </Text>
+                <Text style={styles.textDiagnostic}>{request.description}</Text>
               </TabView.Item>
               <TabView.Item style={styles.styleTabview}>
                 <FlatList

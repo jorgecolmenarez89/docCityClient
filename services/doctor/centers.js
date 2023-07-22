@@ -51,3 +51,13 @@ export const addDoctorCenter = (healthCenterId, userName) => {
     },
   );
 };
+
+export const getCentersBaremos = data => {
+  return axiosInstance({isNode: false}).get(
+    `/Baremos/CentrosAfiliadosCercanosAMiConMiPresupuesto?miGeoLocationActual=${data.location}&distanciaMaxima=9000&examenId=${data.examenId}&miPresupuesto=${data.balance}`,
+  );
+};
+
+export const getServices = () => {
+  return axiosInstance({isNode: false}).get(`/Baremos/GetTodosServicios`);
+};

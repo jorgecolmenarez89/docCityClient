@@ -11,13 +11,6 @@ function CarGrey({navigation, title, options, onPressEvent, image}) {
         </View>
         <View style={styles.infoContent}>
           <Text style={styles.title}>{title}</Text>
-          <View style={styles.optionsContent}>
-            {options.map((opt, i) => (
-              <Text style={styles.text} key={'opt-i'}>
-                {opt}
-              </Text>
-            ))}
-          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -31,7 +24,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#cdcdcd',
     padding: 10,
     borderRadius: 10,
-    minHeight: 80,
   },
   content: {
     display: 'flex',
@@ -45,6 +37,7 @@ const styles = StyleSheet.create({
   },
   infoContent: {
     display: 'flex',
+    justifyContent: 'center',
   },
   title: {
     fontFamily: 'Poppins-SemiBold',

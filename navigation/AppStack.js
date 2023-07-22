@@ -14,6 +14,7 @@ import ChatStack from './ChatStack';
 import {NavigationRoutes} from '../config/Enum';
 import {getFocusedRouteNameFromRoute, useNavigation} from '@react-navigation/native';
 import {getProfile} from '../services/doctor/profile';
+import BaremosScreen from '../screens/cliente/BaremosScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -121,6 +122,21 @@ function AppStack() {
           ),
         }}
       />
+
+      <Tab.Screen
+        name='Services'
+        component={BaremosScreen}
+        options={{
+          tabBarLabel: 'Servicios',
+          tabBarLabelStyle: {
+            fontSize: 14,
+          },
+          tabBarIcon: ({color, size}) => (
+            <Icon name='map-outline' color={color} size={size} type='ionicon' />
+          ),
+        }}
+      />
+
       <Tab.Screen
         name='ChatsStack'
         component={ChatStack}

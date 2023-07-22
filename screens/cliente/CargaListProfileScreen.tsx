@@ -10,6 +10,7 @@ import Relative from '../../components/home/Relative';
 import {AuthContext} from '../../context/AuthContext';
 import {useLocation} from '../../hooks/useLocation';
 import {updateUserInfo} from '../../services/doctor/profile';
+import CustomHeader from '../../components/CustomHeader';
 
 type CargaListScreenProps = NativeStackScreenProps<RootStackParamList>;
 
@@ -51,6 +52,14 @@ function CargaListProfileScreen({navigation}: CargaListScreenProps) {
 
   return (
     <View style={styles.container}>
+      <View style={{marginTop: 10, marginLeft: 20}}>
+        <CustomHeader
+          iconColor='#0b445e'
+          iconName='arrow-back'
+          onPressIcon={() => navigation.goBack()}
+        />
+      </View>
+
       {busco && relatives.length == 0 && (
         <View style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
           <View style={styles.contentButton}>

@@ -142,7 +142,7 @@ function ProfileScreen({navigation}) {
       experienceYears: userLoged.experienceYears,
       medicalSpecialityId: userLoged.medicalSpecialityId,
       sexo: sex,
-      isAuthorizedDoctor: userLoged.isAuthorizedDoctor,
+      isAuthorizedDoctor: false,
       phoneNumber: phone,
       deviceToken: userLoged.deviceToken,
       geoLocation: userLoged.geoLocation,
@@ -153,9 +153,8 @@ function ProfileScreen({navigation}) {
       statusDoctorDescription: userLoged.statusDoctorDescription,
       isCompletedInfo: userLoged.isCompletedInfo,
     };
-    const formatBody = formatBodyUser(body);
     try {
-      await updateUserInfo(formatBody);
+      await updateUserInfo(body);
       changeUserLoged({...userLoged, ...body});
       Alert.alert('Exito', 'Datos actualizados correctamente');
     } catch (error) {

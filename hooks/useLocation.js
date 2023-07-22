@@ -10,7 +10,7 @@ const handleRequestAuthorization = async () => {
       'android.permission.ACCESS_FINE_LOCATION',
     ]);
 
-    console.log('handleRequestAuthorization() => result', {result});
+    //console.log('handleRequestAuthorization() => result', {result});
     if (
       result['android.permission.ACCESS_FINE_LOCATION'] === 'granted' &&
       result['android.permission.ACCESS_COARSE_LOCATION'] === 'granted'

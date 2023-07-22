@@ -82,7 +82,7 @@ const ProfileStack = () => {
           component={CargaListProfileScreen}
           options={{
             title: '',
-            headerTransparent: true,
+            headerShown: false,
           }}
         />
         <Stack.Screen
