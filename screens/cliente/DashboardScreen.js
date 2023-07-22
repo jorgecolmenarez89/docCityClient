@@ -144,7 +144,7 @@ function DashboardScreen({navigation}) {
         <View style={styles.spacer} />
 
         <View style={styles.sectionSeparatpor}>
-          <Text style={styles.sectionTitle}>Información de interes</Text>
+          <Text style={styles.sectionTitle}>Información de interés</Text>
         </View>
 
         <Items navigation={navigation} />

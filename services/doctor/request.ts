@@ -30,7 +30,7 @@ export const requestFinish = async (id: string) => {
 
 export const requestById = async (id: string) => {
   try {
-    return await axiosInstance({isNode: false}).get(`users/GetRequestByRequestId/${id}`);
+    return await axiosInstance({isNode: true}).get(`request/${id}`);
   } catch (err: any) {
     console.log('requestFinish() ==> err', {err});
     return {status: false, msg: err.message};

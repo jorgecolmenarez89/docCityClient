@@ -14,7 +14,7 @@ const Items = ({navigation}: any) => {
     },
     {
       icon: '',
-      name: 'Historia médica',
+      name: 'Mis familiares',
       url: require('../../assets/icono-historia-medica.png'),
       route: 'Profile',
       screen: 'CargaListP',
