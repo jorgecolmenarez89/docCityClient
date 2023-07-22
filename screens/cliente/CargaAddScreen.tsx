@@ -16,6 +16,9 @@ import {AuthContext} from '../../context/AuthContext';
 import {validateEmail} from '../../helpers';
 import {axiosInstance} from '../../config/api';
 
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import SelectDropdown from 'react-native-select-dropdown';
+
 type CargaListScreenProps = NativeStackScreenProps<RootStackParamList>;
 
 function CargaAddScreen({navigation}: CargaListScreenProps) {
@@ -32,7 +35,20 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
     fullName: '',
     repeatPassword: '',
     deviceToken: token,
+    parentesco: '',
   });
+
+  const [relations, setRelations] = useState([
+    {id: 1, name: 'Abuelo/a'},
+    {id: 2, name: 'Esposo/a'},
+    {id: 3, name: 'Hermano/a'},
+    {id: 4, name: 'Hijo/a'},
+    {id: 5, name: 'Madre'},
+    {id: 6, name: 'Padre'},
+    {id: 7, name: 'Primo/a'},
+    {id: 8, name: 'Sobrino/a'},
+    {id: 9, name: 'Tío/a'},
+  ]);
 
   const handleChange = (text: string, name: string) => {
     setUser({
@@ -128,6 +144,36 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
           />
         </View>
         <View style={styles.inputContainer}>
+          <SelectDropdown
+            data={relations}
+            onSelect={(selectedItem, index) => {
+              setUser({...user, parentesco: selectedItem.name});
+            }}
+            buttonTextAfterSelection={(selectedItem, index) => {
+              return selectedItem.name;
+            }}
+            rowTextForSelection={(item, index) => {
+              return item.name;
+            }}
+            buttonStyle={styles.dropdown1BtnStyle}
+            buttonTextStyle={styles.dropdown1BtnTxtStyle}
+            renderDropdownIcon={isOpened => {
+              return (
+                <FontAwesome
+                  name={isOpened ? 'chevron-up' : 'chevron-down'}
+                  color={'#9fa0af'}
+                  size={16}
+                />
+              );
+            }}
+            dropdownIconPosition={'right'}
+            dropdownStyle={styles.dropdown1DropdownStyle}
+            rowStyle={styles.dropdown1RowStyle}
+            rowTextStyle={styles.dropdown1RowTxtStyle}
+            defaultButtonText={'Parentesco'}
+          />
+        </View>
+        <View style={styles.inputContainer}>
           {/*<Text style={styles.label}>Contraseña</Text>*/}
           <View style={styles.inputIcon}>
             <TextInput
@@ -172,7 +218,7 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
         <View style={styles.inputContainer}>
           <Button
             raised={false}
-            title='Guardar Familiar'
+            title='Guardar familiar'
             onPress={() => {
               handleRegister();
             }}
@@ -242,6 +288,24 @@ const styles = StyleSheet.create({
     color: '#06060a',
     fontFamily: 'Poppins-SemiBold',
   },
+  dropdown1BtnStyle: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#f5f6fa',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#7d7d7d',
+    fontFamily: 'Poppins-Medium',
+  },
+  dropdown1BtnTxtStyle: {
+    color: '#7d7d7d',
+    textAlign: 'left',
+    fontFamily: 'Poppins-Medium',
+    fontSize: 15,
+  },
+  dropdown1DropdownStyle: {backgroundColor: '#EFEFEF'},
+  dropdown1RowStyle: {backgroundColor: '#EFEFEF', borderBottomColor: '#C5C5C5'},
+  dropdown1RowTxtStyle: {color: '#444', textAlign: 'left'},
 });
 
 export default CargaAddScreen;

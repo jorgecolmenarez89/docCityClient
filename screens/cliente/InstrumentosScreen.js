@@ -1,16 +1,29 @@
 import React, {useState, useContext, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
-import {Button, Icon} from '@rneui/themed';
+import {View, Text, StyleSheet, Linking} from 'react-native';
+import {Button, Image} from '@rneui/themed';
 
 import CustomHeader from '../../components/CustomHeader';
 import {AuthContext} from '../../context/AuthContext';
 import {getMyGiftCare} from '../../services/user/gitfcare';
+import {checkMoney} from '../../services/user/gitfcare';
+
+const url = 'https://play.google.com/store/apps/details?id=com.veidthealth.giftcareapp&pli=1';
 
 function InstrumentosScreen({navigation}) {
   const {userLoged} = useContext(AuthContext);
   const [isSearch, setIsSearch] = useState(false);
   const [loading, setIsLoading] = useState(false);
   const [cards, setCards] = useState([]);
+  const [cardInfo, setCarInfo] = useState(null);
+
+  const [loadingCheck, setLoadingCheck] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [reesponseGC, setResponseGC] = useState({
+    success: false,
+    found: 0,
+    message: '',
+    todoOk: false,
+  });
 
   const renderItem = ({item, index}) => (
     <TouchableOpacity
@@ -50,13 +63,68 @@ function InstrumentosScreen({navigation}) {
   );
 
   useEffect(() => {
-    getCards();
+    getSaldo();
   }, []);
 
   const getCards = async () => {
     const {data} = await getMyGiftCare(userLoged);
     setCards([]);
     setIsSearch(true);
+  };
+
+  const getSaldo = async () => {
+    try {
+      const response = await checkMoney(userLoged.email);
+      setCarInfo(response.data);
+      setResponseGC({
+        success: true,
+        found: response.data.balance,
+        message: buildMesage(response.data.balance),
+        todoOk: response.data.balance < 10 ? false : true,
+      });
+      setIsSearch(true);
+    } catch (error) {
+      console.log('error dado', error);
+      if (error.response.status === 404) {
+        setResponseGC({
+          success: false,
+          found: -400,
+          message: 'No posees tarjeta GiftCare con tu cuenta de Correo, puedes:',
+          todoOk: false,
+        });
+        setIsSearch(true);
+      } else {
+        setResponseGC({
+          success: false,
+          found: -500,
+          message: 'Ha Ocurrido un error intente nuevamente',
+          todoOk: false,
+        });
+        setIsSearch(true);
+      }
+    }
+  };
+
+  const tryAgain = () => {
+    setLoadingCheck(true);
+    getSaldo();
+  };
+
+  const buildMesage = balance => {
+    if (balance === 0) {
+      return 'Detectamos tu tarjeta sin embargo no posee fondos, debereas recargar el mismo desde la app GiftCare';
+    } else if (balance > 0 && balance < 10) {
+      return 'Detectamos tu tarjeta sin embargo no posee monto minimo para una consulta, debereas recargar el mismo desde la app GiftCare';
+    } else {
+      return 'Fondos suficientes, presiona continuar para realizar la busqueda';
+    }
+  };
+
+  const getBackground = () => {
+    if (cardInfo.balance >= 10) {
+      return '#17C964';
+    }
+    return '#F5A524';
   };
 
   return (
@@ -77,40 +145,54 @@ function InstrumentosScreen({navigation}) {
           width: '100%',
           marginBottom: 10,
         }}>
-        <Text style={styles.title}>Mis Gitfcare</Text>
+        <Text style={styles.title}>Mi Gitfcare</Text>
       </View>
-      {cards.length == 0 && isSearch && (
-        <View style={styles.notFoundView}>
-          <Text style={styles.notFoundText}>
-            {userLoged.fullName}, Aún no posee ninguna tarjeta
-          </Text>
 
-          <View style={styles.buttonContainer}>
-            <Button
-              raised={false}
-              title='Generar GiftCare'
-              buttonStyle={{
-                backgroundColor: '#0b445e',
-                borderRadius: 30,
-                height: 50,
-              }}
-              titleStyle={{
-                fontFamily: 'Poppins-SemiBold',
-              }}
-              onPress={() => {}}
-              loading={loading}
-            />
+      <View
+        style={{
+          width: '100%',
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        {!isSearch && <Text>Buscando...</Text>}
+
+        {!cardInfo && isSearch && (
+          <View style={styles.styleResponse}>
+            <Text style={styles.textFinance}>No posees GitfCare</Text>
+            <View style={{width: '100%', display: 'flex', alignItems: 'center', marginTop: 15}}>
+              <Image
+                source={require('../../assets/google-play.png')}
+                style={{
+                  height: 70,
+                  width: 70,
+                }}
+              />
+              <Button
+                title='Descargar desde Play Store'
+                type='clear'
+                onPress={async () => {
+                  await Linking.openURL(url);
+                }}
+              />
+            </View>
           </View>
-        </View>
-      )}
-      <View style={{width: '100%', paddingHorizontal: 10}}>
-        <FlatList
-          containerStyle={styles.listContainer}
-          data={cards}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          ItemSeparatorComponent={() => <View style={{height: 5}}></View>}
-        />
+        )}
+
+        {cardInfo && isSearch && (
+          <View style={{width: '100%', display: 'flex', alignItems: 'center'}}>
+            <Text style={styles.textFinance}>Resumen finaciero</Text>
+            <View style={{...styles.header, backgroundColor: getBackground()}}>
+              <Text style={styles.titleHeader}>Saldo: {cardInfo.balance}$</Text>
+              <Text style={styles.titleHeader}>
+                {cardInfo.balance >= 10
+                  ? 'Si posee fondos para realizar una consulta'
+                  : 'El fondo mínimo para una consulta es de 10$, debe recargar saldo'}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -163,11 +245,6 @@ const styles = StyleSheet.create({
   infoContent: {
     display: 'flex',
   },
-  title: {
-    color: '#393738',
-    fontFamily: 'Poppins-Medium',
-    fontSize: 17,
-  },
   optionsContent: {
     display: 'flex',
   },
@@ -184,5 +261,37 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '80%',
     paddingVertical: 15,
+  },
+  header: {
+    width: '90%',
+    marginTop: 10,
+    //backgroundColor: '#005d81',
+    borderRadius: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    display: 'flex',
+  },
+  body: {
+    marginTop: -30,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    flex: 1,
+    padding: 10,
+  },
+  titleHeader: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 17,
+    color: '#fff',
+  },
+  textHeader: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 15,
+    color: '#fff',
+  },
+  textFinance: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 18,
+    color: '#06060a',
   },
 });

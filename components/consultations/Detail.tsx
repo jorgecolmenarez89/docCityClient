@@ -102,7 +102,7 @@ function DetailConsultation({navigation, route}: DetailScreenProps) {
           </View>
           <View style={styles.body}>
             <Tab value={index} onChange={setIndex} dense>
-              <Tab.Item>Diagnostico</Tab.Item>
+              <Tab.Item>Diagnóstico</Tab.Item>
               <Tab.Item>Historia Médica</Tab.Item>
             </Tab>
             <TabView value={index} onChange={setIndex} animationType='spring'>

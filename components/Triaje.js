@@ -908,7 +908,7 @@ function Triaje({idUser, parent}) {
 
         <View style={styles.buttonContainer}>
           <Button
-            title='Guardar Información'
+            title='Guardar información'
             raised={false}
             buttonStyle={{
               backgroundColor: '#0b445e',

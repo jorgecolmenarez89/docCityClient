@@ -124,7 +124,7 @@ function ProfileNewScreen({navigation}) {
             title='Mis Familiares'
             options={['Lorem Ipsum']}
             onPressEvent={() => navigation.navigate('CargaListP')}
-            image={require('../../assets/icono-historia-medica.png')}
+            image={require('../../assets/icono-familia.png')}
           />
           <View style={styles.spacer}></View>
           <CardGrey
@@ -135,7 +135,7 @@ function ProfileNewScreen({navigation}) {
           />
           <View style={styles.spacer}></View>
           <CardGrey
-            title='Mis GiftCare'
+            title='Mi GiftCare'
             options={['Lorem Ipsum']}
             onPressEvent={() => navigation.navigate('InstrumentosS')}
             image={require('../../assets/icono-giftCare.png')}
@@ -145,7 +145,7 @@ function ProfileNewScreen({navigation}) {
             title='Mi Triaje'
             options={['Lorem Ipsum']}
             onPressEvent={() => navigation.navigate('TriajeSC')}
-            image={require('../../assets/icono-giftCare.png')}
+            image={require('../../assets/icono-triaje.png')}
           />
           <View style={styles.spacer}></View>
         </View>

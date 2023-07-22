@@ -124,7 +124,7 @@ function CargaListProfileScreen({navigation}: CargaListScreenProps) {
                   <Relative
                     key={'ralative' + index}
                     name={item.fullName}
-                    relation={'Parentezco'}
+                    relation={item.parentesco}
                     age={item.age}
                     onClick={() => {
                       navigation.navigate('CargaDetailP', {

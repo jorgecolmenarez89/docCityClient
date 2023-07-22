@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentImg: {
-    backgroundColor: 'blue',
+    backgroundColor: '#fff',
     flex: 2,
   },
   contentInfo: {
