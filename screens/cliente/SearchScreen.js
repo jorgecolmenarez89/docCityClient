@@ -67,10 +67,8 @@ function SearchScreen({navigation}) {
   });
 
   useEffect(() => {
-    console.log('isFocused', isFocused);
     if (isFocused) {
-      console.log('entro aqui');
-      tryAgain();
+      getSaldo();
     }
   }, [isFocused]);
 
@@ -81,7 +79,6 @@ function SearchScreen({navigation}) {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log('useCallback');
       getSaldo();
     }, []),
   );
@@ -113,9 +110,9 @@ function SearchScreen({navigation}) {
       setGifCareData(response.data);
       setResponseGC({
         success: true,
-        found: 30, //response.data.balance,
-        message: buildMesage(30), // buildMesage(response.data.balance),
-        todoOk: true, //response.data.balance < 10 ? false : true,
+        found: response.data.balance,
+        message: buildMesage(response.data.balance),
+        todoOk: response.data.balance < 10 ? false : true,
       });
       setLoadingCheck(false);
     } catch (error) {
@@ -405,6 +402,7 @@ function SearchScreen({navigation}) {
                   <Dialog.Button
                     title='Salir'
                     onPress={() => {
+                      setOpenDialog(false);
                       navigation.navigate('Home');
                     }}
                   />

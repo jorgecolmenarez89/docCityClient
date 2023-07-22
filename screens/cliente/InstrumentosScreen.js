@@ -122,7 +122,7 @@ function InstrumentosScreen({navigation}) {
 
   const getBackground = () => {
     if (cardInfo.balance >= 10) {
-      return '#17C964';
+      return 'yellow';
     }
     return '#F5A524';
   };
@@ -133,7 +133,7 @@ function InstrumentosScreen({navigation}) {
         <CustomHeader
           iconColor='#0b445e'
           iconName='arrow-back'
-          onPressIcon={() => navigation.goBack()}
+          onPressIcon={() => navigation.popToTop()}
         />
       </View>
       <View
@@ -145,7 +145,7 @@ function InstrumentosScreen({navigation}) {
           width: '100%',
           marginBottom: 10,
         }}>
-        <Text style={styles.title}>Mi Gitfcare</Text>
+        <Text style={styles.title}>Mi Giftcare</Text>
       </View>
 
       <View
@@ -160,7 +160,7 @@ function InstrumentosScreen({navigation}) {
 
         {!cardInfo && isSearch && (
           <View style={styles.styleResponse}>
-            <Text style={styles.textFinance}>No posees GitfCare</Text>
+            <Text style={styles.textFinance}>No posees GiftCare</Text>
             <View style={{width: '100%', display: 'flex', alignItems: 'center', marginTop: 15}}>
               <Image
                 source={require('../../assets/google-play.png')}
@@ -182,7 +182,7 @@ function InstrumentosScreen({navigation}) {
 
         {cardInfo && isSearch && (
           <View style={{width: '100%', display: 'flex', alignItems: 'center'}}>
-            <Text style={styles.textFinance}>Resumen finaciero</Text>
+            <Text style={styles.textFinance}>Resumen financiero</Text>
             <View style={{...styles.header, backgroundColor: getBackground()}}>
               <Text style={styles.titleHeader}>Saldo: {cardInfo.balance}$</Text>
               <Text style={styles.titleHeader}>

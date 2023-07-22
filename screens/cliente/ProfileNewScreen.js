@@ -27,7 +27,6 @@ function ProfileNewScreen({navigation}) {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log('profile focus');
       setFullName(userLoged.fullName);
       setPhone(userLoged.phoneNumber);
       setSex(userLoged.sexo);

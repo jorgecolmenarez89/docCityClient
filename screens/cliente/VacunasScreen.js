@@ -173,7 +173,7 @@ function VacunasScreen({navigation}) {
         <CustomHeader
           iconColor='#0b445e'
           iconName='arrow-back'
-          onPressIcon={() => navigation.goBack()}
+          onPressIcon={() => navigation.popToTop()}
         />
       </View>
       <View

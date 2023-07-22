@@ -52,4 +52,4 @@ export const PREFIXES = {
 // distancia de busqueda para doctores en mts
 export const SEARCH_DISTANCE = 9000;
 
-export const DEVELOPED = true;
+export const DEVELOPED = false;
