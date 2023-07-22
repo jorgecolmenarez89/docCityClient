@@ -44,7 +44,7 @@ export const sendNotificationRequest = async ({
         },
         notification: {
           title: 'Solicitud de servició',
-          body: `${user.fullName} solicita tus servicios`,
+          body: `solicitan tus servicios`,
         },
       },
       {
