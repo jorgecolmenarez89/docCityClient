@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {Button, Dialog} from '@rneui/themed';
-import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar} from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar, TextInput} from 'react-native';
 import CardSolicitar from '../../components/home/CardSolicitar';
 import Items from '../../components/home/Items';
 import Populares from '../../components/home/Populares';
@@ -27,6 +27,7 @@ function DashboardScreen({navigation}) {
   const [isLoading, setIsLoading] = useState(false);
   const [populars, setPopulars] = useState([]);
   const [details, setDetails] = useState(null);
+  const [comment, setComment] = useState('');
 
   const onLoadLastRequest = async () => {
     try {
@@ -222,13 +223,21 @@ function DashboardScreen({navigation}) {
           </Text>
           <Rating
             onFinishRating={val => setValRanking(val)}
+            ratingCount={5}
             minValue={0}
             startingValue={0}
             style={{paddingVertical: 10}}
           />
+          <TextInput
+            value={comment}
+            style={{backgroundColor: '#cfcfcf'}}
+            onChangeText={val => setComment(val)}
+            multiline={true}
+            numberOfLines={6}
+          />
           <View>
             <Button
-              disabled={valRanking === 0}
+              disabled={valRanking === 0 && comment === ''}
               loading={isLoading}
               onPress={async () => {
                 setIsLoading(true);
@@ -239,6 +248,7 @@ function DashboardScreen({navigation}) {
                   doctor: request.doctorUser,
                   status: StatusRequest.finished,
                   serviceRating: `${valRanking}`,
+                  comment: comment,
                 });
                 const {status: sta, data: dat} = await sendNotificationDoctorFinish({
                   doctor: request.doctorUser,

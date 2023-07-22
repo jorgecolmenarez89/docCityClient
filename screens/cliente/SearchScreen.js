@@ -198,7 +198,7 @@ function SearchScreen({navigation}) {
           setDoctors(newDoctors);
           const {status: statusOne, data: dataOne} = await onSaveSearch({
             status: 'green',
-            user: userLoged,
+            user: userSelected,
             doctors: data,
             type: typeSearch,
             data: filterValues.description,
@@ -207,7 +207,7 @@ function SearchScreen({navigation}) {
             //console.log('handleSearch() ==>', {dataOne});
             const result = await sendNotificationRequest({
               doctors: newDoctors,
-              user: {...userLoged, deviceToken: token},
+              user: {...userSelected, deviceToken: userSelected.deviceToken},
               idSearch: dataOne.data.id,
             });
           }

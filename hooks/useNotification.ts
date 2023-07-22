@@ -68,10 +68,16 @@ const useNotification = () => {
   const managerNotification = async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
     const {data} = remoteMessage;
     const user = {};
+    const client = {};
     for (const [key, value] of Object.entries(data)) {
       if (key.indexOf('user_') !== -1) {
         const newKey = key.replace('user_', '');
         user[newKey] = value;
+      }
+
+      if (key.indexOf('client_') !== -1) {
+        const newKey = key.replace('client_', '');
+        client[newKey] = value;
       }
     }
 
@@ -80,7 +86,7 @@ const useNotification = () => {
         type: data?.type || TypeNotification.request,
         title: data?.title,
         description: data?.description,
-        data: {user, idRequest: data?.idRequest},
+        data: {user, idRequest: data?.idRequest, client},
       }),
     );
 

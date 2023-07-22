@@ -36,7 +36,7 @@ class Doctor {
     const {coordinate, fullName} = this.data;
     return {
       coordinate,
-      title: fullName,
+      //title: fullName,
       type: 'doctor',
     };
   }

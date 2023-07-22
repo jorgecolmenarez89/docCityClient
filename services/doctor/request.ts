@@ -1,6 +1,15 @@
 import {axiosInstance} from '../../config/api';
 import {URL_MOCK} from '../../config/Constant';
 
+export const generateRequest = async (data: any) => {
+  try {
+    return await axiosInstance({isNode: true}).post('consultations', data);
+  } catch (err: any) {
+    console.log('genereateRequest() ==> err', {err});
+    return {status: false, msg: err.message};
+  }
+};
+
 export const updateRequest = async (data: any) => {
   try {
     return await axiosInstance({isNode: true}).put(`consultations/${data.id}`, data);

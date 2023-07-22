@@ -8,7 +8,7 @@ import {NavigationRoutes, StatusRequest, TypeToast} from '../../config/Enum';
 import {AuthContext} from '@context/AuthContext';
 import Notification, {TypeNotification} from '../../models/Notification';
 import {sendNotificationRequest} from '../../services/doctor/notification';
-import {updateRequest} from '@services/doctor/request';
+import {generateRequest, updateRequest} from '@services/doctor/request';
 import {createChat} from '../../services/user/chat';
 
 const ModalNotification = ({
@@ -121,15 +121,16 @@ const ModalNotification = ({
                 onPress={async () => {
                   setIsLoading(true);
                   const body = {
-                    userId: userLoged.id,
+                    userId: notification.data.data.client.id,
                     medicoId: notification.data.data.user.id,
                     status: StatusRequest.inProgress,
                     serviceRating: '0',
-                    user: userLoged,
+                    user: notification.data.data.client,
                     doctor: notification.data.data.user,
-                    id: notification.data.data.idRequest,
+                    description: '',
+                    createdDate: new Date(),
                   };
-                  const {status, data} = await updateRequest(body);
+                  const {status, data} = await generateRequest(body);
 
                   if (status === 200) {
                     showToast({
