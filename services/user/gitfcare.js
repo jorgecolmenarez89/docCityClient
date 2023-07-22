@@ -13,3 +13,9 @@ export const addGifcare = body => {
 export const checkMoney = email => {
   return axiosInstance({isNode: false}).get(`GiftCareInfo/GetGiftCareUserByEmail/${email}`);
 };
+
+export const debitFound = body => {
+  return axiosInstance({isNode: false}).post(`/GiftCareInfo/RegisterMedicalConsultation`, body, {
+    headers: {'Content-Type': 'application/json'},
+  });
+};

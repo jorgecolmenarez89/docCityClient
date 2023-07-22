@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useContext} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar} from 'react-native';
 import {Button, Icon, Image} from '@rneui/themed';
+import {useFocusEffect} from '@react-navigation/native';
 import CardGrey from '../../components/perfil/CardGrey';
 
 import {AuthContext} from '../../context/AuthContext';
@@ -23,6 +24,17 @@ function ProfileNewScreen({navigation}) {
     setSex(userLoged.sexo);
     setDefaultSex(userLoged.sexo);
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('profile focus');
+      setFullName(userLoged.fullName);
+      setPhone(userLoged.phoneNumber);
+      setSex(userLoged.sexo);
+      setDefaultSex(userLoged.sexo);
+      return undefined;
+    }, []),
+  );
 
   const getImage = () => {
     if (userLoged.url && userLoged.url != '') {

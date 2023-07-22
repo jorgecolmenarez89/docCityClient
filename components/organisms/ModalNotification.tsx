@@ -10,6 +10,7 @@ import Notification, {TypeNotification} from '../../models/Notification';
 import {sendNotificationRequest} from '../../services/doctor/notification';
 import {generateRequest, updateRequest} from '@services/doctor/request';
 import {createChat} from '../../services/user/chat';
+import {debitFound} from '../../services/user/gitfcare';
 
 const ModalNotification = ({
   onClose,
@@ -131,22 +132,40 @@ const ModalNotification = ({
                     createdDate: new Date(),
                   };
                   const {status, data} = await generateRequest(body);
-
+                  const dataRequest = data.data;
                   if (status === 200) {
                     showToast({
                       description: 'Consulta aceptada con éxito.',
                       type: TypeToast.success,
                     });
-                    const {status, data} = await createChat({
-                      id: body.id,
+                    const {status: statusChat, data: dataChat} = await createChat({
+                      id: dataRequest.id.toString(),
                       doctor: notification.data.data.user,
                       user: {...userLoged, deviceToken: token},
                     });
-                    if (status) {
+                    if (statusChat) {
                       navigation.navigate('ChatsStack', {
                         screen: NavigationRoutes.chat,
-                        params: {id: data, receiver: notification.data.data.user.id},
+                        params: {id: dataChat, receiver: notification.data.data.user.id},
                       });
+                    } else {
+                      console.log('paso algo al crear el chat');
+                    }
+
+                    const bodyDebit = {
+                      historialMedicoId: dataRequest.id,
+                      requestId: dataRequest.id,
+                      description: 'debito de consulta médica desde Veidt',
+                      medicaUserId: notification.data.data.user.id,
+                      giftCareUserId: userLoged.email,
+                      amount: 10,
+                      status: 'inicial',
+                    };
+                    const {status: statusDebit, data: dataDebit} = await debitFound(bodyDebit);
+                    if (statusDebit === 200) {
+                      console.log('se debito ');
+                    } else {
+                      console.log('no se debito');
                     }
                     onClose();
                   } else {

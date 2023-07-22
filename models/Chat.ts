@@ -15,6 +15,7 @@ export interface ChatModel {
   createAt?: number;
   createAtDisplay?: string;
   receiver?: DoctorModel | UserModel;
+  requestFinish?: boolean;
 }
 
 class Chat {
@@ -25,7 +26,7 @@ class Chat {
   }
 
   static formatData({data, userLog}: {data: any; userLog: UserModel}) {
-    const {doctor, doctorId, user, userId, messages, updateAt, id} = data;
+    const {doctor, doctorId, user, userId, messages, updateAt, id, requestFinish} = data;
 
     return {
       id: id,
@@ -40,6 +41,7 @@ class Chat {
       updateAt: updateAt?.toDate(),
       updateAtDisplay: updateAt ? dateChat(updateAt?.toDate()) : undefined,
       receiver: userLog.id !== doctor.id ? doctor : user,
+      requestFinish: requestFinish ? requestFinish : false,
     };
   }
 

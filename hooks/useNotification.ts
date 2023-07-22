@@ -117,7 +117,7 @@ const useNotification = () => {
   const boostrap = async () => {
     await messaging().registerDeviceForRemoteMessages();
     const tokenNew = await messaging().getToken();
-    console.log('token ==>', tokenNew);
+    //console.log('token ==>', tokenNew);
     setToken(tokenNew);
 
     messaging().onNotificationOpenedApp(async remoteMessage => {

@@ -164,8 +164,9 @@ function DashboardScreen({navigation}) {
                 onPress={() => {
                   setRequest(p);
                 }}
+                profile={p.doctorUser.url}
                 title={p.doctorUser.fullName}
-                stars={0}
+                stars={parseInt(p.serviceRating, 10)}
                 speciality={
                   specialities.find(spec => spec.id === p.doctorUser.medicalSpecialityId).name || ''
                 }

@@ -113,9 +113,9 @@ function SearchScreen({navigation}) {
       setGifCareData(response.data);
       setResponseGC({
         success: true,
-        found: 6, //response.data.balance,
-        message: buildMesage(6), // buildMesage(response.data.balance),
-        todoOk: false, //response.data.balance < 10 ? false : true,
+        found: 30, //response.data.balance,
+        message: buildMesage(30), // buildMesage(response.data.balance),
+        todoOk: true, //response.data.balance < 10 ? false : true,
       });
       setLoadingCheck(false);
     } catch (error) {
@@ -472,7 +472,7 @@ function SearchScreen({navigation}) {
                   <Avatar source={require('../../assets/user-icon.png')} />
                   <ListItem.Content>
                     <ListItem.Title>{r.fullName}</ListItem.Title>
-                    <ListItem.Subtitle>Patentezco</ListItem.Subtitle>
+                    <ListItem.Subtitle>{r.parentesco}</ListItem.Subtitle>
                   </ListItem.Content>
                   <ListItem.Chevron />
                 </ListItem>

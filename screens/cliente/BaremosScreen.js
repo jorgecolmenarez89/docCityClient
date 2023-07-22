@@ -362,12 +362,12 @@ function BaremosScreen({navigation}) {
                       setOpenDialog(false);
                     }}
                   />
-                  <Dialog.Button
+                  {/*<Dialog.Button
                     title='Reintentar'
                     onPress={() => {
                       tryAgain();
                     }}
-                  />
+                  />*/}
                 </Dialog.Actions>
               </View>
             )}

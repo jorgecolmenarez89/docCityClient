@@ -80,7 +80,6 @@ const MapCustom = ({
       const coordinatesNew = markers.map(marker => ({
         ...marker.coordinate,
       }));
-      console.log('effects', {coordinatesNew, mapViewRef});
       if (coordinatesNew) {
         mapViewRef.current?.fitToCoordinates(coordinatesNew, {
           animated: true,

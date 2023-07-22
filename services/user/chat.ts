@@ -6,8 +6,9 @@ import Chat from '../../models/Chat';
 import ChatMessage from '../../models/ChatMessage';
 
 export const createChat = async ({id, user, doctor}: {id?: string; user: any; doctor: any}) => {
+  const body = Chat.create({user, doctor});
   try {
-    await firestore().collection('chats').doc(id).set(Chat.create({user, doctor}));
+    await firestore().collection('chats').doc(id).set(body);
     return {status: true, data: id};
   } catch (err: any) {
     console.log('createChat() ==> err', {err});
