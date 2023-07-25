@@ -108,7 +108,7 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
             width: '100%',
             marginBottom: 30,
           }}>
-          <Text style={styles.title}>Registar Familiar</Text>
+          <Text style={styles.title}>Registar familiar</Text>
         </View>
         <View style={styles.inputContainer}>
           {/*<Text style={styles.label}>Usuario</Text>*/}

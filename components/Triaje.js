@@ -178,7 +178,7 @@ function Triaje({idUser, parent}) {
           <View style={styles.item}>
             <View style={styles.titleItemContainer}>
               <Text style={styles.textItem}>
-                ¿Tiene algún problema de salud o diagnostico actualmente?
+                ¿Tiene algún problema de salud o diagnóstico actualmente?
               </Text>
             </View>
             <View style={styles.itemCheckbox}>
@@ -231,7 +231,7 @@ function Triaje({idUser, parent}) {
           <View style={styles.item}>
             <View style={styles.titleItemContainer}>
               <Text style={styles.textItem}>
-                ¿Ha tenido usted una cirugía o procedimiento médico en los ultimos años
+                ¿Ha tenido usted una cirugía o procedimiento médico en los ultimos años?
               </Text>
             </View>
             <View style={styles.itemCheckbox}>
@@ -283,7 +283,7 @@ function Triaje({idUser, parent}) {
         <View style={styles.itemContainer}>
           <View style={styles.item}>
             <View style={styles.titleItemContainer}>
-              <Text style={styles.textItem}>¿Toma algúna medicación de manera regular?</Text>
+              <Text style={styles.textItem}>¿Toma alguna medicación de manera regular?</Text>
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox
@@ -386,7 +386,7 @@ function Triaje({idUser, parent}) {
           <View style={styles.item}>
             <View style={styles.titleItemContainer}>
               <Text style={styles.textItem}>
-                ¿Tiene antecedendes familiares de algúna enfermedad crónica?
+                ¿Tiene antecedendes familiares con alguna enfermedad crónica?
               </Text>
             </View>
             <View style={styles.itemCheckbox}>
@@ -542,7 +542,7 @@ function Triaje({idUser, parent}) {
         <View style={styles.itemContainer}>
           <View style={styles.itemRadioContainer}>
             <View style={styles.titleItemContainer}>
-              <Text style={styles.textItem}>¿Cauntas Horas duerme promedio cada noche?</Text>
+              <Text style={styles.textItem}>¿En promedio, cuántas horas duerme regularmente?</Text>
             </View>
             <View style={styles.itemRadio}>
               <CheckBox
@@ -716,7 +716,7 @@ function Triaje({idUser, parent}) {
           <View style={styles.item}>
             <View style={styles.titleItemContainer}>
               <Text style={styles.textItem}>
-                ¿Ha experimentado algún tipo de dolor o molesti física el los últimos meses?
+                ¿Ha experimentado algún tipo de dolor o molestia física el los últimos meses?
               </Text>
             </View>
             <View style={styles.itemCheckbox}>
@@ -768,7 +768,7 @@ function Triaje({idUser, parent}) {
         <View style={styles.itemContainer}>
           <View style={styles.item}>
             <View style={styles.titleItemContainer}>
-              <Text style={styles.textItem}>¿Ha recibido algna vacuna recientemente?</Text>
+              <Text style={styles.textItem}>¿Ha recibido alguna vacuna recientemente?</Text>
             </View>
             <View style={styles.itemCheckbox}>
               <CheckBox

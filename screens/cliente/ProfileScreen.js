@@ -156,7 +156,7 @@ function ProfileScreen({navigation}) {
     try {
       await updateUserInfo(body);
       changeUserLoged({...userLoged, ...body});
-      Alert.alert('Exito', 'Datos actualizados correctamente');
+      Alert.alert('Éxito', 'Datos actualizados correctamente');
     } catch (error) {
       console.log('error', error);
       Alert.alert('Error', 'Ocurrio un error intente nuevamente');
@@ -247,7 +247,7 @@ function ProfileScreen({navigation}) {
             maxLength={11}
             onChangeText={text => setPhone(text)}
             value={phone}
-            placeholder='Escribe tu numero teléfonico'
+            placeholder='Escribe tu número telefónico'
             placeholderTextColor={'#35385b'}
           />
         </View>

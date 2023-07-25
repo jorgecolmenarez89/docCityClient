@@ -99,7 +99,7 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
             <View style={{width: '100%', display: 'flex', height: 'auto'}}>
               <View style={styles.header}>
                 <Text style={styles.headerTitle}>Bienvenido a </Text>
-                <Image style={{width: 120, height: 50}} source={require('../../assets/icon.png')} />
+                <Image style={{width: 140, height: 70}} source={require('../../assets/icon.png')} />
               </View>
               <View style={styles.header}>
                 <Text style={styles.headerText}>Para comenzar puedes</Text>

@@ -9,9 +9,9 @@ function Inicio({navigation}) {
         <Image style={styles.stretch} source={require('../../assets/chequeo-medico.png')} />
       </View>
       <View style={styles.contentInfo}>
-        <Text style={styles.title}>Permitenos atenderter desde tu uibicación</Text>
+        <Text style={styles.title}>Permítenos atenderte desde tu ubicación</Text>
         <Text style={styles.subTitle}>
-          Con tu apliacación DocCity podrás solicitar consultas médicas desde donde te encuentres
+          Con tu aplicación VEiDT podrás solicitar consultas médicas desde donde te encuentres
         </Text>
         <View style={styles.contentButton}>
           <Button

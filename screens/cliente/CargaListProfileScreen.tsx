@@ -67,7 +67,7 @@ function CargaListProfileScreen({navigation}: CargaListScreenProps) {
           <View style={styles.contentButton}>
             <View style={{width: '100%', display: 'flex', height: 'auto'}}>
               <View style={styles.header}>
-                <Text style={styles.headerText}>No posses Carga Familiar</Text>
+                <Text style={styles.headerText}>Aún no ha registrado familiares</Text>
               </View>
               <View style={styles.contentButtonItem}>
                 <Button

@@ -23,7 +23,7 @@ const ModalNotification = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [widthCard, setWidthCard] = useState(0);
-  const {userLoged, showToast, navigation, token} = useContext(AuthContext);
+  const {userLoged, showToast, navigation, token, giftCareDataContext} = useContext(AuthContext);
 
   if (notification.data.type === TypeNotification.request) {
     return (
@@ -157,7 +157,7 @@ const ModalNotification = ({
                       requestId: dataRequest.id,
                       description: 'debito de consulta médica desde Veidt',
                       medicaUserId: notification.data.data.user.id,
-                      giftCareUserId: userLoged.email,
+                      giftCareUserId: giftCareDataContext.id,
                       amount: 10,
                       status: 'inicial',
                     };

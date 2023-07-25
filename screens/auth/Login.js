@@ -103,7 +103,7 @@ function Login({navigation}) {
         </View>
         <View style={styles.contentLinks}>
           <Button
-            title='Registrate'
+            title='Regístrate'
             onPress={() => navigation.navigate('Register')}
             type='clear'
             titleStyle={{
@@ -113,7 +113,7 @@ function Login({navigation}) {
           />
           <Text style={{marginHorizontal: 2}} />
           <Button
-            title='Olvide contraseña'
+            title='Olvidé contraseña'
             onPress={() => navigation.navigate('VerifyEmail')}
             type='clear'
             titleStyle={{

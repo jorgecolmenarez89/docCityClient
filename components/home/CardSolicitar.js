@@ -7,7 +7,6 @@ function CardSolicitar({navigation}) {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.textTitle}>SOLICITAR CONSULTA MÉDICA</Text>
-        <Icon type='ionicon' name='close-outline' size={20} color={'#fff'} />
       </View>
       <View style={styles.dataContainer}>
         <View style={styles.ubicationContainer}>

@@ -30,6 +30,7 @@ function VerifyEmail({navigation}) {
         });
         setLoading(false);
       } catch (error) {
+        console.log('error', error);
         setLoading(false);
         Alert.alert('Atención', error.response.data);
       }

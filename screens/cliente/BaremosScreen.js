@@ -1,5 +1,5 @@
 import React, {ReactNode, useEffect, useRef, useState, useContext} from 'react';
-import {StyleSheet, Text, Linking, View, Image, Dimensions, Modal} from 'react-native';
+import {StyleSheet, Text, Linking, View, Image, Dimensions, Modal, TextInput} from 'react-native';
 import MapView, {Marker, MapMarkerProps, Region, LatLng, Callout} from 'react-native-maps';
 import {Icon, useTheme, Button, Dialog} from '@rneui/themed';
 import {useFocusEffect} from '@react-navigation/native';
@@ -26,6 +26,7 @@ function BaremosScreen({navigation}) {
   const [initialRegion, setInitialRegion] = useState(null);
   const [services, setServices] = useState([]);
   const [examenId, setExamenId] = useState(-1);
+  const [saldo, setSaldo] = useState('');
   const [cordinates, setCoordinates] = useState({
     latitude: '',
     longitude: '',
@@ -58,7 +59,7 @@ function BaremosScreen({navigation}) {
       latitude,
       longitude,
     });
-    onRegionChange({latitude, longitude, ...DEFAULT_REGION});
+    //onRegionChange({latitude, longitude, ...DEFAULT_REGION});
     mapRef.current?.animateCamera({
       center: {latitude, longitude},
     });
@@ -103,7 +104,7 @@ function BaremosScreen({navigation}) {
       const body = {
         examenId,
         location: `${cordinates.latitude},${cordinates.longitude}`,
-        balance: reesponseGC.found,
+        balance: saldo,
       };
       const {data} = await getCentersBaremos(body);
       console.log('data baremos', data);
@@ -149,13 +150,17 @@ function BaremosScreen({navigation}) {
     if (!examenId || examenId == '' || examenId == -1) {
       return true;
     }
+    if (saldo == '' || !saldo || saldo == '0') {
+      return true;
+    }
     return false;
   };
 
   const handleSearch = async () => {
     setLoading(true);
     try {
-      getSaldo();
+      //getSaldo();
+      getCenters();
       setLoading(false);
     } catch (error) {
       console.log('error handleSearch', error);
@@ -277,8 +282,20 @@ function BaremosScreen({navigation}) {
                 dropdownStyle={styles.dropdown1DropdownStyle}
                 rowStyle={styles.dropdown1RowStyle}
                 rowTextStyle={styles.dropdown1RowTxtStyle}
-                defaultButtonText={'Elija un Servicio'}
+                defaultButtonText={'Elija un servicio'}
               />
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  maxLength={24}
+                  style={styles.input}
+                  onChangeText={text => setSaldo(text)}
+                  value={saldo}
+                  placeholder='Presupuesto'
+                  placeholderTextColor={'#83859a'}
+                  keyboardType='numeric'
+                />
+              </View>
             </View>
           </View>
         </View>
@@ -527,5 +544,57 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#15193f',
     fontFamily: 'Poppins-Regular',
+  },
+  inputContainer: {
+    width: '100%',
+  },
+  input: {
+    width: '100%',
+    color: '#000000',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    height: 50,
+    fontFamily: 'Poppins-Medium',
+    backgroundColor: '#FFF',
+    borderRadius: 6,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+    fontSize: 16,
+  },
+  label: {
+    fontSize: 17,
+    color: '#06060a',
+    fontFamily: 'Poppins-Medium',
+  },
+  contentLinks: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  inputIcon: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: '100%',
+    backgroundColor: '#f5f6fa',
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#7d7d7d',
+    paddingHorizontal: 10,
+    height: 50,
+  },
+  inputStyle: {
+    flex: 1,
+    height: 50,
+    fontFamily: 'Poppins-Medium',
+    color: '#000000',
   },
 });

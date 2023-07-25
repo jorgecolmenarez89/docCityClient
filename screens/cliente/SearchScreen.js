@@ -35,8 +35,16 @@ import {getTriaje} from '../../services/doctor/triaje';
 function SearchScreen({navigation}) {
   const isFocused = useIsFocused();
   const {theme} = useTheme();
-  const {userLoged, token, getEspecialitiesAll, specialities, userSelected, setUserSelected} =
-    useContext(AuthContext);
+  const {
+    userLoged,
+    token,
+    getEspecialitiesAll,
+    specialities,
+    userSelected,
+    setUserSelected,
+    giftCareDataContext,
+    setGiftCareDataContext,
+  } = useContext(AuthContext);
   const [locationUser, setLocationUser] = useState();
   const [filterValues, setFilterValues] = useState({
     specialtyId: undefined,
@@ -108,6 +116,7 @@ function SearchScreen({navigation}) {
     try {
       const response = await checkMoney(userLoged.email);
       setGifCareData(response.data);
+      setGiftCareDataContext(response.data);
       setResponseGC({
         success: true,
         found: response.data.balance,

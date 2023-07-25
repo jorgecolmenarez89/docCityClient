@@ -29,6 +29,7 @@ export const AuthProvider = ({children}) => {
   const [specialities, setSpecialities] = useState([]);
   const [regions, setRegions] = useState([]);
   const [userSelected, setUserSelected] = useState(null);
+  const [giftCareDataContext, setGiftCareDataContext] = useState(null);
 
   const login = async (username, password) => {
     setAuthLoading(true);
@@ -198,6 +199,8 @@ export const AuthProvider = ({children}) => {
         regions,
         userSelected,
         setUserSelected: handleUserSelected,
+        giftCareDataContext,
+        setGiftCareDataContext,
       }}>
       {children}
       {notification && (
