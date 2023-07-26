@@ -6,7 +6,7 @@ function Inicio({navigation}) {
   return (
     <View style={styles.container}>
       <View style={styles.contentImg}>
-        <Image style={styles.stretch} source={require('../../assets/chequeo-medico.png')} />
+        <Image style={styles.stretch} source={require('../../assets/veidt-home.png')} />
       </View>
       <View style={styles.contentInfo}>
         <Text style={styles.title}>Permítenos atenderte desde tu ubicación</Text>
@@ -39,20 +39,19 @@ export default Inicio;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f1f8fe',
   },
   contentImg: {
-    backgroundColor: '#fff',
-    flex: 2,
+    backgroundColor: '#f1f8fe',
+    height: '60%',
   },
   contentInfo: {
     display: 'flex',
     backgroundColor: '#fff',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    flex: 1,
+    height: '40%',
     paddingHorizontal: 30,
-    marginTop: -30,
   },
   contentButton: {
     width: '100%',
@@ -76,6 +75,6 @@ const styles = StyleSheet.create({
   stretch: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
 });
