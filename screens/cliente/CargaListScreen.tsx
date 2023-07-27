@@ -14,7 +14,7 @@ import {updateUserInfo} from '../../services/doctor/profile';
 type CargaListScreenProps = NativeStackScreenProps<RootStackParamList>;
 
 function CargaListScreen({navigation}: CargaListScreenProps) {
-  const {userLoged, changeUserLoged} = useContext(AuthContext);
+  const {userLoged, changeUserLoged, hasTriaje} = useContext(AuthContext);
   const {getCurrentLocation} = useLocation();
   const [relatives, setRelatives] = useState<User[]>([]);
   const listCargas = useRef<FlatList<User>>(null);
@@ -54,6 +54,11 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
   };
 
   const handleOmitir = () => {
+    navigation.navigate('ConfirmTriaje');
+    //setLoadingOmitir(true);
+  };
+
+  const onContinue = () => {
     setLoadingOmitir(true);
     updateData();
   };
@@ -83,7 +88,7 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
       await updateUserInfo(bodyUser);
       changeUserLoged({...userLoged, ...bodyUser});
       setLoadingOmitir(false);
-      //Alert.alert('Exito', 'Datos actualizados correctamente');
+      Alert.alert('Exito', 'Datos actualizados correctamente');
     } catch (error) {
       console.log('error', error);
       setLoadingOmitir(false);
@@ -120,23 +125,49 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
                   onPress={() => navigation.navigate('CargaAdd')}
                 />
               </View>
-              <View style={styles.contentButtonItem}>
-                <Button
-                  raised={false}
-                  title='Omitir este paso'
-                  buttonStyle={{
-                    backgroundColor: '#0b445e',
-                    borderRadius: 30,
-                    height: 50,
-                  }}
-                  titleStyle={{
-                    fontFamily: 'Poppins-Bold',
-                    fontSize: 18,
-                  }}
-                  onPress={() => handleOmitir()}
-                  loading={loadingOmitir}
-                />
-              </View>
+              {!hasTriaje && (
+                <View style={styles.contentButtonItem}>
+                  <Button
+                    raised={false}
+                    title='Completar triaje'
+                    buttonStyle={{
+                      backgroundColor: '#0b445e',
+                      borderRadius: 30,
+                      height: 50,
+                    }}
+                    titleStyle={{
+                      fontFamily: 'Poppins-Bold',
+                      fontSize: 18,
+                    }}
+                    onPress={() => handleOmitir()}
+                    loading={loadingOmitir}
+                  />
+                </View>
+              )}
+
+              {hasTriaje && (
+                <View style={styles.contentButtonItem2}>
+                  <Text style={styles.headerMesasge}>Has completado el formulario de Triaje</Text>
+                  <Button
+                    raised={false}
+                    title='Continuar'
+                    containerStyle={{
+                      width: '100%',
+                    }}
+                    buttonStyle={{
+                      backgroundColor: '#0b445e',
+                      borderRadius: 30,
+                      height: 50,
+                    }}
+                    titleStyle={{
+                      fontFamily: 'Poppins-Bold',
+                      fontSize: 18,
+                    }}
+                    onPress={() => onContinue()}
+                    loading={loadingOmitir}
+                  />
+                </View>
+              )}
             </View>
           </View>
         </View>
@@ -167,22 +198,42 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
               />
             </View>
             <View style={styles.contentButtonItem}>
-              <Button
-                raised={false}
-                title='Continuar'
-                buttonStyle={{
-                  backgroundColor: '#0b445e',
-                  borderRadius: 30,
-                  height: 50,
-                  width: 130,
-                }}
-                titleStyle={{
-                  fontFamily: 'Poppins-SemiBold',
-                  fontSize: 18,
-                }}
-                onPress={() => handleOmitir()}
-                loading={loadingOmitir}
-              />
+              {!hasTriaje && (
+                <Button
+                  raised={false}
+                  title='Mi triaje'
+                  buttonStyle={{
+                    backgroundColor: '#0b445e',
+                    borderRadius: 30,
+                    height: 50,
+                    width: 130,
+                  }}
+                  titleStyle={{
+                    fontFamily: 'Poppins-SemiBold',
+                    fontSize: 18,
+                  }}
+                  onPress={() => handleOmitir()}
+                  loading={loadingOmitir}
+                />
+              )}
+              {hasTriaje && (
+                <Button
+                  raised={false}
+                  title='Continuar'
+                  buttonStyle={{
+                    backgroundColor: '#0b445e',
+                    borderRadius: 30,
+                    height: 50,
+                    width: 130,
+                  }}
+                  titleStyle={{
+                    fontFamily: 'Poppins-SemiBold',
+                    fontSize: 18,
+                  }}
+                  onPress={() => onContinue()}
+                  loading={loadingOmitir}
+                />
+              )}
             </View>
           </View>
 
@@ -238,12 +289,24 @@ const styles = StyleSheet.create({
     color: '#15193f',
     fontFamily: 'Poppins-SemiBold',
   },
+  headerMesasge: {
+    fontSize: 16,
+    color: '#15193f',
+    fontFamily: 'Poppins-SemiBold',
+  },
   contentButton: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
   },
   contentButtonItem: {
+    paddingHorizontal: 10,
+    marginVertical: 7,
+  },
+  contentButtonItem2: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
     paddingHorizontal: 10,
     marginVertical: 7,
   },

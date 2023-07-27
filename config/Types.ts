@@ -8,4 +8,5 @@ export type RootStackParamList = {
   CargaDetail?: {id: string};
   CargaAddP?: undefined;
   CargaDetailP?: {id: string};
+  ConfirmTriaje?: undefined;
 };

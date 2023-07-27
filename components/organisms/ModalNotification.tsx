@@ -134,23 +134,11 @@ const ModalNotification = ({
                   const {status, data} = await generateRequest(body);
                   const dataRequest = data.data;
                   if (status === 200) {
-                    showToast({
-                      description: 'Consulta aceptada con éxito.',
-                      type: TypeToast.success,
-                    });
                     const {status: statusChat, data: dataChat} = await createChat({
                       id: dataRequest.id.toString(),
                       doctor: notification.data.data.user,
                       user: {...userLoged, deviceToken: token},
                     });
-                    if (statusChat) {
-                      navigation.navigate('ChatsStack', {
-                        screen: NavigationRoutes.chat,
-                        params: {id: dataChat, receiver: notification.data.data.user.id},
-                      });
-                    } else {
-                      console.log('paso algo al crear el chat');
-                    }
 
                     const bodyDebit = {
                       historialMedicoId: dataRequest.id,
@@ -161,12 +149,28 @@ const ModalNotification = ({
                       amount: 10,
                       status: 'inicial',
                     };
+                    console.log('bodyDebit', bodyDebit);
                     const {status: statusDebit, data: dataDebit} = await debitFound(bodyDebit);
                     if (statusDebit === 200) {
                       console.log('se debito ');
                     } else {
                       console.log('no se debito');
                     }
+
+                    showToast({
+                      description: 'Consulta aceptada con éxito.',
+                      type: TypeToast.success,
+                    });
+
+                    if (statusChat) {
+                      navigation.navigate('ChatsStack', {
+                        screen: NavigationRoutes.chat,
+                        params: {id: dataChat, receiver: notification.data.data.user.id},
+                      });
+                    } else {
+                      console.log('paso algo al crear el chat');
+                    }
+
                     onClose();
                   } else {
                     showToast({

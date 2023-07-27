@@ -4,8 +4,8 @@ import {CheckBox, Button, Dialog} from '@rneui/themed';
 import {AuthContext} from '../context/AuthContext';
 import {getTriaje, insertTriaje, updateTriaje} from '../services/doctor/triaje';
 
-function Triaje({idUser, parent}) {
-  const {userLoged} = useContext(AuthContext);
+function Triaje({idUser, parent, handleFinish}) {
+  const {userLoged, setHasTriaje} = useContext(AuthContext);
 
   const [answerToQuestion1, setAnswerToQuestion1] = useState('');
   const [answerToQuestion2, setAnswerToQuestion2] = useState('');
@@ -37,6 +37,7 @@ function Triaje({idUser, parent}) {
     const id = userId ? userId : userLoged.id;
     try {
       const {data} = await getTriaje(id);
+      setHasTriaje(true);
       setAnswerToQuestion1(data[0].answerToQuestion1);
       setAnswerToQuestion2(data[0].answerToQuestion2);
       setAnswerToQuestion3(data[0].answerToQuestion3);
@@ -163,6 +164,9 @@ function Triaje({idUser, parent}) {
         setTiene(false);
         setLoading(false);
         Alert.alert('Exito', 'Datos actualizados correctamente');
+        if (handleFinish) {
+          handleFinish();
+        }
       } catch (error) {
         setLoading(false);
         console.log('error', error);

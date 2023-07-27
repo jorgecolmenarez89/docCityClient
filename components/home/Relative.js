@@ -29,7 +29,7 @@ function Relative({name, relation, age, onClick}) {
               justifyContent: 'center',
             }}>
             <Icon
-              name='settings-outline'
+              name='reader-outline'
               color='#0b445e'
               size={30}
               type='ionicon'

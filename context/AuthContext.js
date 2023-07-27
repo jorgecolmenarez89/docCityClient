@@ -30,6 +30,7 @@ export const AuthProvider = ({children}) => {
   const [regions, setRegions] = useState([]);
   const [userSelected, setUserSelected] = useState(null);
   const [giftCareDataContext, setGiftCareDataContext] = useState(null);
+  const [hasTriaje, setHasTriaje] = useState(false);
 
   const login = async (username, password) => {
     setAuthLoading(true);
@@ -201,6 +202,8 @@ export const AuthProvider = ({children}) => {
         setUserSelected: handleUserSelected,
         giftCareDataContext,
         setGiftCareDataContext,
+        hasTriaje,
+        setHasTriaje,
       }}>
       {children}
       {notification && (

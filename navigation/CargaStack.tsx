@@ -4,6 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import CargaListScreen from '../screens/cliente/CargaListScreen';
 import CargaAddScreen from '../screens/cliente/CargaAddScreen';
 import CargaDetailScreen from '../screens/cliente/CargaDetailScreen';
+import ConfirmTriaje from '../screens/auth/ConfirmTriaje';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,15 @@ function CargaSatck() {
         name='CargaDetail'
         initialParams={{id: null}}
         component={CargaDetailScreen}
+        options={{
+          title: '',
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name='ConfirmTriaje'
+        initialParams={{id: null}}
+        component={ConfirmTriaje}
         options={{
           title: '',
           headerTransparent: true,

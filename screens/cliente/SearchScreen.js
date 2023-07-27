@@ -28,7 +28,7 @@ import {sendNotificationRequest} from '../../services/doctor/notification';
 import {AuthContext} from '../../context/AuthContext';
 import MapFilterComponet from '../../components/molecules/MapFilter';
 import {onSaveSearch} from '../../services/doctor/request';
-import {checkMoney} from '../../services/user/gitfcare';
+import {checkMoney, checkSaldo} from '../../services/user/gitfcare';
 import {getCargas} from '../../services/user/carga';
 import {getTriaje} from '../../services/doctor/triaje';
 
@@ -115,14 +115,25 @@ function SearchScreen({navigation}) {
     setOpenDialog(true);
     try {
       const response = await checkMoney(userLoged.email);
-      setGifCareData(response.data);
-      setGiftCareDataContext(response.data);
-      setResponseGC({
-        success: true,
-        found: response.data.balance,
-        message: buildMesage(response.data.balance),
-        todoOk: response.data.balance < 10 ? false : true,
-      });
+      const dataResponse = response.data;
+      setGifCareData(dataResponse);
+      setGiftCareDataContext(dataResponse);
+      const {data} = await checkSaldo(10, dataResponse.id);
+      if (data.existeTarjetaConSaldo) {
+        setResponseGC({
+          success: true,
+          found: response.data.balance,
+          message: buildMesage(response.data.balance),
+          todoOk: true,
+        });
+      } else {
+        setResponseGC({
+          success: true,
+          found: 1,
+          message: buildMesage(1),
+          todoOk: false,
+        });
+      }
       setLoadingCheck(false);
     } catch (error) {
       console.log('error dado', error);
