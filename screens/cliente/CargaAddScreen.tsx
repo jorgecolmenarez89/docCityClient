@@ -82,7 +82,7 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
     } else if (user.repeatPassword != user.password) {
       Alert.alert('Atención', 'Las contraseñas son distintas');
     } else if (!validateEmail(user.email)) {
-      Alert.alert('Atención', 'Formato de corre invalido');
+      Alert.alert('Atención', 'Formato de correo invalido');
     } else if (user.parentesco == '') {
       Alert.alert('Atención', 'Campo Parentesco es requerido');
     } else if (user.sexo == '') {
@@ -102,7 +102,7 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
       const body = {
         ...user,
         parentUserId: userLoged.id,
-        birthDate: fecha,
+        birthDate: fecha.toISOString(),
         age,
       };
       try {

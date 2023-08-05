@@ -67,7 +67,7 @@ function Register({navigation}) {
     } else if (user.repeatPassword != user.password) {
       Alert.alert('Atención', 'Las contraseñas son distintas');
     } else if (!validateEmail(user.email)) {
-      Alert.alert('Atención', 'Formato de corre invalido');
+      Alert.alert('Atención', 'Formato de correo invalido');
     } else if (user.sexo == '') {
       Alert.alert('Atención', 'Campo Sexo es requerido');
     } else if (date == '') {
@@ -82,7 +82,7 @@ function Register({navigation}) {
       const year = fecha.getYear();
       const currentYear = xmas.getYear();
       const age = currentYear - year;
-      const body = {...user, birthDate: fecha, age};
+      const body = {...user, birthDate: fecha.toISOString(), age};
       try {
         const response = await axiosInstance({isNode: false}).post(url, body, {
           headers: {'Content-Type': 'application/json'},

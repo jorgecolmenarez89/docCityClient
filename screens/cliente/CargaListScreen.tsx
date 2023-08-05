@@ -73,7 +73,7 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
         colegioMedicoId: userLoged.colegioMedicoId,
         experienceYears: userLoged.experienceYears,
         medicalSpecialityId: userLoged.medicalSpecialityId,
-        sexo: '',
+        sexo: userLoged.sexo,
         isAuthorizedDoctor: false,
         phoneNumber: userLoged.phoneNumber,
         deviceToken: userLoged.deviceToken,
@@ -84,6 +84,8 @@ function CargaListScreen({navigation}: CargaListScreenProps) {
         statusDoctor: '',
         statusDoctorDescription: '',
         isCompletedInfo: true,
+        age: userLoged.age,
+        birthDate: userLoged.userLoged,
       };
       await updateUserInfo(bodyUser);
       changeUserLoged({...userLoged, ...bodyUser});
