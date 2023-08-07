@@ -159,7 +159,6 @@ function BaremosScreen({navigation}) {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      //getSaldo();
       getCenters();
       setLoading(false);
     } catch (error) {
