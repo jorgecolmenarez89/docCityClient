@@ -70,9 +70,22 @@ function DashboardScreen({navigation}) {
         .collection('consultations')
         .where('userId', '==', userLoged.id)
         .where('status', '==', StatusRequest.finished)
+        .where('serviceRating', '==', '0')
         .get();
-      setIsRanking(true);
-      setRequest({...result.docs[0].data, id: result.docs[0].id});
+
+      let resultados = [];
+
+      result.forEach(documentSnapshot => {
+        resultados.push({...documentSnapshot.data(), id: documentSnapshot.id});
+      });
+      console.log('resultados', resultados);
+      if (resultados.length > 0) {
+        setIsRanking(true);
+        setRequest(resultados[0]);
+      } else {
+        setIsRanking(false);
+        setRequest(undefined);
+      }
     } catch (err) {}
   };
 
@@ -208,40 +221,22 @@ function DashboardScreen({navigation}) {
         ))}
       </ScrollView>
 
-      <Dialog isVisible={request ? true : false}>
+      {/*<Dialog isVisible={request ? true : false}>
         {request && (
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
             <Avatar
-              source={{uri: request.doctorUser.url || ASSETS.user}}
+              source={{uri: request.doctor.url || ASSETS.user}}
               containerStyle={{marginBottom: 10}}
               size='large'
             />
             <Text style={{textTransform: 'capitalize', fontWeight: 'bold'}}>
-              {request.doctorUser.fullName}
+              {request.doctor.fullName}
             </Text>
             <Text style={{textTransform: 'capitalize', fontWeight: 'bold'}}>
-              {specialities.find(spec => spec.id === request.doctorUser.medicalSpecialityId).name}
+              {specialities.find(spec => spec.id === request.doctor.medicalSpecialityId).name}
             </Text>
 
             <View style={{flexDirection: 'row', gap: 10, marginTop: 10}}>
-              {/**
-              <Button
-                title={'Finalizar'}
-                containerStyle={{flex: 1}}
-                onPress={async () => {
-                  setIsLoading(true);
-                  const {status, data} = await updateRequest({
-                    ...request,
-                    userId: request.pacientUser.id,
-                    user: request.pacientUser,
-                    doctor: request.doctorUser,
-                    status: StatusRequest.finished,
-                  });
-                  setIsLoading(false);
-                  setIsRanking(true);
-                }}
-              />
-              */}
               <Button
                 title={'Ver chat'}
                 type='outline'
@@ -258,7 +253,7 @@ function DashboardScreen({navigation}) {
             </View>
           </View>
         )}
-      </Dialog>
+      </Dialog> */}
 
       {isRanking && (
         <Dialog isVisible={isRanking}>
@@ -298,7 +293,7 @@ function DashboardScreen({navigation}) {
                   serviceRating: `${valRanking}`,
                   comment: comment,
                 });
-                console.log('onPress() -> data', {dat, sta});
+                console.log('onPress() -> data', {data, status});
                 setIsLoading(false);
                 setRequest(undefined);
                 setIsRanking(false);

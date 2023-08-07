@@ -31,7 +31,7 @@ import {onSaveSearch} from '../../services/doctor/request';
 import {checkMoney, checkSaldo} from '../../services/user/gitfcare';
 import {getCargas} from '../../services/user/carga';
 import {getTriaje} from '../../services/doctor/triaje';
-import {getAllChatsByActives} from 'services/user/chat';
+import {getAllChatsByActives} from '../../services/user/chat';
 
 function SearchScreen({navigation}) {
   const isFocused = useIsFocused();
