@@ -64,8 +64,21 @@ function DashboardScreen({navigation}) {
     }
   };
 
+  const onLoadRequestFinish = async () => {
+    try {
+      const result = await firestore()
+        .collection('consultations')
+        .where('userId', '==', userLoged.id)
+        .where('status', '==', StatusRequest.finished)
+        .get();
+      setIsRanking(true);
+      setRequest({...result.docs[0].data, id: result.docs[0].id});
+    } catch (err) {}
+  };
+
   useEffect(() => {
     onLoadLastRequest();
+    onLoadRequestFinish();
 
     const subscriberRequest = firestore()
       .collection('consultations')
@@ -211,6 +224,7 @@ function DashboardScreen({navigation}) {
             </Text>
 
             <View style={{flexDirection: 'row', gap: 10, marginTop: 10}}>
+              {/**
               <Button
                 title={'Finalizar'}
                 containerStyle={{flex: 1}}
@@ -227,6 +241,7 @@ function DashboardScreen({navigation}) {
                   setIsRanking(true);
                 }}
               />
+              */}
               <Button
                 title={'Ver chat'}
                 type='outline'
@@ -276,17 +291,12 @@ function DashboardScreen({navigation}) {
                 setIsLoading(true);
                 const {status, data} = await updateRequest({
                   ...request,
-                  userId: request.pacientUser.id,
-                  user: request.pacientUser,
-                  doctor: request.doctorUser,
+                  userId: request.user.id,
+                  user: request.user,
+                  doctor: request.doctor,
                   status: StatusRequest.finished,
                   serviceRating: `${valRanking}`,
                   comment: comment,
-                });
-                const {status: sta, data: dat} = await sendNotificationDoctorFinish({
-                  doctor: request.doctorUser,
-                  user: request.pacientUser,
-                  idRequest: request.id,
                 });
                 console.log('onPress() -> data', {dat, sta});
                 setIsLoading(false);

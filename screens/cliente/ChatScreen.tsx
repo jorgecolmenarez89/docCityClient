@@ -9,7 +9,7 @@ import {PermisionsContext} from '../../context/PermisionsContext';
 import {addMessage, getChatById} from '../../services/user/chat';
 import {Avatar, Dialog, Icon, Image, Text, useTheme} from '@rneui/themed';
 import {ASSETS, NAME_ICON} from '../../config/Constant';
-import Chat, {ChatModel} from '../../models/Chat';
+import Chat, {ChatModel, ChatStatus} from '../../models/Chat';
 import {RootStackParamList} from '../../config/Types';
 import {NavigationRoutes, StateUserInUseApp, TypeToast} from '../../config/Enum';
 import ChatMessage, {ChatMessageStatus} from '../../models/ChatMessage';
@@ -383,122 +383,124 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
       )}
 
       {/** input */}
-      <View
-        style={{
-          borderTopEndRadius: 15,
-          borderTopStartRadius: 15,
-          backgroundColor: theme.colors.disabled,
-          paddingVertical: 15,
-          paddingHorizontal: 10,
-        }}>
+      {chat && chat.data.status === ChatStatus.ACTIVE && (
         <View
           style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderRadius: 30,
-            backgroundColor: 'white',
+            borderTopEndRadius: 15,
+            borderTopStartRadius: 15,
+            backgroundColor: theme.colors.disabled,
+            paddingVertical: 15,
+            paddingHorizontal: 10,
           }}>
-          <TextInput
-            multiline
-            numberOfLines={numberOfLines}
+          <View
             style={{
-              borderWidth: 0,
-              backgroundColor: 'transparent',
-              color: 'black',
-              flex: 1,
-              marginHorizontal: 10,
-            }}
-            placeholderTextColor={'rgba(0,0,0,0.6)'}
-            value={newMessage}
-            placeholder={'Mensaje...'}
-            onChangeText={value => {
-              const lineBreaks = value.split(/\r\n|\r|\n/);
-              if (lineBreaks.length >= 4) {
-                setNumberOfLines(4);
-              } else {
-                setNumberOfLines(lineBreaks.length);
-              }
-              setNewMessage(value);
-            }}
-          />
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              borderRadius: 30,
+              backgroundColor: 'white',
+            }}>
+            <TextInput
+              multiline
+              numberOfLines={numberOfLines}
+              style={{
+                borderWidth: 0,
+                backgroundColor: 'transparent',
+                color: 'black',
+                flex: 1,
+                marginHorizontal: 10,
+              }}
+              placeholderTextColor={'rgba(0,0,0,0.6)'}
+              value={newMessage}
+              placeholder={'Mensaje...'}
+              onChangeText={value => {
+                const lineBreaks = value.split(/\r\n|\r|\n/);
+                if (lineBreaks.length >= 4) {
+                  setNumberOfLines(4);
+                } else {
+                  setNumberOfLines(lineBreaks.length);
+                }
+                setNewMessage(value);
+              }}
+            />
 
-          <Center>
-            <Box alignItems='center' position='absolute' bottom={10}>
-              <Stagger
-                visible={isOpen}
-                initial={{
-                  opacity: 0,
-                  scale: 0,
-                  translateY: 34,
-                }}
-                animate={{
-                  translateY: 0,
-                  scale: 1,
-                  opacity: 1,
-                  transition: {
-                    type: 'spring',
-                    duration: 50,
-                    mass: 0.8,
-                    stagger: {
-                      offset: 30,
-                      reverse: true,
+            <Center>
+              <Box alignItems='center' position='absolute' bottom={10}>
+                <Stagger
+                  visible={isOpen}
+                  initial={{
+                    opacity: 0,
+                    scale: 0,
+                    translateY: 34,
+                  }}
+                  animate={{
+                    translateY: 0,
+                    scale: 1,
+                    opacity: 1,
+                    transition: {
+                      type: 'spring',
+                      duration: 50,
+                      mass: 0.8,
+                      stagger: {
+                        offset: 30,
+                        reverse: true,
+                      },
                     },
-                  },
-                }}
-                exit={{
-                  translateY: 34,
-                  scale: 0.5,
-                  opacity: 0,
-                  transition: {
-                    duration: 100,
-                    stagger: {
-                      offset: 30,
-                      reverse: true,
+                  }}
+                  exit={{
+                    translateY: 34,
+                    scale: 0.5,
+                    opacity: 0,
+                    transition: {
+                      duration: 100,
+                      stagger: {
+                        offset: 30,
+                        reverse: true,
+                      },
                     },
-                  },
-                }}>
+                  }}>
+                  <Icon
+                    onPress={() => onLaunchLibrary()}
+                    name={NAME_ICON.photo}
+                    size={15}
+                    color={theme.colors.success}
+                    reverse
+                    type='material'
+                  />
+                  <Icon
+                    onPress={() => onLaunchCamera()}
+                    name={NAME_ICON.camera}
+                    size={15}
+                    color={theme.colors.warning}
+                    reverse
+                    type='material'
+                  />
+                </Stagger>
+              </Box>
+              <HStack alignItems='center'>
                 <Icon
-                  onPress={() => onLaunchLibrary()}
-                  name={NAME_ICON.photo}
+                  onPress={() => onToggle()}
+                  name={NAME_ICON.attachment}
                   size={15}
-                  color={theme.colors.success}
+                  color={theme.colors.primary}
                   reverse
                   type='material'
                 />
-                <Icon
-                  onPress={() => onLaunchCamera()}
-                  name={NAME_ICON.camera}
-                  size={15}
-                  color={theme.colors.warning}
-                  reverse
-                  type='material'
-                />
-              </Stagger>
-            </Box>
-            <HStack alignItems='center'>
-              <Icon
-                onPress={() => onToggle()}
-                name={NAME_ICON.attachment}
-                size={15}
-                color={theme.colors.primary}
-                reverse
-                type='material'
-              />
-            </HStack>
-          </Center>
+              </HStack>
+            </Center>
 
-          <Icon
-            onPress={() => onSendMessage()}
-            name={NAME_ICON.sendOutline}
-            size={15}
-            color={theme.colors.primary}
-            reverse
-            disabled={handleDisabled()}
-            type='ionicon'
-          />
+            <Icon
+              onPress={() => onSendMessage()}
+              name={NAME_ICON.sendOutline}
+              size={15}
+              color={theme.colors.primary}
+              reverse
+              disabled={handleDisabled()}
+              type='ionicon'
+            />
+          </View>
         </View>
-      </View>
+      )}
 
       {imgCurrent && (
         <View

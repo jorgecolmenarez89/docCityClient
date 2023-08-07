@@ -31,6 +31,7 @@ import {onSaveSearch} from '../../services/doctor/request';
 import {checkMoney} from '../../services/user/gitfcare';
 import {getCargas} from '../../services/user/carga';
 import {getTriaje} from '../../services/doctor/triaje';
+import {getAllChatsByActives} from 'services/user/chat';
 
 function SearchScreen({navigation}) {
   const isFocused = useIsFocused();
@@ -65,14 +66,29 @@ function SearchScreen({navigation}) {
     message: '',
     expirate: false,
   });
+  const [isBusy, setIsBusy] = useState(false);
+
+  const isChatsActives = async () => {
+    const {status, data} = await getAllChatsByActives(userLoged.id);
+
+    if (status) {
+      if (data.length > 0) {
+        setIsBusy(true);
+      }
+    } else {
+      setIsBusy(false);
+    }
+  };
 
   useEffect(() => {
     if (isFocused) {
+      isChatsActives();
       getSaldo();
     }
   }, [isFocused]);
 
   useEffect(() => {
+    isChatsActives();
     getEspecialitiesAll();
     getRelatives();
   }, []);
@@ -345,6 +361,17 @@ function SearchScreen({navigation}) {
             loading={loading}
           />
         </View>
+      )}
+
+      {isBusy && (
+        <Dialog isVisible={isBusy} onBackdropPress={() => {}}>
+          <Dialog.Title title='Esta ocupado' />
+
+          <Text>
+            Estimado usuario, solo puedo realizar una consulta a la vez, por favor espere a que
+            finalice la consulta actual.
+          </Text>
+        </Dialog>
       )}
 
       <Dialog isVisible={openDialog} onBackdropPress={() => {}}>

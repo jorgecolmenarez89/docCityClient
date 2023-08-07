@@ -3,6 +3,11 @@ import ChatMessage from './ChatMessage';
 import Doctor, {DoctorModel} from './Doctor';
 import User, {UserModel} from './User';
 
+export enum ChatStatus {
+  ACTIVE = 'active',
+  FINISHED = 'finished',
+}
+
 export interface ChatModel {
   id?: string;
   doctor: DoctorModel;
@@ -16,6 +21,7 @@ export interface ChatModel {
   createAtDisplay?: string;
   receiver?: DoctorModel | UserModel;
   requestFinish?: boolean;
+  status?: ChatStatus;
 }
 
 class Chat {
@@ -26,7 +32,7 @@ class Chat {
   }
 
   static formatData({data, userLog}: {data: any; userLog: UserModel}) {
-    const {doctor, doctorId, user, userId, messages, updateAt, id, requestFinish} = data;
+    const {doctor, doctorId, user, userId, messages, updateAt, id, requestFinish, status} = data;
 
     return {
       id: id,
@@ -42,6 +48,7 @@ class Chat {
       updateAtDisplay: updateAt ? dateChat(updateAt?.toDate()) : undefined,
       receiver: userLog.id !== doctor.id ? doctor : user,
       requestFinish: requestFinish ? requestFinish : false,
+      status: status || ChatStatus.FINISHED,
     };
   }
 
@@ -55,6 +62,7 @@ class Chat {
       messages: [],
       createAt: date,
       updateAt: date,
+      status: ChatStatus.ACTIVE,
     };
   }
 }
