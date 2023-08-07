@@ -10,7 +10,7 @@ import {checkMoney} from '../../services/user/gitfcare';
 const url = 'https://play.google.com/store/apps/details?id=com.veidthealth.giftcareapp&pli=1';
 
 function InstrumentosScreen({navigation}) {
-  const {userLoged} = useContext(AuthContext);
+  const {userLoged, setGiftCareDataContext} = useContext(AuthContext);
   const [isSearch, setIsSearch] = useState(false);
   const [loading, setIsLoading] = useState(false);
   const [cards, setCards] = useState([]);
@@ -76,6 +76,7 @@ function InstrumentosScreen({navigation}) {
     try {
       const response = await checkMoney(userLoged.email);
       setCarInfo(response.data);
+      setGiftCareDataContext(response.data);
       setResponseGC({
         success: true,
         found: response.data.balance,
@@ -122,9 +123,16 @@ function InstrumentosScreen({navigation}) {
 
   const getBackground = () => {
     if (cardInfo.balance >= 10) {
-      return 'yellow';
+      return '#17C964';
     }
-    return '#F5A524';
+    return '#d1ecf1';
+  };
+
+  const getColor = () => {
+    if (cardInfo.balance >= 10) {
+      return '#fff';
+    }
+    return '#0b445e';
   };
 
   return (
@@ -145,7 +153,7 @@ function InstrumentosScreen({navigation}) {
           width: '100%',
           marginBottom: 10,
         }}>
-        <Text style={styles.title}>Mi Giftcare</Text>
+        <Text style={styles.title}>Mi GiftCare</Text>
       </View>
 
       <View
@@ -184,8 +192,10 @@ function InstrumentosScreen({navigation}) {
           <View style={{width: '100%', display: 'flex', alignItems: 'center'}}>
             <Text style={styles.textFinance}>Resumen financiero</Text>
             <View style={{...styles.header, backgroundColor: getBackground()}}>
-              <Text style={styles.titleHeader}>Saldo: {cardInfo.balance}$</Text>
-              <Text style={styles.titleHeader}>
+              <Text style={{...styles.titleHeader, color: getColor()}}>
+                Saldo: {cardInfo.balance}$
+              </Text>
+              <Text style={{...styles.titleHeader, color: getColor()}}>
                 {cardInfo.balance >= 10
                   ? 'Si posee fondos para realizar una consulta'
                   : 'El fondo mínimo para una consulta es de 10$, debe recargar saldo'}

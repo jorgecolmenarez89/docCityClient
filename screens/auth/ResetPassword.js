@@ -45,7 +45,7 @@ function ResetPassword({navigation, route}) {
             width: '100%',
             marginBottom: 30,
           }}>
-          <Text style={styles.title}>Resetear Contraseña</Text>
+          <Text style={styles.title}>Resetear contraseña</Text>
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Nueva contraseña</Text>

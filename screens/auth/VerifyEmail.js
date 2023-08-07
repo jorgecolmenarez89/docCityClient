@@ -30,6 +30,7 @@ function VerifyEmail({navigation}) {
         });
         setLoading(false);
       } catch (error) {
+        console.log('error', error);
         setLoading(false);
         Alert.alert('Atención', error.response.data);
       }
@@ -53,7 +54,7 @@ function VerifyEmail({navigation}) {
             width: '100%',
             marginBottom: 30,
           }}>
-          <Text style={styles.title}>Recuperar Contraseña</Text>
+          <Text style={styles.title}>Recuperar contraseña</Text>
         </View>
 
         <View style={styles.inputContainer}>

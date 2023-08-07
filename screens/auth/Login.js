@@ -31,8 +31,17 @@ function Login({navigation}) {
       const url = `/users/GetUserInfoForLogin/${user.userName}/${user.password}/${token}`;
       try {
         const response = await axiosInstance({isNode: false}).get(url);
+        console.log(response.data);
         setLoading(false);
-        changeUserLoged(response.data);
+        const userResponse = response.data;
+        if (userResponse.urlCredential || userResponse.urlCredential != '') {
+          Alert.alert(
+            'Atención',
+            'Has usado una cuenta tipo médico, no puedes acceder a esta app, use la app VEiDT doctor.',
+          );
+        } else {
+          changeUserLoged(response.data);
+        }
       } catch (error) {
         if (error.response.status === 400) {
           setLoading(false);
@@ -103,7 +112,7 @@ function Login({navigation}) {
         </View>
         <View style={styles.contentLinks}>
           <Button
-            title='Registrate'
+            title='Regístrate'
             onPress={() => navigation.navigate('Register')}
             type='clear'
             titleStyle={{
@@ -113,7 +122,7 @@ function Login({navigation}) {
           />
           <Text style={{marginHorizontal: 2}} />
           <Button
-            title='Olvide contraseña'
+            title='Olvidé contraseña'
             onPress={() => navigation.navigate('VerifyEmail')}
             type='clear'
             titleStyle={{

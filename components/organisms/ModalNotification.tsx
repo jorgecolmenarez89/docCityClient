@@ -23,7 +23,7 @@ const ModalNotification = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [widthCard, setWidthCard] = useState(0);
-  const {userLoged, showToast, navigation, token} = useContext(AuthContext);
+  const {userLoged, showToast, navigation, token, giftCareDataContext} = useContext(AuthContext);
 
   if (notification.data.type === TypeNotification.request) {
     return (
@@ -134,15 +134,34 @@ const ModalNotification = ({
                   const {status, data} = await generateRequest(body);
                   const dataRequest = data.data;
                   if (status === 200) {
-                    showToast({
-                      description: 'Consulta aceptada con éxito.',
-                      type: TypeToast.success,
-                    });
                     const {status: statusChat, data: dataChat} = await createChat({
                       id: dataRequest.id.toString(),
                       doctor: notification.data.data.user,
                       user: {...userLoged, deviceToken: token},
                     });
+
+                    const bodyDebit = {
+                      historialMedicoId: dataRequest.id,
+                      requestId: dataRequest.id,
+                      description: 'debito de consulta médica desde Veidt',
+                      medicaUserId: notification.data.data.user.id,
+                      giftCareUserId: giftCareDataContext.id,
+                      amount: 10,
+                      status: 'inicial',
+                    };
+                    console.log('bodyDebit', bodyDebit);
+                    const {status: statusDebit, data: dataDebit} = await debitFound(bodyDebit);
+                    if (statusDebit === 200) {
+                      console.log('se debito ');
+                    } else {
+                      console.log('no se debito');
+                    }
+
+                    showToast({
+                      description: 'Consulta aceptada con éxito.',
+                      type: TypeToast.success,
+                    });
+
                     if (statusChat) {
                       navigation.navigate('ChatsStack', {
                         screen: NavigationRoutes.chat,
@@ -152,21 +171,6 @@ const ModalNotification = ({
                       console.log('paso algo al crear el chat');
                     }
 
-                    const bodyDebit = {
-                      historialMedicoId: dataRequest.id,
-                      requestId: dataRequest.id,
-                      description: 'debito de consulta médica desde Veidt',
-                      medicaUserId: notification.data.data.user.id,
-                      giftCareUserId: userLoged.email,
-                      amount: 10,
-                      status: 'inicial',
-                    };
-                    const {status: statusDebit, data: dataDebit} = await debitFound(bodyDebit);
-                    if (statusDebit === 200) {
-                      console.log('se debito ');
-                    } else {
-                      console.log('no se debito');
-                    }
                     onClose();
                   } else {
                     showToast({
