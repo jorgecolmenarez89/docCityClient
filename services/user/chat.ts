@@ -2,8 +2,9 @@ import firestore from '@react-native-firebase/firestore';
 
 import Doctor from '../../models/Doctor';
 import User, {UserModel} from '../../models/User';
-import Chat from '../../models/Chat';
+import Chat, {ChatStatus} from '../../models/Chat';
 import ChatMessage from '../../models/ChatMessage';
+import {StatusBar} from 'native-base';
 
 export const createChat = async ({id, user, doctor}: {id?: string; user: any; doctor: any}) => {
   const body = Chat.create({user, doctor});
@@ -38,6 +39,26 @@ export const getAllChats = async (params: {user: UserModel}) => {
       .collection('chats')
       .where('userId', '==', params.user.id)
       .orderBy('updateAt', 'desc')
+      .get();
+    const chats: Chat[] = [];
+    result.forEach(doc => {
+      chats.push(
+        new Chat(Chat.formatData({data: {...doc.data(), id: doc.id}, userLog: params.user})),
+      );
+    });
+    return {status: true, data: chats};
+  } catch (err: any) {
+    console.log('addMessage() ==> err', {err});
+    return {status: false, message: 'No fue posible obtener los chats.'};
+  }
+};
+
+export const getAllChatsByActives = async (params: {user: UserModel}) => {
+  try {
+    const result = await firestore()
+      .collection('chats')
+      .where('userId', '==', params.user.id)
+      .where('status', '==', ChatStatus.ACTIVE)
       .get();
     const chats: Chat[] = [];
     result.forEach(doc => {

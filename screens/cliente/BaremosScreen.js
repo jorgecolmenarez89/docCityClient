@@ -107,7 +107,6 @@ function BaremosScreen({navigation}) {
         balance: saldo,
       };
       const {data} = await getCentersBaremos(body);
-      console.log('data baremos', data);
       if (data.length === 0) {
         setOpenModalResult(true);
       } else {
@@ -159,7 +158,8 @@ function BaremosScreen({navigation}) {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      getCenters();
+      //getSaldo();
+      await getCenters();
       setLoading(false);
     } catch (error) {
       console.log('error handleSearch', error);
