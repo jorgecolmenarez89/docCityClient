@@ -76,6 +76,7 @@ function DashboardScreen({navigation}) {
       let resultados = [];
 
       result.forEach(documentSnapshot => {
+        console.log(documentSnapshot.id);
         resultados.push({...documentSnapshot.data(), id: documentSnapshot.id});
       });
       console.log('resultados', resultados);

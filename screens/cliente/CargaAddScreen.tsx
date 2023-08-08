@@ -64,7 +64,7 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
   const handleChange = (text: string, name: string) => {
     setUser({
       ...user,
-      [name]: text,
+      [name]: text.trim(),
     });
   };
 

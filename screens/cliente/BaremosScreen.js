@@ -120,7 +120,7 @@ function BaremosScreen({navigation}) {
   const buildMarkers = data => {
     let arrayMarkerts = [];
     data.forEach(location => {
-      const arrayCoordinate = location.geoLocation.split(',');
+      const arrayCoordinate = location.geolocalizacionCentroSalud.split(',');
       const latitude = parseFloat(arrayCoordinate[0]);
       const longitude = parseFloat(arrayCoordinate[1]);
       arrayMarkerts.push({
@@ -129,8 +129,8 @@ function BaremosScreen({navigation}) {
           latitude,
           longitude,
         },
-        title: location.nombre,
-        description: location.address,
+        title: location.nombreCentroSalud,
+        description: `${location.direccionCentroSalud} - ${location.telefonoCentroSalud}`,
       });
     });
     setMarkers(arrayMarkerts);
@@ -415,7 +415,7 @@ function BaremosScreen({navigation}) {
           <View style={styles.modalView}>
             <View style={{width: '100%', display: 'flex', alignItems: 'center', marginBottom: 7}}>
               <Text style={styles.modalTitle}>
-                Estimado usuario no encontramos rsultados para su búsqueda
+                Estimado usuario, no encontramos resultados para su búsqueda
               </Text>
             </View>
             <View style={{width: '100%', display: 'flex', alignItems: 'flex-end'}}>

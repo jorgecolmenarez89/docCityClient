@@ -17,7 +17,7 @@ function Login({navigation}) {
   const handleChange = (text, name) => {
     setUser({
       ...user,
-      [name]: text,
+      [name]: text.trim(),
     });
   };
 
