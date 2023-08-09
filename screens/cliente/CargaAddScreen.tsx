@@ -64,7 +64,7 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
   const handleChange = (text: string, name: string) => {
     setUser({
       ...user,
-      [name]: text.trim(),
+      [name]: text,
     });
   };
 
@@ -142,7 +142,7 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
             <TextInput
               maxLength={40}
               style={styles.input}
-              onChangeText={text => handleChange(text, 'username')}
+              onChangeText={text => handleChange(text.trim(), 'username')}
               value={user.username}
               placeholder='Nombre de usuario'
               placeholderTextColor={'#7d7d7d'}
@@ -153,7 +153,7 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
             <TextInput
               maxLength={40}
               style={styles.input}
-              onChangeText={text => handleChange(text, 'email')}
+              onChangeText={text => handleChange(text.trim(), 'email')}
               value={user.email}
               placeholder='Correo electrónico'
               placeholderTextColor={'#7d7d7d'}
@@ -207,7 +207,7 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
               <TextInput
                 style={styles.inputStyle}
                 maxLength={40}
-                onChangeText={text => handleChange(text, 'password')}
+                onChangeText={text => handleChange(text.trim(), 'password')}
                 value={user.password}
                 secureTextEntry={hidePassword}
                 placeholder='Contraseña'
@@ -228,7 +228,7 @@ function CargaAddScreen({navigation}: CargaListScreenProps) {
               <TextInput
                 style={styles.inputStyle}
                 maxLength={40}
-                onChangeText={text => handleChange(text, 'repeatPassword')}
+                onChangeText={text => handleChange(text.trim(), 'repeatPassword')}
                 value={user.repeatPassword}
                 secureTextEntry={hideRepeatPassword}
                 placeholder='Repetir Contraseña'

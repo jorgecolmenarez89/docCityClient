@@ -45,7 +45,7 @@ function Register({navigation}) {
   const handleChange = (text, name) => {
     setUser({
       ...user,
-      [name]: text.trim(),
+      [name]: text,
     });
   };
 
@@ -120,7 +120,7 @@ function Register({navigation}) {
             <TextInput
               maxLength={40}
               style={styles.input}
-              onChangeText={text => handleChange(text, 'username')}
+              onChangeText={text => handleChange(text.trim(), 'username')}
               value={user.username}
               placeholder='Nombre de usuario'
               placeholderTextColor={'#7d7d7d'}
@@ -131,7 +131,7 @@ function Register({navigation}) {
             <TextInput
               maxLength={40}
               style={styles.input}
-              onChangeText={text => handleChange(text, 'email')}
+              onChangeText={text => handleChange(text.trim(), 'email')}
               value={user.email}
               placeholder='Correo electrónico'
               placeholderTextColor={'#7d7d7d'}
@@ -154,7 +154,7 @@ function Register({navigation}) {
               <TextInput
                 style={styles.inputStyle}
                 maxLength={40}
-                onChangeText={text => handleChange(text, 'password')}
+                onChangeText={text => handleChange(text.trim(), 'password')}
                 value={user.password}
                 secureTextEntry={hidePassword}
                 placeholder='********'
@@ -175,7 +175,7 @@ function Register({navigation}) {
               <TextInput
                 style={styles.inputStyle}
                 maxLength={40}
-                onChangeText={text => handleChange(text, 'repeatPassword')}
+                onChangeText={text => handleChange(text.trim(), 'repeatPassword')}
                 value={user.repeatPassword}
                 secureTextEntry={hideRepeatPassword}
                 placeholder='********'
