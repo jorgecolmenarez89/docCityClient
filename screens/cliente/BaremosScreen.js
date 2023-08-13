@@ -1,5 +1,15 @@
 import React, {ReactNode, useEffect, useRef, useState, useContext} from 'react';
-import {StyleSheet, Text, Linking, View, Image, Dimensions, Modal, TextInput} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  Linking,
+  View,
+  Image,
+  Dimensions,
+  Modal,
+  TextInput,
+  Platform,
+} from 'react-native';
 import MapView, {Marker, MapMarkerProps, Region, LatLng, Callout} from 'react-native-maps';
 import {Icon, useTheme, Button, Dialog} from '@rneui/themed';
 import {useFocusEffect} from '@react-navigation/native';
@@ -10,6 +20,7 @@ import {ASSETS, DEFAULT_REGION} from '../../config/Constant';
 import {getCentersBaremos, getServices} from '../../services/doctor/centers';
 import {checkMoney} from '../../services/user/gitfcare';
 import {AuthContext} from '../../context/AuthContext';
+import Fab from '../../components/Fab';
 
 const deviceHeight = Dimensions.get('window').height;
 const widthHeight = Dimensions.get('window').width;
@@ -18,6 +29,7 @@ const url = 'https://play.google.com/store/apps/details?id=com.veidthealth.giftc
 function BaremosScreen({navigation}) {
   const {theme} = useTheme();
   const mapRef = useRef(null);
+  const selectRef = useRef(null);
   const {hasLocation, initialPosition, getCurrentLocation, userLocation, errLocation} =
     useLocation();
   const {userLoged} = useContext(AuthContext);
@@ -25,7 +37,7 @@ function BaremosScreen({navigation}) {
   const [markers, setMarkers] = useState([]);
   const [initialRegion, setInitialRegion] = useState(null);
   const [services, setServices] = useState([]);
-  const [examenId, setExamenId] = useState(-1);
+  const [examenId, setExamenId] = useState(null);
   const [saldo, setSaldo] = useState('');
   const [cordinates, setCoordinates] = useState({
     latitude: '',
@@ -42,6 +54,7 @@ function BaremosScreen({navigation}) {
     todoOk: false,
   });
   const [openModalResult, setOpenModalResult] = useState(false);
+  const [defaultValueSelect, setDefaultValueSelect] = useState(null);
 
   const getInitialRegion = () => {
     return {
@@ -124,13 +137,14 @@ function BaremosScreen({navigation}) {
       const latitude = parseFloat(arrayCoordinate[0]);
       const longitude = parseFloat(arrayCoordinate[1]);
       arrayMarkerts.push({
-        image: require('../../assets/custom-marker.png'),
+        image: require('../../assets/hospital-marker.png'),
         coordinate: {
           latitude,
           longitude,
         },
         title: location.nombreCentroSalud,
-        description: `${location.direccionCentroSalud} - ${location.telefonoCentroSalud}`,
+        description: `${location.direccionCentroSalud}`,
+        phone: location.telefonoCentroSalud,
       });
     });
     setMarkers(arrayMarkerts);
@@ -158,9 +172,12 @@ function BaremosScreen({navigation}) {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      //getSaldo();
+      setMarkers([]);
       await getCenters();
       setLoading(false);
+      setExamenId(undefined);
+      selectRef.current.reset();
+      setSaldo('');
     } catch (error) {
       console.log('error handleSearch', error);
       setLoading(false);
@@ -222,11 +239,22 @@ function BaremosScreen({navigation}) {
     }
   };
 
+  const dialCall = number => {
+    let phoneNumber = '';
+    if (Platform.OS === 'android') {
+      phoneNumber = `tel:${number}`;
+    } else {
+      phoneNumber = `telprompt:${number}`;
+    }
+    Linking.openURL(phoneNumber);
+  };
+
   return (
     <View style={styles.container}>
       <View style={{position: 'relative', width: '100%', height: '100%', flex: 1}}>
         <MapView
           ref={el => (mapRef.current = el)}
+          showsUserLocation={false}
           style={styles.map}
           onRegionChangeComplete={() => {}}
           initialRegion={initialRegion ? initialRegion : getInitialRegion()}>
@@ -240,21 +268,41 @@ function BaremosScreen({navigation}) {
                   title={marker.title}
                   description={marker.description}>
                   <Image
-                    source={require('../../assets/custom-marker.png')}
+                    source={require('../../assets/hospital-marker.png')}
                     style={{width: 50, height: 50}}
                   />
+
+                  <Callout tooltip>
+                    <View>
+                      <View style={styles.bubble}>
+                        <Text style={styles.bubbleTitle}>{marker.title}</Text>
+                        <Text style={styles.bubbleDescription}>{marker.description}</Text>
+                        <View style={{width: '100%', display: 'flex', flexDirection: 'row'}}>
+                          <Text style={styles.bubblePhone}>Tel: {marker.phone}</Text>
+                          {/*<Icon name='call' color={'red'} size={20} type='ionicon' 
+                            onPress={() => dialCall(marker.phone)}
+                          />*/}
+                        </View>
+                      </View>
+                    </View>
+                  </Callout>
                 </Marker>
               );
             })}
+          <Marker coordinate={userLocation}>
+            <Image source={ASSETS.locationPin} style={{width: 40, height: 40}} />
+          </Marker>
         </MapView>
 
         <View style={styles.overlay} pointerEvents='box-none'>
           <View style={styles.overlaySearch}>
             <View style={styles.containerFilter}>
               <SelectDropdown
+                ref={el => (selectRef.current = el)}
                 data={services}
                 onSelect={(selectedItem, index) => {
                   setExamenId(selectedItem.id);
+                  setMarkers([]);
                 }}
                 buttonTextAfterSelection={(selectedItem, index) => {
                   return selectedItem.nombre;
@@ -318,6 +366,16 @@ function BaremosScreen({navigation}) {
           loading={loading}
         />
       </View>
+
+      <Fab
+        iconName='compass-outline'
+        onPress={centerPosition}
+        style={{
+          position: 'absolute',
+          bottom: 100,
+          left: 20,
+        }}
+      />
 
       <Dialog isVisible={openDialog} onBackdropPress={() => {}}>
         <Dialog.Title title='Verificando Saldo' />
@@ -595,5 +653,31 @@ const styles = StyleSheet.create({
     height: 50,
     fontFamily: 'Poppins-Medium',
     color: '#000000',
+  },
+  bubble: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    borderColor: '#ccc',
+    borderWidth: 0.5,
+    padding: 15,
+    width: 250,
+    height: 'auto',
+  },
+  bubbleTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+    marginBottom: 5,
+  },
+  bubbleDescription: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Medium',
+    marginBottom: 5,
+  },
+  bubblePhone: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Medium',
+    marginBottom: 5,
   },
 });

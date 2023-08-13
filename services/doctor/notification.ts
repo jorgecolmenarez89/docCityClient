@@ -37,13 +37,13 @@ export const sendNotificationRequest = async ({
         registrationTokens: doctors.map(doctor => doctor.getTokenNotification()),
         data: {
           type: 'request',
-          title: 'Solicitud de servició',
+          title: 'Solicitud de servicio',
           description: 'El siguiente usuario solicita una consulta:',
           idSearch: idSearch,
           ...userMap,
         },
         notification: {
-          title: 'Solicitud de servició',
+          title: 'Solicitud de servicio',
           body: `solicitan tus servicios`,
         },
       },

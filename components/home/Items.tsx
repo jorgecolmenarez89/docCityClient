@@ -9,29 +9,29 @@ const Items = ({navigation}: any) => {
       icon: '',
       name: 'Mis Consultas',
       url: require('../../assets/icono-consultas.png'),
-      route: 'Profile',
-      screen: 'ConsultasS',
+      route: 'Home',
+      screen: 'HomeConsultas',
     },
     {
       icon: '',
       name: 'Mis familiares',
       url: require('../../assets/icono-familia.png'),
-      route: 'Profile',
-      screen: 'CargaListP',
+      route: 'Home',
+      screen: 'HomeCargaList',
     },
     {
       icon: '',
       name: 'Mis Vacunas',
       url: require('../../assets/icono-vacunas.png'),
-      route: 'Profile',
-      screen: 'VacunasS',
+      route: 'Home',
+      screen: 'HomeVacunas',
     },
     {
       icon: '',
       name: 'Mi GiftCare',
       url: require('../../assets/icono-giftCare.png'),
-      route: 'Profile',
-      screen: 'InstrumentosS',
+      route: 'Home',
+      screen: 'HomeInstrumentos',
     },
   ]);
 
@@ -42,9 +42,7 @@ const Items = ({navigation}: any) => {
           {/*<View style={styles.round}></View> */}
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate(item.route, {
-                screen: item.screen,
-              });
+              navigation.navigate(item.screen);
             }}>
             <Image style={{width: 70, height: 70}} source={item.url} />
           </TouchableOpacity>

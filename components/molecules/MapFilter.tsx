@@ -11,6 +11,7 @@ interface MapFilterValues {
   specialtyId?: number;
   description?: string;
   regionId?: string;
+  extedns?: boolean;
 }
 
 interface MapSelectorFilter {
@@ -36,6 +37,7 @@ type MapFilterComponetProps = {
   values: MapFilterValues;
   onChangeValues: (values: MapFilterValues) => void;
   onlyOneFilter?: boolean;
+  onChangeExtendida: (values: boolean) => void;
 };
 
 enum EnumSelectFilter {
@@ -87,16 +89,23 @@ const reducerValues = (state: MapSelectorFilter, action: {type: MapFilterAction;
   }
 };
 
-const MapFilterComponet = ({values, onChangeValues, onlyOneFilter}: MapFilterComponetProps) => {
+const MapFilterComponet = ({
+  values,
+  onChangeValues,
+  onlyOneFilter,
+  onChangeExtendida,
+}: MapFilterComponetProps) => {
   const initialFocusRef = React.useRef(null);
   const {theme} = useTheme();
   const {getEspecialitiesAll, specialities, getRegionsAll, regions} = useContext(AuthContext);
+  const [extedns, setExtends] = useState(false);
 
   const [valuesFilter, dispatch] = useReducer(reducerValues, values);
   const [valuesSelectorFilter, dispatchSelector] = useReducer(reducerSelectorFilter, {
     description: true,
     specialty: false,
     region: false,
+    extedns: false,
   });
 
   useEffect(() => {
@@ -127,7 +136,7 @@ const MapFilterComponet = ({values, onChangeValues, onlyOneFilter}: MapFilterCom
           <SelectDropdown
             data={specialities}
             onSelect={(selectedItem, index) => {
-              console.log('onSelect() ==>', {selectedItem, index});
+              //console.log('onSelect() ==>', {selectedItem, index});
               dispatch({type: MapFilterAction.specialities, value: selectedItem.id});
               onChangeValues({...valuesFilter, specialtyId: selectedItem.id});
             }}
@@ -156,11 +165,12 @@ const MapFilterComponet = ({values, onChangeValues, onlyOneFilter}: MapFilterCom
           />
         )}
 
-        {valuesSelectorFilter.region && (
+        {/*valuesSelectorFilter.region && ( */}
+        {extedns && (
           <SelectDropdown
             data={regions}
             onSelect={(selectedItem, index) => {
-              console.log('onSelect() ==>', {selectedItem, index});
+              //console.log('onSelect() ==>', {selectedItem, index});
               dispatch({type: MapFilterAction.region, value: selectedItem.id});
               onChangeValues({...valuesFilter, regionId: selectedItem.id});
             }}
@@ -221,7 +231,7 @@ const MapFilterComponet = ({values, onChangeValues, onlyOneFilter}: MapFilterCom
                     onlyOneFilter,
                   });
                   dispatch({type: MapFilterAction.all, value: {description: ''}});
-                  onChangeValues({description: ''});
+                  //onChangeValues({description: ''});
                 }}>
                 <Text style={{marginVertical: 4}}>Descripción</Text>
                 {valuesSelectorFilter.description && (
@@ -244,7 +254,7 @@ const MapFilterComponet = ({values, onChangeValues, onlyOneFilter}: MapFilterCom
                     onlyOneFilter,
                   });
                   dispatch({type: MapFilterAction.all, value: {description: ''}});
-                  onChangeValues({description: ''});
+                  //onChangeValues({description: ''});
                 }}>
                 <Text style={{marginVertical: 4}}>Especialidad</Text>
                 {valuesSelectorFilter.specialty && (
@@ -261,15 +271,20 @@ const MapFilterComponet = ({values, onChangeValues, onlyOneFilter}: MapFilterCom
                   justifyContent: 'space-between',
                 }}
                 onPress={() => {
-                  dispatchSelector({
+                  setExtends(!extedns);
+                  onChangeValues({...valuesFilter, extedns: !extedns});
+                  onChangeExtendida(!extedns);
+                  /*dispatchSelector({
                     type: MapSelectorFilterAction.region,
                     value: !valuesSelectorFilter.region,
                     onlyOneFilter,
                   });
                   dispatch({type: MapFilterAction.all, value: {description: ''}});
-                  onChangeValues({description: ''});
+                  onChangeValues({description: ''});*/
                 }}>
-                <Text style={{marginVertical: 4}}>Región</Text>
+                <Text style={{marginVertical: 4}}>
+                  {!extedns ? 'Extender búsqueda Región' : 'Búsqueda sencilla'}
+                </Text>
                 {valuesSelectorFilter.region && (
                   <Icon name={NAME_ICON.checkmark} type={'ionicon'} color={theme.colors.success} />
                 )}

@@ -6,7 +6,9 @@ export type RootStackParamList = {
   Profile?: undefined;
   CargaAdd?: undefined;
   CargaDetail?: {id: string};
-  CargaAddP?: undefined;
+  CargaAddP?: {parent: string};
   CargaDetailP?: {id: string};
   ConfirmTriaje?: undefined;
+  HomeCargaAdd?: undefined;
+  HpomeCargaDetail?: {id: string};
 };

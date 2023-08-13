@@ -9,7 +9,7 @@ import {checkMoney} from '../../services/user/gitfcare';
 
 const url = 'https://play.google.com/store/apps/details?id=com.veidthealth.giftcareapp&pli=1';
 
-function InstrumentosScreen({navigation}) {
+function InstrumentosScreen({navigation, route}) {
   const {userLoged, setGiftCareDataContext} = useContext(AuthContext);
   const [isSearch, setIsSearch] = useState(false);
   const [loading, setIsLoading] = useState(false);
@@ -24,6 +24,8 @@ function InstrumentosScreen({navigation}) {
     message: '',
     todoOk: false,
   });
+
+  const {parent} = route.params;
 
   const renderItem = ({item, index}) => (
     <TouchableOpacity
@@ -141,7 +143,7 @@ function InstrumentosScreen({navigation}) {
         <CustomHeader
           iconColor='#0b445e'
           iconName='arrow-back'
-          onPressIcon={() => navigation.popToTop()}
+          onPressIcon={() => navigation.goBack()}
         />
       </View>
       <View

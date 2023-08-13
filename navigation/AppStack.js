@@ -3,6 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from '@rneui/themed';
 import DashboardScreen from '../screens/cliente/DashboardScreen';
 import SearchStack from '../navigation/SearchStack';
+import HomeStack from '../navigation/HomeStack';
 import ChatsScreen from '../screens/cliente/ChatsScreen';
 import ProfileStack from '../navigation/ProfileStack';
 import CargaStack from '../navigation/CargaStack';
@@ -98,7 +99,7 @@ function AppStack() {
       }}>
       <Tab.Screen
         name='Home'
-        component={DashboardScreen}
+        component={HomeStack}
         options={{
           tabBarLabel: 'Home',
           tabBarLabelStyle: {

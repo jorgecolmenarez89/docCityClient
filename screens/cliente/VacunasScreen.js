@@ -8,7 +8,7 @@ import {AuthContext} from '../../context/AuthContext';
 import CustomHeader from '../../components/CustomHeader';
 import {getAllVacunas} from '../../services/user/vacunas';
 
-function VacunasScreen({navigation}) {
+function VacunasScreen({navigation, route}) {
   const {userLoged} = useContext(AuthContext);
   const [vacunas, setVacunas] = useState([]);
   const [isSeacrh, setIsSeacrh] = useState(false);
@@ -23,6 +23,8 @@ function VacunasScreen({navigation}) {
   const [date, setDate] = useState(new Date());
   const [refresh, setRefresh] = useState(false);
   const [confirm, setConfrim] = useState(false);
+
+  const {parent} = route.params;
 
   const getVacunas = async () => {
     setRefresh(true);
@@ -173,7 +175,7 @@ function VacunasScreen({navigation}) {
         <CustomHeader
           iconColor='#0b445e'
           iconName='arrow-back'
-          onPressIcon={() => navigation.popToTop()}
+          onPressIcon={() => navigation.goBack()}
         />
       </View>
       <View

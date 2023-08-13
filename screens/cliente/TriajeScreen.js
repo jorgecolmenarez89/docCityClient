@@ -2,7 +2,9 @@ import Triaje from '../../components/Triaje';
 import React, {useState, useContext, useEffect} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, ScrollView, StatusBar, Alert} from 'react-native';
 
-function TriajeScreen({navigation}) {
+function TriajeScreen({navigation, route}) {
+  const {parent} = route.params;
+
   return (
     <View style={{flex: 1, backgroundColor: '#f6f7fc', paddingTop: 50}}>
       <View style={{flex: 1, paddingHorizontal: 20, width: '100%'}}>

@@ -54,6 +54,24 @@ export const mostrarUbicacionesByRegion = async (params: {
   }
 };
 
+export const mostrarUbicacionesByRegionAndSpeciality = async (params: {
+  user: {longitude: string; latitude: string};
+  regionId: string;
+  especialidadId: number;
+}) => {
+  try {
+    return await axiosInstance({}).get(
+      `users/GetDoctorsByRegionAndSpeciality/${params.regionId}/${params.especialidadId}`,
+      {
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+      },
+    );
+  } catch (err) {
+    console.log('mostrarUbicaciones() ==> err', {err});
+    return {status: false, msg: err?.message};
+  }
+};
+
 export const eliminarUbicacion = id => {};
 
 export const mostarUbicacion = id => {};

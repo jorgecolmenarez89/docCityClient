@@ -6,10 +6,12 @@ import {AuthContext} from '../../context/AuthContext';
 import {requestFinish} from '../../services/doctor/request';
 import moment from 'moment';
 
-function ConsultasScreen({navigation}) {
+function ConsultasScreen({navigation, route}) {
   const {userLoged} = useContext(AuthContext);
   const [consultations, setConsultations] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
+
+  const {parent} = route.params;
 
   useEffect(() => {
     getData();
@@ -24,7 +26,8 @@ function ConsultasScreen({navigation}) {
   const renderItem = ({item, index}) => (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate('ConsultasDeatilS', {
+        const path = parent == 'home' ? 'HomeConsultasDeatil' : 'ConsultasDeatilS';
+        navigation.navigate(path, {
           id: item.id,
         });
       }}
@@ -64,7 +67,7 @@ function ConsultasScreen({navigation}) {
         <CustomHeader
           iconColor='#0b445e'
           iconName='arrow-back'
-          onPressIcon={() => navigation.popToTop()}
+          onPressIcon={() => navigation.goBack()}
         />
       </View>
       <View

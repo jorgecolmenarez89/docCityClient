@@ -11,10 +11,11 @@ import {AuthContext} from '../../context/AuthContext';
 import {useLocation} from '../../hooks/useLocation';
 import {updateUserInfo} from '../../services/doctor/profile';
 import CustomHeader from '../../components/CustomHeader';
+import {Path} from 'react-native-svg';
 
 type CargaListScreenProps = NativeStackScreenProps<RootStackParamList>;
 
-function CargaListProfileScreen({navigation}: CargaListScreenProps) {
+function CargaListProfileScreen({navigation, route}: CargaListScreenProps) {
   const {userLoged, changeUserLoged} = useContext(AuthContext);
   const {getCurrentLocation} = useLocation();
   const [relatives, setRelatives] = useState<User[]>([]);
@@ -24,6 +25,7 @@ function CargaListProfileScreen({navigation}: CargaListScreenProps) {
 
   const nav = useNavigation();
   const isFocused = useIsFocused();
+  const parent = route.params;
 
   useEffect(() => {
     if (isFocused) {
@@ -57,7 +59,7 @@ function CargaListProfileScreen({navigation}: CargaListScreenProps) {
           iconColor='#0b445e'
           iconName='arrow-back'
           onPressIcon={() => {
-            navigation.popToTop();
+            navigation.goBack();
           }}
         />
       </View>
@@ -82,7 +84,10 @@ function CargaListProfileScreen({navigation}: CargaListScreenProps) {
                     fontFamily: 'Poppins-Bold',
                     fontSize: 17,
                   }}
-                  onPress={() => navigation.navigate('CargaAddP')}
+                  onPress={() => {
+                    const path = parent.parent == 'home' ? 'HomeCargaAdd' : 'CargaAddP';
+                    navigation.navigate(path);
+                  }}
                 />
               </View>
             </View>
@@ -111,7 +116,10 @@ function CargaListProfileScreen({navigation}: CargaListScreenProps) {
                   fontFamily: 'Poppins-SemiBold',
                   fontSize: 17,
                 }}
-                onPress={() => navigation.navigate('CargaAddP')}
+                onPress={() => {
+                  const path = parent.parent == 'home' ? 'HomeCargaAdd' : 'CargaAddP';
+                  navigation.navigate(path);
+                }}
               />
             </View>
           </View>
@@ -129,7 +137,8 @@ function CargaListProfileScreen({navigation}: CargaListScreenProps) {
                     relation={item.parentesco}
                     age={item.age}
                     onClick={() => {
-                      navigation.navigate('CargaDetailP', {
+                      const path = parent.parent == 'home' ? 'HpomeCargaDetail' : 'CargaDetailP';
+                      navigation.navigate(path, {
                         id: item.id,
                       });
                     }}

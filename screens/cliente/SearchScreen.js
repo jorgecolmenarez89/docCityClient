@@ -22,6 +22,7 @@ import {
   mostrarUbicaciones,
   mostrarUbicacionesByDescription,
   mostrarUbicacionesByRegion,
+  mostrarUbicacionesByRegionAndSpeciality,
 } from '../../services/doctor/ubicaciones';
 import Doctor from '../../models/Doctor';
 import {sendNotificationRequest} from '../../services/doctor/notification';
@@ -51,7 +52,10 @@ function SearchScreen({navigation}) {
     specialtyId: undefined,
     regionId: undefined,
     description: '',
+    extends: false,
   });
+
+  const [extendida, setExtendida] = useState(false);
   const [doctors, setDoctors] = useState();
   const [loading, setLoading] = useState(false);
   const [loadingCheck, setLoadingCheck] = useState(true);
@@ -200,31 +204,57 @@ function SearchScreen({navigation}) {
 
     try {
       if (filterValues.specialtyId) {
-        const {status: sta, data: dat} = await mostrarUbicaciones({
+        if (extendida) {
+          const {status: sta, data: dat} = await mostrarUbicacionesByRegionAndSpeciality({
+            user: locationUser,
+            regionId: filterValues.regionId,
+            especialidadId: filterValues.specialtyId,
+          });
+          status = sta;
+          data = dat;
+          typeSearch = 'specialty';
+        } else {
+          const {status: sta, data: dat} = await mostrarUbicaciones({
+            user: locationUser,
+            especialidadId: filterValues.specialtyId,
+          });
+          status = sta;
+          data = dat;
+          typeSearch = 'specialty';
+        }
+        /*const {status: sta, data: dat} = await mostrarUbicaciones({
           user: locationUser,
           especialidadId: filterValues.specialtyId,
         });
         status = sta;
         data = dat;
-        typeSearch = 'specialty';
-      } else if (filterValues.regionId) {
-        const {status: sta, data: dat} = await mostrarUbicacionesByRegion({
-          user: locationUser,
-          regionId: filterValues.regionId,
-        });
-        status = sta;
-        data = dat;
-        typeSearch = 'region';
+        typeSearch = 'specialty';*/
       } else if (filterValues.description) {
-        const {status: sta, data: dat} = await mostrarUbicacionesByDescription({
+        if (extendida) {
+          const {status: sta, data: dat} = await mostrarUbicacionesByRegion({
+            user: locationUser,
+            regionId: filterValues.regionId,
+          });
+          status = sta;
+          data = dat;
+          typeSearch = 'region';
+        } else {
+          const {status: sta, data: dat} = await mostrarUbicacionesByDescription({
+            user: locationUser,
+            description: filterValues.description,
+          });
+          status = sta;
+          data = dat;
+          typeSearch = 'description';
+        }
+        /*const {status: sta, data: dat} = await mostrarUbicacionesByDescription({
           user: locationUser,
           description: filterValues.description,
         });
         status = sta;
         data = dat;
-        typeSearch = 'description';
+        typeSearch = 'description';*/
       }
-
       console.log('handleSearch() ==> ', {status, data});
       if (status === 200) {
         if (data && data.length > 0) {
@@ -258,19 +288,38 @@ function SearchScreen({navigation}) {
     } catch (err) {
       console.log('handleSearch() ==> err', {err});
     }
-
     setLoading(false);
   };
 
   const validButton = () => {
-    if (
+    if (!extendida) {
+      if (
+        (filterValues.specialtyId !== undefined || filterValues.description !== '') &&
+        locationUser !== undefined
+      ) {
+        return false;
+      }
+    } else {
+      if (filterValues.regionId == undefined) {
+        return true;
+      } else if (
+        (filterValues.specialtyId !== undefined || filterValues.description !== '') &&
+        locationUser !== undefined
+      ) {
+        return false;
+      } else {
+        console.log('caso true 3');
+      }
+    }
+
+    /*if (
       (filterValues.specialtyId !== undefined ||
         filterValues.regionId !== undefined ||
         filterValues.description !== '') &&
       locationUser !== undefined
     ) {
       return false;
-    }
+    }*/
     return true;
   };
 
@@ -361,7 +410,12 @@ function SearchScreen({navigation}) {
           })
         }>
         {!doctors && (
-          <MapFilterComponet values={filterValues} onChangeValues={setFilterValues} onlyOneFilter />
+          <MapFilterComponet
+            values={filterValues}
+            onChangeValues={setFilterValues}
+            onlyOneFilter
+            onChangeExtendida={setExtendida}
+          />
         )}
       </MapCustom>
       {!doctors && (
