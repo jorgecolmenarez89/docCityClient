@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Button, Image} from '@rneui/themed';
+import {Button, Image, Dialog} from '@rneui/themed';
 
 function Inicio({navigation}) {
+  const [openDialog, setOpenDialog] = useState(false);
+
   return (
     <View style={styles.container}>
       <View style={styles.contentImg}>
@@ -26,10 +28,35 @@ function Inicio({navigation}) {
               fontFamily: 'Poppins-Bold',
               fontSize: 20,
             }}
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => setOpenDialog(true)}
           />
         </View>
       </View>
+
+      <Dialog isVisible={openDialog} onBackdropPress={() => {}}>
+        <Dialog.Title title='Atención' />
+
+        <View style={{width: '100%'}}>
+          <Text style={styles.dialogTitle}>
+            VEIDT recopila datos de localización para encontrar médicos cercanos a la ubicacion de
+            los usuarios, incluso cuando la aplicación está cerrada o no se utiliza.
+          </Text>
+          <Dialog.Actions>
+            <Dialog.Button
+              title='Cancelar'
+              onPress={() => {
+                setOpenDialog(false);
+              }}
+            />
+            <Dialog.Button
+              title='Estoy de acuerdo'
+              onPress={() => {
+                navigation.navigate('Login');
+              }}
+            />
+          </Dialog.Actions>
+        </View>
+      </Dialog>
     </View>
   );
 }
@@ -76,5 +103,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
+  },
+  dialogTitle: {
+    fontFamily: 'Poppins-Regular',
+    color: '#1a1a1a',
+    fontSize: 14,
+    marginVertical: 10,
   },
 });

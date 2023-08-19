@@ -29,7 +29,6 @@ function ProfileScreen({navigation}) {
     React.useCallback(() => {
       if (userLoged.fullName) setFullName(userLoged.fullName);
       if (userLoged.phoneNumber) setPhone(userLoged.phoneNumber);
-      console.log(userLoged);
       if (userLoged.sexo) {
         setDefaultSex(userLoged.sexo);
         setSex(userLoged.sexo);

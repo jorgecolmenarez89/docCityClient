@@ -98,7 +98,8 @@ const MapCustom = ({
           longitude: initialPosition.longitude,
           latitudeDelta: DEFAULT_REGION.latitudeDelta,
           longitudeDelta: DEFAULT_REGION.longitudeDelta,
-        }}>
+        }}
+        toolbarEnabled={false}>
         {markers &&
           markers.length &&
           markers.map((marker, index) => {
