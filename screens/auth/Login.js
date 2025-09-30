@@ -29,6 +29,7 @@ function Login({navigation}) {
     } else {
       setLoading(true);
       const url = `/users/GetUserInfoForLogin/${user.userName}/${user.password}/${token}`;
+      console.log('🚀 ~ handleLogin ~ url:', url);
       try {
         const response = await axiosInstance({isNode: false}).get(url);
         console.log(response.data);
@@ -43,12 +44,15 @@ function Login({navigation}) {
           changeUserLoged(response.data);
         }
       } catch (error) {
-        if (error.response.status === 400) {
-          setLoading(false);
+        console.log('🚀 ~ handleLogin ~ error:', error);
+        setLoading(false);
+
+        if (error.response && error.response.status === 400) {
           Alert.alert('Atención', error.response.data);
+        } else if (error.response) {
+          Alert.alert('Error', 'Ha ocurrido un error en el servidor');
         } else {
-          Alert.alert('Error', 'Ha Ocurrido un error intente nuevamente');
-          setLoading(false);
+          Alert.alert('Error', 'Error de conexión. Verifica tu conexión a internet');
         }
       }
     }
