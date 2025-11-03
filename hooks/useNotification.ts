@@ -18,41 +18,63 @@ interface OptionNotification {
 }
 
 const showNotification = async ({notification, data}: OptionNotification) => {
-  //const channelId = await notifee.createChannel({
-  //id: 'default',
-  //name: 'Default Channel',
-  //});
+  try {
+    // Verificar permisos de notificación
+    const settings = await notifee.getNotificationSettings();
+    console.log('🔔 Configuración de notificaciones:', settings);
 
-  const channelId = await notifee.createChannel({
-    id: 'default',
-    name: 'Custom',
-    lights: true,
-    lightColor: AndroidColor.RED,
-    vibration: true,
-    vibrationPattern: [300, 500],
-    importance: AndroidImportance.HIGH,
-  });
+    if (settings.authorizationStatus === 0) {
+      // 0 = DENIED
+      console.log('❌ Permisos de notificación denegados');
+      return;
+    }
 
-  console.log('showNotification() => { notification, data }', {
-    notification,
-    data,
-  });
-
-  await notifee.displayNotification({
-    title: notification.title,
-    body: notification.body,
-    data: data,
-    android: {
-      channelId,
-      vibrationPattern: [300, 500],
-      lights: [AndroidColor.RED, 300, 600],
+    // Crear canal de notificación con configuración mejorada
+    const channelId = await notifee.createChannel({
+      id: 'doccity_notifications',
+      name: 'DocCity Notificaciones',
+      description: 'Notificaciones de la aplicación DocCity',
+      lights: true,
+      lightColor: AndroidColor.BLUE,
+      vibration: true,
+      vibrationPattern: [300, 500, 300, 500],
       importance: AndroidImportance.HIGH,
-      category: AndroidCategory.CALL,
-      pressAction: {
-        id: 'default',
+      sound: 'default',
+      bypassDnd: true,
+    });
+
+    console.log('✅ Canal de notificación creado:', channelId);
+    console.log('📱 Mostrando notificación:', {
+      title: notification.title,
+      body: notification.body,
+      data,
+    });
+
+    await notifee.displayNotification({
+      title: notification.title || 'DocCity',
+      body: notification.body || 'Nueva notificación',
+      data: data,
+      android: {
+        channelId,
+        vibrationPattern: [300, 500, 300, 500],
+        lights: [AndroidColor.BLUE, 300, 600],
+        importance: AndroidImportance.HIGH,
+        category: AndroidCategory.MESSAGE,
+        pressAction: {
+          id: 'default',
+          launchActivity: 'default',
+        },
+        smallIcon: 'ic_launcher',
+        largeIcon: 'ic_launcher',
+        showTimestamp: true,
+        timestamp: Date.now(),
       },
-    },
-  });
+    });
+
+    console.log('✅ Notificación mostrada exitosamente');
+  } catch (error) {
+    console.error('❌ Error al mostrar notificación:', error);
+  }
 };
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
@@ -65,11 +87,11 @@ const useNotification = () => {
   const [notification, setNotification] = useState<any>();
   const [updateVerfication, setUpdateVerfication] = useState<any>();
 
-  const managerNotification = async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
+  const managerNotification = async (remoteMessage: any) => {
     const {data} = remoteMessage;
-    const user = {};
-    const client = {};
-    for (const [key, value] of Object.entries(data)) {
+    const user: {[key: string]: any} = {};
+    const client: {[key: string]: any} = {};
+    for (const [key, value] of Object.entries(data || {})) {
       if (key.indexOf('user_') !== -1) {
         const newKey = key.replace('user_', '');
         user[newKey] = value;
@@ -115,10 +137,23 @@ const useNotification = () => {
   };
 
   const boostrap = async () => {
-    await messaging().registerDeviceForRemoteMessages();
-    const tokenNew = await messaging().getToken();
-    //console.log('token ==>', tokenNew);
-    setToken(tokenNew);
+    try {
+      // Solicitar permisos de notificación
+      const authStatus = await notifee.requestPermission();
+      console.log('🔔 Estado de permisos de notificación:', authStatus);
+
+      if (authStatus.authorizationStatus === 0) {
+        console.log('❌ Permisos de notificación denegados por el usuario');
+        return;
+      }
+
+      await messaging().registerDeviceForRemoteMessages();
+      const tokenNew = await messaging().getToken();
+      console.log('📱 Token FCM:', tokenNew);
+      setToken(tokenNew);
+    } catch (error) {
+      console.error('❌ Error en bootstrap de notificaciones:', error);
+    }
 
     messaging().onNotificationOpenedApp(async remoteMessage => {
       console.log('Notification caused app to open from background state:', remoteMessage);
@@ -175,7 +210,33 @@ const useNotification = () => {
     };
   }, []);
 
-  return {token, showNotification, notification, onDeleteNotification, updateVerfication};
+  // Función para probar notificaciones locales
+  const testNotification = async () => {
+    try {
+      console.log('🧪 Probando notificación local...');
+      await showNotification({
+        notification: {
+          title: '🧪 Prueba DocCity',
+          body: 'Esta es una notificación de prueba para verificar el funcionamiento',
+        },
+        data: {
+          type: 'test',
+          timestamp: Date.now(),
+        },
+      });
+    } catch (error) {
+      console.error('❌ Error en notificación de prueba:', error);
+    }
+  };
+
+  return {
+    token,
+    showNotification,
+    notification,
+    onDeleteNotification,
+    updateVerfication,
+    testNotification,
+  };
 };
 
 export default useNotification;

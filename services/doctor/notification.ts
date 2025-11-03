@@ -17,7 +17,6 @@ export const sendNotificationRequest = async ({
   idSearch?: string;
 }) => {
   try {
-    console.log('sendNotificationRequest() ==> user', {user});
     let userMap = {};
     for (const [key, value] of Object.entries(user)) {
       console.log(`${key}: ${value}`);
@@ -29,28 +28,28 @@ export const sendNotificationRequest = async ({
       console.log('newKey', newKey);
       userMap[newKey] = `${value}`;
     }
-    console.log('sendNotificationRequest() ==> userMap', {doctors, userMap, neess: {...userMap}});
 
-    return await axios.create({baseURL: URL_NODE}).post(
-      '/send-notifications',
-      {
-        registrationTokens: doctors.map(doctor => doctor.getTokenNotification()),
-        data: {
-          type: 'request',
-          title: 'Solicitud de servicio',
-          description: 'El siguiente usuario solicita una consulta:',
-          idSearch: idSearch,
-          ...userMap,
-        },
-        notification: {
-          title: 'Solicitud de servicio',
-          body: `solicitan tus servicios`,
-        },
+    const body = {
+      registrationTokens: doctors.map(doctor => doctor.getTokenNotification()),
+      data: {
+        type: 'request',
+        title: 'Solicitud de servicio',
+        description: 'El siguiente usuario solicita una consulta:',
+        idSearch: idSearch,
+        ...userMap,
       },
-      {
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
+      notification: {
+        title: 'Solicitud de servicio',
+        body: `solicitan tus servicios`,
       },
-    );
+    };
+
+    console.log('sendNotificationRequest() ==> body', {body});
+    console.log('URL_NODE', URL_NODE);
+
+    return await axios.create({baseURL: URL_NODE}).post('/send-notifications', body, {
+      headers: {'Content-Type': 'application/json; charset=utf-8'},
+    });
   } catch (err: any) {
     console.log('sendNotificationRequest() ==> err', {err});
     return {status: false, msg: `err: ${err.message}`};
@@ -69,7 +68,6 @@ export const sendNotificationChat = async ({
   message: ChatMessage;
 }) => {
   try {
-    console.log('sendNotificationRequest() ==> user', {user});
     let userMap = {};
     for (const [key, value] of Object.entries(user)) {
       console.log(`${key}: ${value}`);
@@ -81,12 +79,11 @@ export const sendNotificationChat = async ({
       console.log('newKey', newKey);
       userMap[newKey] = `${value}`;
     }
-    console.log('sendNotificationRequest() ==> userMap', {userMap, neess: {...userMap}});
 
     return await axios.create({baseURL: URL_NODE}).post(
       '/send-notifications',
       {
-        registrationTokens: doctor.deviceToken,
+        registrationTokens: [doctor.deviceToken],
         data: {
           type: TypeNotification.chat,
           title: 'Mensaje nuevo',
@@ -141,7 +138,7 @@ export const sendNotificationDoctorFinish = async ({
     return await axios.create({baseURL: URL_NODE}).post(
       '/send-notifications',
       {
-        registrationTokens: doctor.deviceToken,
+        registrationTokens: [doctor.deviceToken],
         data: {
           type: TypeNotification.finishRequest,
           title: 'Consulta finalizada',
