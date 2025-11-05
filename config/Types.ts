@@ -11,4 +11,11 @@ export type RootStackParamList = {
   ConfirmTriaje?: undefined;
   HomeCargaAdd?: undefined;
   HpomeCargaDetail?: {id: string};
+  PaymentMethods?: {doctor: any; requestId: string};
+  PaymentForm?: {
+    doctor: any;
+    requestId: string;
+    paymentMethods: any[];
+    selectedPaymentMethod?: any;
+  };
 };

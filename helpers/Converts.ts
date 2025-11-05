@@ -22,3 +22,21 @@ export const dateMessage = (date: number | Date) => {
     return '';
   }
 };
+
+export const dateToYYYYMMDD = (date: Date | number | string) => {
+  try {
+    let momentDate;
+    // Si es string y tiene formato dd/mm/yyyy, parsearlo específicamente
+    if (typeof date === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
+      momentDate = moment(date, 'DD/MM/YYYY');
+    } else {
+      // Para Date, number o otros formatos de string
+      momentDate = moment(date);
+    }
+    // Establecer hora a medianoche en UTC y formatear como ISO sin milisegundos
+    return momentDate.utc().startOf('day').format('YYYY-MM-DDTHH:mm:ss') + 'Z';
+  } catch (err: any) {
+    console.log('dateToYYYYMMDD() => err', {err});
+    return '';
+  }
+};

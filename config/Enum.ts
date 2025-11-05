@@ -14,6 +14,8 @@ export enum TypeToast {
 export enum NavigationRoutes {
   chat = 'Chat',
   chats = 'Chats',
+  paymentMethods = 'PaymentMethods',
+  paymentForm = 'PaymentForm',
 }
 
 export enum StateUserInUseApp {
@@ -35,4 +37,11 @@ export enum typeRelatives {
   tio = 'Tio',
   tia = 'Tia',
   otro = 'Otro',
+}
+
+export enum TypePayment {
+  transferencia = 'Transferencia',
+  pagoMovil = 'Pago Móvil',
+  deposito = 'Depósito',
+  divisa = 'Divisa',
 }

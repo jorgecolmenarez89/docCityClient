@@ -25,6 +25,57 @@ const ModalNotification = ({
   const [widthCard, setWidthCard] = useState(0);
   const {userLoged, showToast, navigation, token, giftCareDataContext} = useContext(AuthContext);
 
+  const startRequest = async () => {
+    setIsLoading(true);
+    const body = {
+      userId: notification.data.data.client.id,
+      medicoId: notification.data.data.user.id,
+      status: StatusRequest.started,
+      serviceRating: '0',
+      user: notification.data.data.client,
+      doctor: notification.data.data.user,
+      description: '',
+      createdDate: new Date(),
+    };
+
+    try {
+      const response: any = await generateRequest(body);
+      const status = response?.status || response?.data?.status || 200;
+      const responseData = response?.data || null;
+
+      if (status === 200 && responseData) {
+        setIsLoading(false);
+        showToast({
+          description: 'Consulta creada correctamente.',
+          type: TypeToast.success,
+        });
+        onClose();
+        // Navegar al stack de pagos después de generar la solicitud
+        const requestId = responseData?.data?.id || responseData?.id || '';
+        navigation.navigate('PaymentStack', {
+          screen: NavigationRoutes.paymentMethods,
+          params: {
+            doctor: notification.data.data.user,
+            requestId,
+          },
+        });
+      } else {
+        setIsLoading(false);
+        showToast({
+          description: 'Error al solicitar consulta.',
+          type: TypeToast.error,
+        });
+      }
+    } catch (error) {
+      showToast({
+        description: 'Error al solicitar consulta.',
+        type: TypeToast.error,
+      });
+      setIsLoading(false);
+    }
+  };
+
+  //Modal que indica que un doctor acepto la solicitud de consulta
   if (notification.data.type === TypeNotification.request) {
     return (
       <Modal
@@ -97,7 +148,8 @@ const ModalNotification = ({
                     doctor: notification.data.data.user,
                     id: notification.data.data.idRequest,
                   };
-                  const {status, data} = await updateRequest(body);
+                  const response: any = await updateRequest(body);
+                  const status = response?.status || response?.data?.status || 200;
 
                   if (status === 200) {
                     showToast({
@@ -120,7 +172,8 @@ const ModalNotification = ({
                 loading={isLoading}
                 containerStyle={{flex: 1, marginLeft: 10}}
                 onPress={async () => {
-                  setIsLoading(true);
+                  startRequest();
+                  /*setIsLoading(true);
                   const body = {
                     userId: notification.data.data.client.id,
                     medicoId: notification.data.data.user.id,
@@ -178,7 +231,7 @@ const ModalNotification = ({
                       type: TypeToast.error,
                     });
                   }
-                  setIsLoading(false);
+                  setIsLoading(false);*/
                 }}>
                 <Text style={[styles.textStyle]}>Aceptar</Text>
               </Button>

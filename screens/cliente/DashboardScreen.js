@@ -16,6 +16,7 @@ import {
 import CardSolicitar from '../../components/home/CardSolicitar';
 import Items from '../../components/home/Items';
 import Populares from '../../components/home/Populares';
+import RequestCard from '../../components/home/RequestCard';
 import PopularHome from '../../components/home/PopularHome';
 import {AuthContext} from '../../context/AuthContext';
 import {requestOpenedPacient, updateRequest} from '../../services/doctor/request';
@@ -185,21 +186,42 @@ function DashboardScreen({navigation}) {
         )}
 
         {requests &&
-          requests.map((p, i) => (
-            <View style={{marginBottom: 15}} key={'popular-' + i}>
-              <Populares
-                onPress={() => {
-                  setRequest(p);
-                }}
-                profile={p.doctorUser.url}
-                title={p.doctorUser.fullName}
-                stars={parseInt(p.serviceRating, 10)}
-                speciality={
-                  specialities.find(spec => spec.id === p.doctorUser.medicalSpecialityId).name || ''
-                }
-              />
-            </View>
-          ))}
+          requests.map((request, i) =>
+            specialities ? (
+              <View style={{marginBottom: 15}} key={'popular-' + i}>
+                <RequestCard
+                  request={request}
+                  specialityName={
+                    specialities.find(spec => spec.id === request.doctorUser.medicalSpecialityId)
+                      .name || ''
+                  }
+                  onPress={() => {
+                    setRequest(request);
+                    // Si el estado es iniciada, navegar a la pantalla de pagos
+                    if (request.status === StatusRequest.started) {
+                      navigation.navigate('PaymentStack', {
+                        screen: NavigationRoutes.paymentMethods,
+                        params: {
+                          doctor: request.doctorUser,
+                          requestId: request.id || '',
+                        },
+                      });
+                    }
+                    // Si el estado es en proceso, navegar al chat
+                    else if (request.status === StatusRequest.inProgress) {
+                      navigation.navigate('ChatsStack', {
+                        screen: NavigationRoutes.chat,
+                        params: {
+                          id: `${request.id}`,
+                          receiver: request.doctorUser?.id || request.medicoId || '',
+                        },
+                      });
+                    }
+                  }}
+                />
+              </View>
+            ) : null,
+          )}
 
         <View style={styles.spacer} />
 

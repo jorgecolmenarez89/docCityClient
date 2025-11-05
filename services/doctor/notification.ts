@@ -17,7 +17,7 @@ export const sendNotificationRequest = async ({
   idSearch?: string;
 }) => {
   try {
-    let userMap = {};
+    let userMap: {[key: string]: any} = {};
     for (const [key, value] of Object.entries(user)) {
       console.log(`${key}: ${value}`);
       //Object.defineProperty(userMap, `user.${key}`, {
@@ -68,7 +68,7 @@ export const sendNotificationChat = async ({
   message: ChatMessage;
 }) => {
   try {
-    let userMap = {};
+    let userMap: {[key: string]: any} = {};
     for (const [key, value] of Object.entries(user)) {
       console.log(`${key}: ${value}`);
       //Object.defineProperty(userMap, `user.${key}`, {
@@ -118,7 +118,7 @@ export const sendNotificationDoctorFinish = async ({
 }) => {
   try {
     console.log('sendNotificationDoctorFinish() ==> user', {user});
-    let userMap = {};
+    let userMap: {[key: string]: any} = {};
     for (const [key, value] of Object.entries(user)) {
       console.log(`${key}: ${value}`);
       //Object.defineProperty(userMap, `user.${key}`, {
@@ -157,6 +157,65 @@ export const sendNotificationDoctorFinish = async ({
     );
   } catch (err: any) {
     console.log('sendNotificationRequest() ==> err', {err});
+    return {status: false, msg: `err: ${err.message}`};
+  }
+};
+
+export const sendNotificationPaymentSender = async ({
+  doctor,
+  user,
+  idRequest,
+  amount,
+}: {
+  doctor: DoctorModel;
+  user: UserModel;
+  idRequest: string;
+  paymentId?: string;
+  amount?: number;
+}) => {
+  try {
+    console.log('sendNotificationPaymentSender() ==> user', {user});
+    let userMap: {[key: string]: any} = {};
+    for (const [key, value] of Object.entries(user)) {
+      console.log(`${key}: ${value}`);
+      const newKey = 'user_' + key;
+      console.log('newKey', newKey);
+      userMap[newKey] = `${value}`;
+    }
+    console.log('sendNotificationPaymentSender() ==> userMap', {
+      userMap,
+      idRequest,
+      amount,
+    });
+
+    const body = {
+      registrationTokens: [doctor.deviceToken],
+      data: {
+        type: TypeNotification.paymentSender,
+        title: 'Pago registrado',
+        description: `El paciente ha registrado un pago de ${
+          amount ? `Bs. ${amount.toFixed(2)}` : 'la consulta'
+        }`,
+        idRequest: `${idRequest}`,
+        amount: amount?.toString() || '',
+        ...userMap,
+      },
+      notification: {
+        title: 'Pago registrado',
+        body: `El paciente ha registrado un pago ${
+          amount ? `de Bs. ${amount.toFixed(2)}` : 'para la consulta'
+        }`,
+      },
+    };
+    console.log('sendNotificationPaymentSender() ==> body', {body});
+    console.log('__________________________________________________');
+
+    return await axios.create({baseURL: URL_NODE}).post('/send-notifications', body, {
+      headers: {'Content-Type': 'application/json; charset=utf-8'},
+    });
+    console.log('sendNotificationPaymentSender() ==> Ok');
+  } catch (err: any) {
+    console.log('sendNotificationPaymentSender() ==> err', {err});
     return {status: false, msg: `err: ${err.message}`};
   }
 };
