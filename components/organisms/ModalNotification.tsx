@@ -173,65 +173,6 @@ const ModalNotification = ({
                 containerStyle={{flex: 1, marginLeft: 10}}
                 onPress={async () => {
                   startRequest();
-                  /*setIsLoading(true);
-                  const body = {
-                    userId: notification.data.data.client.id,
-                    medicoId: notification.data.data.user.id,
-                    status: StatusRequest.inProgress,
-                    serviceRating: '0',
-                    user: notification.data.data.client,
-                    doctor: notification.data.data.user,
-                    description: '',
-                    createdDate: new Date(),
-                  };
-                  const {status, data} = await generateRequest(body);
-                  const dataRequest = data.data;
-                  if (status === 200) {
-                    const {status: statusChat, data: dataChat} = await createChat({
-                      id: dataRequest.id.toString(),
-                      doctor: notification.data.data.user,
-                      user: {...userLoged, deviceToken: token},
-                    });
-
-                    const bodyDebit = {
-                      historialMedicoId: dataRequest.id,
-                      requestId: dataRequest.id,
-                      description: 'debito de consulta médica desde Veidt',
-                      medicaUserId: notification.data.data.user.id,
-                      giftCareUserId: giftCareDataContext.id,
-                      amount: 10,
-                      status: 'inicial',
-                    };
-                    console.log('bodyDebit', bodyDebit);
-                    const {status: statusDebit, data: dataDebit} = await debitFound(bodyDebit);
-                    if (statusDebit === 200) {
-                      console.log('se debito ');
-                    } else {
-                      console.log('no se debito');
-                    }
-
-                    showToast({
-                      description: 'Consulta aceptada con éxito.',
-                      type: TypeToast.success,
-                    });
-
-                    if (statusChat) {
-                      navigation.navigate('ChatsStack', {
-                        screen: NavigationRoutes.chat,
-                        params: {id: dataChat, receiver: notification.data.data.user.id},
-                      });
-                    } else {
-                      console.log('paso algo al crear el chat');
-                    }
-
-                    onClose();
-                  } else {
-                    showToast({
-                      description: 'No fue posible aceptar la consulta.',
-                      type: TypeToast.error,
-                    });
-                  }
-                  setIsLoading(false);*/
                 }}>
                 <Text style={[styles.textStyle]}>Aceptar</Text>
               </Button>
@@ -241,6 +182,75 @@ const ModalNotification = ({
       </Modal>
     );
   }
+
+  //Modal que indica que el médico ha verificado el pago
+  if (notification.data.type === TypeNotification.paymentConfirmed) {
+    return (
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={true}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View>
+              <Text style={[styles.modalText, styles.textBold]}>
+                El Médico ha verificado el pago
+              </Text>
+              <Text style={styles.modalDescription}>
+                Para continuar con la consulta presione continuar
+              </Text>
+            </View>
+
+            <View style={styles.optionsModal}>
+              <Button
+                loading={isLoading}
+                containerStyle={{flex: 1}}
+                onPress={async () => {
+                  setIsLoading(true);
+                  try {
+                    const {status: statusChat, data: dataChat} = await createChat({
+                      id:
+                        notification.data.data.idRequest?.toString() ||
+                        notification.data.data.idRequest,
+                      doctor: notification.data.data.user,
+                      user: {...userLoged, deviceToken: token},
+                    });
+
+                    if (statusChat) {
+                      setIsLoading(false);
+                      onClose();
+                      navigation.navigate('ChatsStack', {
+                        screen: NavigationRoutes.chat,
+                        params: {id: dataChat, receiver: notification.data.data.user.id},
+                      });
+                    } else {
+                      setIsLoading(false);
+                      console.log('paso algo al crear el chat');
+                      showToast({
+                        description: 'Error al crear el chat.',
+                        type: TypeToast.error,
+                      });
+                    }
+                  } catch (error) {
+                    setIsLoading(false);
+                    showToast({
+                      description: 'Error al crear el chat.',
+                      type: TypeToast.error,
+                    });
+                  }
+                }}>
+                <Text style={[styles.textStyle]}>Continuar</Text>
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
   return null;
 };
 

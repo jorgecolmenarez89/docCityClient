@@ -331,6 +331,48 @@ function PaymentFormScreen({navigation, route}: PaymentFormScreenProps) {
     } as PaymentData;
   };
 
+  const clearForm = () => {
+    setSelectedPaymentMethod('');
+    setSelectedPaymentMethodObj(null);
+    setFormAmount('');
+    setFormReference('');
+    setFormDate('');
+    setFormDescription('');
+    setSenderBankCode('');
+    setSenderBankName('');
+    setSenderAccountNumber('');
+    setSenderDniNumber('');
+    setSenderAccountType('');
+    setSenderPhoneNumber('');
+    setSenderPaymentType('');
+    setPaymentData({
+      ReceiverUserId: '',
+      PaymentType: '',
+      BankCode: '',
+      BankName: '',
+      Titular: '',
+      AccountNumber: '',
+      DniNumber: '',
+      AccountType: '',
+      PhoneNumber: '',
+      AmountBs: 0,
+      AmountUsd: consultationPrice,
+      TransactionDate: new Date(),
+      RateOfDay: dollarOficial || 0,
+      RequestId: '',
+      SenderUserId: '',
+      BankCodeSender: '',
+      BankNameSender: '',
+      AccountNumberSender: '',
+      DniNumberSender: '',
+      AccountTypeSender: '',
+      PhoneNumberSender: '',
+      Status: 'pendiente',
+      ReferenceCode: '',
+      PaymentTypeSender: 'Seleccione',
+    });
+  };
+
   const handleSubmitPayment = async () => {
     if (!validateForm()) {
       return;
@@ -364,13 +406,14 @@ function PaymentFormScreen({navigation, route}: PaymentFormScreenProps) {
             type: TypeToast.error,
           });
         }
+        clearForm();
+        navigation.navigate('Home');
       } else {
         showToast({
           description: 'Error al registrar el pago',
           type: TypeToast.error,
         });
       }
-      navigation.navigate('Home');
     } catch (error: any) {
       console.log('Error al procesar pago:', error);
       showToast({
