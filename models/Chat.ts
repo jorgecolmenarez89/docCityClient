@@ -46,7 +46,7 @@ class Chat {
           : [],
       updateAt: updateAt?.toDate(),
       updateAtDisplay: updateAt ? dateChat(updateAt?.toDate()) : undefined,
-      receiver: userLog.id !== doctor.id ? doctor : user,
+      receiver: doctor?.id && userLog.id !== doctor.id ? doctor : user,
       requestFinish: requestFinish ? requestFinish : false,
       status: status || ChatStatus.FINISHED,
     };
