@@ -63,6 +63,7 @@ class Chat {
       createAt: date,
       updateAt: date,
       status: ChatStatus.ACTIVE,
+      requestFinish: false,
     };
   }
 }

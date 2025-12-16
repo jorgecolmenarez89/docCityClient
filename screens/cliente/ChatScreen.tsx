@@ -157,6 +157,10 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
   );
 
   const handleDisabled = () => {
+    // Si la solicitud está finalizada, deshabilitar el botón
+    if (chat?.data.requestFinish === true) {
+      return true;
+    }
     let result = true;
     if (newMessage && newMessage !== '') {
       result = false;
