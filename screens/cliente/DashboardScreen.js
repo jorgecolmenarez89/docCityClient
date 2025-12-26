@@ -12,6 +12,7 @@ import {
   Modal,
   Dimensions,
   TextInput,
+  RefreshControl,
 } from 'react-native';
 import CardSolicitar from '../../components/home/CardSolicitar';
 import Items from '../../components/home/Items';
@@ -28,6 +29,7 @@ import {getLocationDetails} from '../../services/doctor/address';
 import {useLocation} from '../../hooks/useLocation';
 import {getPopulars, getPopular} from '../../services/user/doctors';
 import {sendNotificationDoctorFinish} from '../../services/doctor/notification';
+import {getSearchesByUserId} from '../../services/user/search';
 
 function DashboardScreen({navigation}) {
   const {userLoged, specialities} = useContext(AuthContext);
@@ -45,6 +47,8 @@ function DashboardScreen({navigation}) {
   const [popularDetail, setPopularDetail] = useState(null);
   const [medicalDetail, setMedicalDetail] = useState(null);
   const [comment, setComment] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const [searches, setSearches] = useState([]);
 
   const {width, height} = Dimensions.get('window');
   const ratio = width / 541; //541 is actual image width
@@ -109,7 +113,10 @@ function DashboardScreen({navigation}) {
   useEffect(() => {
     getAdress();
     getPopulares();
-  }, []);
+    if (userLoged?.id) {
+      loadSearches();
+    }
+  }, [userLoged]);
 
   const getAdress = async () => {
     try {
@@ -138,6 +145,37 @@ function DashboardScreen({navigation}) {
     }
   };
 
+  const loadSearches = async () => {
+    try {
+      const {status, data} = await getSearchesByUserId(userLoged.id);
+      if (status && data) {
+        setSearches(data);
+      } else {
+        setSearches([]);
+      }
+    } catch (error) {
+      console.log('error loadSearches', error);
+      setSearches([]);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        onLoadLastRequest(),
+        onLoadRequestFinish(),
+        getAdress(),
+        getPopulares(),
+        loadSearches(),
+      ]);
+    } catch (error) {
+      console.log('error onRefresh', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   const viewDetail = async p => {
     setPopularDetail(p);
     try {
@@ -152,7 +190,9 @@ function DashboardScreen({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView
+        style={styles.scrollView}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         {details && (
           <View style={styles.ubicationContainer}>
             <View style={styles.ubicationContainerTitleContent}>
@@ -178,6 +218,60 @@ function DashboardScreen({navigation}) {
         </View>
 
         <Items navigation={navigation} />
+
+        {searches && searches.length > 0 && (
+          <>
+            <View style={styles.spacer} />
+            <View style={styles.sectionSeparatpor}>
+              <Text style={styles.sectionTitle}>Búsquedas recientes</Text>
+            </View>
+            {searches.map((search, i) => (
+              <View style={styles.searchItem} key={'search-' + i}>
+                <View style={styles.searchItemContent}>
+                  <Icon
+                    type='ionicon'
+                    color='#005d81'
+                    name='search-outline'
+                    style={{marginRight: 10}}
+                  />
+                  <View style={styles.searchItemText}>
+                    <Text style={styles.searchItemTitle}>
+                      {search.type === 'specialty'
+                        ? 'Búsqueda por especialidad'
+                        : search.type === 'description'
+                        ? 'Búsqueda por descripción'
+                        : 'Búsqueda reciente'}
+                    </Text>
+                    {search.data && (
+                      <Text style={styles.searchItemDescription} numberOfLines={1}>
+                        {search.data}
+                      </Text>
+                    )}
+                    {search.status && (
+                      <View style={styles.searchStatusContainer}>
+                        <View
+                          style={[
+                            styles.searchStatusBadge,
+                            search.status === 'green' && styles.searchStatusGreen,
+                            search.status === 'yellow' && styles.searchStatusYellow,
+                            search.status === 'red' && styles.searchStatusRed,
+                          ]}>
+                          <Text style={styles.searchStatusText}>
+                            {search.status === 'green'
+                              ? 'Activa'
+                              : search.status === 'yellow'
+                              ? 'Pendiente'
+                              : 'Finalizada'}
+                          </Text>
+                        </View>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              </View>
+            ))}
+          </>
+        )}
 
         {requests && (
           <View style={styles.sectionSeparatpor}>
@@ -525,6 +619,62 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     fontSize: 15,
     color: '#15193f',
+  },
+  searchItem: {
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    padding: 15,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  searchItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchItemText: {
+    flex: 1,
+  },
+  searchItemTitle: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 14,
+    color: '#06060a',
+    marginBottom: 4,
+  },
+  searchItemDescription: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    color: '#666666',
+    marginBottom: 6,
+  },
+  searchStatusContainer: {
+    marginTop: 4,
+  },
+  searchStatusBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  searchStatusGreen: {
+    backgroundColor: '#d4edda',
+  },
+  searchStatusYellow: {
+    backgroundColor: '#fff3cd',
+  },
+  searchStatusRed: {
+    backgroundColor: '#f8d7da',
+  },
+  searchStatusText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 10,
+    color: '#06060a',
   },
 });
 

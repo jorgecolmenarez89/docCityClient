@@ -9,7 +9,7 @@ import {AuthContext} from '@context/AuthContext';
 import Notification, {TypeNotification} from '../../models/Notification';
 import {sendNotificationRequest} from '../../services/doctor/notification';
 import {generateRequest, updateRequest} from '@services/doctor/request';
-import {createChat} from '../../services/user/chat';
+import {createChat, getChatById} from '../../services/user/chat';
 import {debitFound} from '../../services/user/gitfcare';
 
 const ModalNotification = ({
@@ -211,28 +211,47 @@ const ModalNotification = ({
                 onPress={async () => {
                   setIsLoading(true);
                   try {
-                    const {status: statusChat, data: dataChat} = await createChat({
-                      id:
-                        notification.data.data.idRequest?.toString() ||
-                        notification.data.data.idRequest,
-                      doctor: notification.data.data.user,
-                      user: {...userLoged, deviceToken: token},
-                    });
+                    // Obtener el idRequest de la notificación
+                    const idRequest =
+                      notification.data.data.idRequest?.toString() ||
+                      notification.data.data.idRequest;
 
-                    if (statusChat) {
+                    // Primero verificar si el chat ya existe
+                    const {status: chatExists, data: existingChat} = await getChatById(
+                      idRequest,
+                      userLoged,
+                    );
+
+                    if (chatExists && existingChat) {
+                      // Si el chat existe, navegar al listado de chats
                       setIsLoading(false);
                       onClose();
                       navigation.navigate('ChatsStack', {
-                        screen: NavigationRoutes.chat,
-                        params: {id: dataChat, receiver: notification.data.data.user.id},
+                        screen: NavigationRoutes.chats,
                       });
                     } else {
-                      setIsLoading(false);
-                      console.log('paso algo al crear el chat');
-                      showToast({
-                        description: 'Error al crear el chat.',
-                        type: TypeToast.error,
+                      // Si no existe, crear el chat nuevo usando el idRequest de la notificación
+                      const {status: statusChat, data: dataChat} = await createChat({
+                        id: idRequest,
+                        doctor: notification.data.data.user,
+                        user: {...userLoged, deviceToken: token},
                       });
+
+                      if (statusChat) {
+                        setIsLoading(false);
+                        onClose();
+                        // Navegar al listado de chats para que se carguen todos los chats
+                        navigation.navigate('ChatsStack', {
+                          screen: NavigationRoutes.chats,
+                        });
+                      } else {
+                        setIsLoading(false);
+                        console.log('paso algo al crear el chat');
+                        showToast({
+                          description: 'Error al crear el chat.',
+                          type: TypeToast.error,
+                        });
+                      }
                     }
                   } catch (error) {
                     setIsLoading(false);

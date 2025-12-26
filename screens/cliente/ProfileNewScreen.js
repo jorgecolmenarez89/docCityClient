@@ -144,13 +144,13 @@ function ProfileNewScreen({navigation}) {
             onPressEvent={() => navigation.navigate('VacunasS')}
             image={require('../../assets/icono-vacunas.png')}
           />
-          <View style={styles.spacer}></View>
+          {/*<View style={styles.spacer}></View>
           <CardGrey
             title='Mi GiftCare'
             options={['Lorem Ipsum']}
             onPressEvent={() => navigation.navigate('InstrumentosS')}
             image={require('../../assets/icono-giftCare.png')}
-          />
+          />*/}
           <View style={styles.spacer}></View>
           <CardGrey
             title='Mi Triaje'

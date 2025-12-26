@@ -22,6 +22,7 @@ import {bancos, formatSelectBancos, formatSelectBancosDivisas} from '../../helpe
 import {createPaymentSender} from '../../services/doctor/payments';
 import {sendNotificationPaymentSender} from '../../services/doctor/notification';
 import {dateToYYYYMMDD} from '../../helpers/Converts';
+import moment from 'moment';
 
 type PaymentFormScreenProps = NativeStackScreenProps<RootStackParamList, 'PaymentForm'>;
 
@@ -119,7 +120,7 @@ function PaymentFormScreen({navigation, route}: PaymentFormScreenProps) {
   // Estados para campos del formulario (temporal para los inputs)
   const [formAmount, setFormAmount] = useState('');
   const [formReference, setFormReference] = useState('');
-  const [formDate, setFormDate] = useState('');
+  const [formDate, setFormDate] = useState(moment().format('DD/MM/YYYY'));
   const [formDescription, setFormDescription] = useState('');
 
   // Estados para datos del remitente (sender)
@@ -192,6 +193,13 @@ function PaymentFormScreen({navigation, route}: PaymentFormScreenProps) {
 
   useEffect(() => {
     findDollarOficial();
+    // Prellenar la fecha actual
+    const currentDate = moment().format('DD/MM/YYYY');
+    setFormDate(currentDate);
+    setPaymentData(prev => ({
+      ...prev,
+      TransactionDate: new Date(),
+    }));
   }, []);
 
   const findDollarOficial = async () => {
@@ -584,7 +592,12 @@ function PaymentFormScreen({navigation, route}: PaymentFormScreenProps) {
                   placeholder='Ingrese el número de referencia'
                   placeholderTextColor={'#7d7d7d'}
                   value={paymentData.ReferenceCode || ''}
-                  onChangeText={(text: string) => handleChange(text, 'ReferenceCode')}
+                  onChangeText={(text: string) => {
+                    // Filtrar solo números
+                    const numericText = text.replace(/[^0-9]/g, '');
+                    handleChange(numericText, 'ReferenceCode');
+                  }}
+                  keyboardType='numeric'
                   maxLength={50}
                 />
               </View>

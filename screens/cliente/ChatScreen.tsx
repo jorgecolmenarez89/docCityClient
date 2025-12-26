@@ -6,7 +6,7 @@ import {View, StyleSheet, FlatList, TextInput, Keyboard, Dimensions} from 'react
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AuthContext} from '../../context/AuthContext';
 import {PermisionsContext} from '../../context/PermisionsContext';
-import {addMessage, getChatById} from '../../services/user/chat';
+import {addMessage, getChatById, createChat} from '../../services/user/chat';
 import {Avatar, Dialog, Icon, Image, Text, useTheme} from '@rneui/themed';
 import {ASSETS, NAME_ICON} from '../../config/Constant';
 import Chat, {ChatModel, ChatStatus} from '../../models/Chat';
@@ -28,7 +28,7 @@ const {width, height} = Dimensions.get('window');
 const ChatScreen = ({navigation, route}: ChatScreenProps) => {
   const {isOpen, onToggle} = useDisclose();
   const {theme} = useTheme();
-  const {showToast, appState, userLoged} = useContext(AuthContext);
+  const {showToast, appState, userLoged, token} = useContext(AuthContext);
   const {checkCameraPermission} = useContext(PermisionsContext);
   const isFocused = useIsFocused();
   const listMessages = useRef<FlatList<ChatMessage>>(null);
@@ -46,7 +46,6 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
     try {
       onToggle();
       const {assets} = await launchImageLibrary({mediaType: 'photo', selectionLimit: 1});
-      console.log('onLaunchLibrary() ==>', {assets});
       if (assets) {
         setNewAssets(assets);
       }
@@ -61,7 +60,6 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
       if (result) {
         onToggle();
         const result = await launchCamera({mediaType: 'photo'});
-        console.log('onLaunchCamera() ==>', {result});
         if (result.assets) {
           setNewAssets(result.assets);
         }
@@ -75,7 +73,6 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
 
   const loadChat = async (id: string) => {
     const {status, data} = await getChatById(id, userLoged);
-    console.log('chat', data);
     if (status && data) {
       setChat(data);
       setMessages(data.data.messages || []);
@@ -83,7 +80,73 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
         listMessages?.current?.scrollToEnd();
       }, 500);
     } else {
-      setChat(undefined);
+      // Si el chat no existe, intentar crearlo automáticamente
+      // Esto puede pasar si la otra app aún no lo ha creado o si hay un retraso
+      try {
+        // Obtener la solicitud desde Firestore para obtener la información del doctor
+        const requestDoc = await firestore().collection('consultations').doc(id).get();
+
+        if (requestDoc.exists) {
+          const requestData = requestDoc.data();
+          // La solicitud puede tener doctorUser o doctor
+          const doctor = requestData?.doctorUser || requestData?.doctor;
+
+          if (doctor) {
+            const {status: statusChat, data: dataChat} = await createChat({
+              id: id,
+              doctor: doctor,
+              user: {...userLoged, deviceToken: token || ''},
+            });
+
+            if (statusChat) {
+              // Recargar el chat después de crearlo
+              const {status: newStatus, data: newData} = await getChatById(id, userLoged);
+              if (newStatus && newData) {
+                setChat(newData);
+                setMessages(newData.data.messages || []);
+                setTimeout(() => {
+                  listMessages?.current?.scrollToEnd();
+                }, 500);
+              } else {
+                setChat(undefined);
+                showToast({
+                  title: 'Error',
+                  description: 'No fue posible cargar el chat después de crearlo.',
+                  type: TypeToast.error,
+                });
+              }
+            } else {
+              setChat(undefined);
+              showToast({
+                title: 'Error',
+                description: 'No fue posible crear el chat. Intente nuevamente.',
+                type: TypeToast.error,
+              });
+            }
+          } else {
+            setChat(undefined);
+            showToast({
+              title: 'Error',
+              description: 'No se encontró información del doctor en la solicitud.',
+              type: TypeToast.error,
+            });
+          }
+        } else {
+          setChat(undefined);
+          showToast({
+            title: 'Error',
+            description: 'No se encontró la solicitud asociada.',
+            type: TypeToast.error,
+          });
+        }
+      } catch (error) {
+        setChat(undefined);
+        showToast({
+          title: 'Error',
+          description: 'Error al crear el chat. Intente nuevamente.',
+          type: TypeToast.error,
+        });
+      }
     }
   };
 
@@ -102,7 +165,6 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
         return undefined;
       }
     } catch (err) {
-      console.log('uploadAssets() ==>', err);
       return undefined;
     }
   };
@@ -111,7 +173,6 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
     setIsLoading(true);
     const msgNew = newMessage;
     const urls = await uploadAssets();
-    console.log('onSendMessage() ==> urls', {urls});
     const nextMessage = new ChatMessage({
       text: msgNew,
       imgs: urls,
@@ -151,28 +212,24 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
 
   const handleSubmit = useCallback(
     (messages: ChatMessage[]) => {
-      console.log('isFocused ==>', {isFocused, messages, appState});
+      // Callback para manejar cambios en los mensajes
     },
     [messages, isFocused, appState],
   );
 
   const handleDisabled = () => {
-    // Si la solicitud está finalizada, deshabilitar el botón
-    if (chat?.data.requestFinish === true) {
-      return true;
-    }
-    let result = true;
+    // Solo deshabilitar si no hay mensaje escrito ni assets seleccionados
     if (newMessage && newMessage !== '') {
-      result = false;
-    } else if (newAssets && newAssets.length > 0) {
-      result = false;
+      return false;
     }
-    return result;
+    if (newAssets && newAssets.length > 0) {
+      return false;
+    }
+    return true;
   };
 
   useEffect(() => {
     const {id, receiver} = route.params;
-    console.log('useEffect() ==> { id, receiver }', {id, receiver});
     if (id) {
       loadChat(id);
     }
@@ -180,7 +237,6 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setTimeout(() => {
         listMessages?.current?.scrollToEnd();
-        console.log('showSubscription ==> ', true);
       }, 50);
     });
 
@@ -199,11 +255,6 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
       .collection('users')
       .doc(receiver)
       .onSnapshot(documentsSnapshot => {
-        console.log('documentsSnapshot user =>', {
-          data: documentsSnapshot,
-          id: receiver,
-          chat: chat,
-        });
         if (documentsSnapshot.data()) {
           setStateReceiver(documentsSnapshot.data().state || StateUserInUseApp.outLine);
         }
@@ -217,7 +268,7 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
   }, [route]);
 
   useEffect(() => {
-    console.log('appState =>', {appState});
+    // Monitorear cambios en el estado de la app
   }, [appState]);
 
   return (
@@ -365,7 +416,6 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
                     size={35}
                     onPress={() => {
                       const resultt = newAssets.splice(index, 1);
-                      console.log('resultt', {resultt, newAssets});
                       if (newAssets.length > 0) {
                         setNewAssets([...newAssets]);
                       } else {
@@ -387,7 +437,7 @@ const ChatScreen = ({navigation, route}: ChatScreenProps) => {
       )}
 
       {/** input */}
-      {chat && chat.data.status === ChatStatus.ACTIVE && (
+      {chat && !chat.data.requestFinish && (
         <View
           style={{
             borderTopEndRadius: 15,

@@ -26,13 +26,6 @@ const Items = ({navigation}: any) => {
       route: 'Home',
       screen: 'HomeVacunas',
     },
-    {
-      icon: '',
-      name: 'Mi GiftCare',
-      url: require('../../assets/icono-giftCare.png'),
-      route: 'Home',
-      screen: 'HomeInstrumentos',
-    },
   ]);
 
   return (

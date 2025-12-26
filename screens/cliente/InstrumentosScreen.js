@@ -146,7 +146,7 @@ function InstrumentosScreen({navigation, route}) {
           onPressIcon={() => navigation.goBack()}
         />
       </View>
-      <View
+      {/*<View
         style={{
           display: 'flex',
           justifyContent: 'flex-start',
@@ -156,7 +156,7 @@ function InstrumentosScreen({navigation, route}) {
           marginBottom: 10,
         }}>
         <Text style={styles.title}>Mi GiftCare</Text>
-      </View>
+      </View>*/}
 
       <View
         style={{
