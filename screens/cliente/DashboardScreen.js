@@ -378,8 +378,9 @@ function DashboardScreen({navigation}) {
             Califica el servicio
           </Text>
           <Text>
-            Como te fue con el doctor, calificalo con 5 extrellas si es exelente o 1 si es muy
-            deficiente.
+            El médico ha finalizado la consulta, por favor califica el servicio con 5 extrellas si
+            es exelente o 1 si es muy deficiente. Puedes agregar un comentario para ayudarnos a
+            mejorar.
           </Text>
           <Rating
             onFinishRating={val => setValRanking(val)}

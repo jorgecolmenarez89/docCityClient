@@ -29,6 +29,8 @@ function VacunasScreen({navigation, route}) {
   const getVacunas = async () => {
     setRefresh(true);
     const {data} = await getAllVacunas(userLoged.id);
+    console.log('🚀 ~ getVacunas ~ data:', data);
+
     setVacunas(data);
     setRefresh(false);
   };
@@ -51,7 +53,7 @@ function VacunasScreen({navigation, route}) {
         <View style={styles.contentName}>
           <Text style={styles.textName}>{item.name}</Text>
           <Text style={styles.textDate}>
-            Colocada: {moment(item.createdAt).format('DD-MM-YYYY')}
+            Colocada: {moment(item.createdAt, 'YYYY-MM-DD HH:mm:ss').format('DD-MM-YYYY')}
           </Text>
         </View>
         <View style={styles.contentDate}>
@@ -108,7 +110,11 @@ function VacunasScreen({navigation, route}) {
   const confirmar = () => {
     if (formData.name === '') {
       Alert.alert('Atención', 'Campo Nombre es obligatorio');
-    } else if (!date) {
+    } else if (
+      formData.createdAt === '' ||
+      formData.createdAt === null ||
+      formData.createdAt === undefined
+    ) {
       Alert.alert('Atención', 'Campo Fecha es obligatorio');
     } else {
       setLoading(true);
@@ -122,13 +128,11 @@ function VacunasScreen({navigation, route}) {
 
   const addVacuna = async () => {
     try {
-      firestore()
-        .collection('vacunas')
-        .add({
-          name: formData.name,
-          userId: userLoged.id,
-          createdAt: moment(date).format('YYYY-DD-MM HH:mm:ss'),
-        });
+      firestore().collection('vacunas').add({
+        name: formData.name,
+        userId: userLoged.id,
+        createdAt: formData.createdAt,
+      });
       setLoading(false);
       clear();
     } catch (error) {
@@ -138,14 +142,11 @@ function VacunasScreen({navigation, route}) {
 
   const updateVacuna = async () => {
     try {
-      firestore()
-        .collection('vacunas')
-        .doc(idEditar)
-        .update({
-          name: formData.name,
-          userId: userLoged.id,
-          createdAt: moment(date).format('YYYY-DD-MM HH:mm:ss'),
-        });
+      firestore().collection('vacunas').doc(idEditar).update({
+        name: formData.name,
+        userId: userLoged.id,
+        createdAt: formData.createdAt,
+      });
       setLoading(false);
       clear();
     } catch (error) {
@@ -156,6 +157,7 @@ function VacunasScreen({navigation, route}) {
   const deleteVacuna = async () => {
     try {
       firestore().collection('vacunas').doc(idEditar).delete();
+      await getVacunas();
       clear();
     } catch (error) {
       console.log('error al eliminar', error);
@@ -238,7 +240,17 @@ function VacunasScreen({navigation, route}) {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Fecha de colocación</Text>
-              <DatePicker date={date} onDateChange={setDate} mode='date' />
+              <DatePicker
+                date={date}
+                mode='date'
+                onDateChange={newDate => {
+                  setDate(newDate);
+                  setFormData(prev => ({
+                    ...prev,
+                    createdAt: moment(newDate).format('YYYY-MM-DD HH:mm:ss'),
+                  }));
+                }}
+              />
             </View>
             <View style={styles.inputContainer}>
               <View

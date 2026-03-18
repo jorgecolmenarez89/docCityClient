@@ -19,6 +19,7 @@ function ConsultasScreen({navigation, route}) {
 
   const getData = async () => {
     const {data} = await requestFinish(userLoged.id);
+    console.log('🚀 ~ getData ~ data:', data);
     setIsSearch(true);
     setConsultations(data.data);
   };
